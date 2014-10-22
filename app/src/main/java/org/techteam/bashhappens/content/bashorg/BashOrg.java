@@ -1,8 +1,8 @@
 package org.techteam.bashhappens.content.bashorg;
 
-import org.techteam.bashhappens.content.IContent;
+import org.techteam.bashhappens.content.ContentSource;
 
-public abstract class BashOrg implements IContent {
+public abstract class BashOrg implements ContentSource {
 
     protected String locale;
 

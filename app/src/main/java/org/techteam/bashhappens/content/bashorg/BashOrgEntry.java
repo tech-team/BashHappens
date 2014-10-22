@@ -1,8 +1,10 @@
 package org.techteam.bashhappens.content.bashorg;
 
 import org.jsoup.nodes.Element;
+import org.techteam.bashhappens.content.ContentEntry;
+import org.techteam.bashhappens.content.ContentType;
 
-public class BashOrgEntry {
+public class BashOrgEntry extends ContentEntry {
     public static final String DOM_CLASS_NAME = "quote";
     private static final String ACTIONS_BAR_CLASS = "actions";
     private static final String TEXT_CLASS = "text";
@@ -12,6 +14,7 @@ public class BashOrgEntry {
     private String text;
 
     public BashOrgEntry(String id, String creationDate, String text) {
+        super(ContentType.BASH_ORG);
         this.id = id;
         this.creationDate = creationDate;
         this.text = text;

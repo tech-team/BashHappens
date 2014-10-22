@@ -2,18 +2,14 @@ package org.techteam.bashhappens.content.bashorg;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.techteam.bashhappens.content.ContentList;
 
 import java.util.ArrayList;
 
-public abstract class BashOrgList {
-    private ArrayList<BashOrgEntry> entries;
+public abstract class BashOrgList extends ContentList<BashOrgEntry> {
 
     public BashOrgList(ArrayList<BashOrgEntry> entries) {
-        this.entries = entries;
-    }
-
-    public ArrayList<BashOrgEntry> getEntries() {
-        return entries;
+        super(entries);
     }
 
     protected static ArrayList<BashOrgEntry> listFromHtml(Element html) {

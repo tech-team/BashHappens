@@ -2,6 +2,7 @@ package org.techteam.bashhappens.content.bashorg.newest;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.techteam.bashhappens.content.ContentList;
 import org.techteam.bashhappens.content.FeedOverflowException;
 import org.techteam.bashhappens.content.bashorg.BashOrg;
 import org.techteam.bashhappens.content.bashorg.BashOrgList;
@@ -46,7 +47,7 @@ public class BashOrgNewest extends BashOrg {
     }
 
     @Override
-    public BashOrgList retrieveNextList() throws IOException, FeedOverflowException {
+    public ContentList retrieveNextList() throws IOException, FeedOverflowException {
         BashOrgList list = retrieveList(currentPage);
         if (currentPage <= minPage && currentPage >= maxPage) {
             throw new FeedOverflowException("Feed is out of bound");
