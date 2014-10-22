@@ -4,8 +4,16 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 
 import org.techteam.bashhappens.R;
+import org.techteam.bashhappens.logic.FeedOverflowException;
+import org.techteam.bashhappens.logic.bashorg.BashOrg;
+import org.techteam.bashhappens.logic.bashorg.BashOrgList;
+
+import java.io.IOException;
+import java.util.Locale;
 
 
 public class MainActivity extends Activity {
@@ -13,6 +21,28 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Button b = (Button) findViewById(R.id.button_test);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Thread th = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        String locale = Locale.getDefault().toString();
+                        try {
+                            BashOrgList list = BashOrg.getInstance().retrieveNextList(locale);
+                            System.out.println("hi");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        } catch (FeedOverflowException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                th.start();
+            }
+        });
     }
 
     @Override
