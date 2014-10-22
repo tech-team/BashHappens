@@ -1,4 +1,4 @@
-package org.techteam.bashhappens.logic;
+package org.techteam.bashhappens.content;
 
 public class FeedOverflowException extends Exception {
     public FeedOverflowException() {

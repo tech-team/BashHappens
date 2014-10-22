@@ -1,4 +1,4 @@
-package org.techteam.bashhappens.logic.bashorg;
+package org.techteam.bashhappens.content.bashorg;
 
 import org.jsoup.nodes.Element;
 
@@ -7,17 +7,17 @@ public class BashOrgEntry {
     private static final String ACTIONS_BAR_CLASS = "actions";
     private static final String TEXT_CLASS = "text";
 
-    private int id;
+    private String id;
     private String creationDate;
     private String text;
 
-    public BashOrgEntry(int id, String creationDate, String text) {
+    public BashOrgEntry(String id, String creationDate, String text) {
         this.id = id;
         this.creationDate = creationDate;
         this.text = text;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
@@ -39,7 +39,7 @@ public class BashOrgEntry {
             return null;
         }
 
-        int id = Integer.parseInt(actionsBar.getElementsByClass("id").get(0).text().substring(1));
+        String id = actionsBar.getElementsByClass("id").get(0).text().substring(1);
         String creationDate = actionsBar.getElementsByClass("date").text();
 
         return new BashOrgEntry(id, creationDate, text);

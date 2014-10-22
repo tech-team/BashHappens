@@ -8,19 +8,26 @@ import android.view.View;
 import android.widget.Button;
 
 import org.techteam.bashhappens.R;
-import org.techteam.bashhappens.logic.FeedOverflowException;
-import org.techteam.bashhappens.logic.bashorg.BashOrg;
-import org.techteam.bashhappens.logic.bashorg.BashOrgList;
+import org.techteam.bashhappens.content.FeedOverflowException;
+import org.techteam.bashhappens.content.IContent;
+import org.techteam.bashhappens.content.bashorg.BashOrgFactory;
+import org.techteam.bashhappens.content.bashorg.BashOrgList;
 
 import java.io.IOException;
 import java.util.Locale;
 
 
 public class MainActivity extends Activity {
+
+    BashOrgFactory factory = new BashOrgFactory(Locale.getDefault().toString());
+    IContent content = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        content = factory.buildBashOrgNewest();
 
         Button b = (Button) findViewById(R.id.button_test);
         b.setOnClickListener(new View.OnClickListener() {
@@ -29,9 +36,8 @@ public class MainActivity extends Activity {
                 Thread th = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        String locale = Locale.getDefault().toString();
                         try {
-                            BashOrgList list = BashOrg.getInstance().retrieveNextList(locale);
+                            BashOrgList list = content.retrieveNextList();
                             System.out.println("hi");
                         } catch (IOException e) {
                             e.printStackTrace();
