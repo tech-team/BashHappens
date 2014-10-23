@@ -1,4 +1,4 @@
-package org.techteam.bashhappens.db;
+package org.techteam.bashhappens.db.providers;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import org.techteam.bashhappens.db.DatabaseHelper;
 import org.techteam.bashhappens.db.tables.BashCache;
 import org.techteam.bashhappens.db.tables.BashLikes;
 import org.techteam.bashhappens.db.tables.ItCache;
@@ -20,31 +21,17 @@ import java.util.HashMap;
 
 import static org.techteam.bashhappens.db.DatabaseHelper.AUTHORITY;
 
-public class BashHappensDbProvider extends ContentProvider {
-
-    private DatabaseHelper database;
-    private final UriMatcher mUriMatcher;
-    private final HashMap<String, String> mProjectionMap;
+public class BashHappensDbProvider extends DbProvider {
 
     private static final int BASH_CACHE = 1;
-    private static final int BASH_CACHE_ID = 2;
     private static final int BASH_LIKES = 11;
-    private static final int BASH_LIKES_ID = 12;
-    private static final int BASH_LIKES_ARTICLE_ID = 13;
-    private static final int IT_CACHE = 21;
-    private static final int IT_CACHE_ID = 22;
-    private static final int IT_LIKES = 31;
-    private static final int IT_LIKES_ID = 32;
-    private static final int IT_LIKES_ARTICLE_ID = 33;
 
     public BashHappensDbProvider() {
-        mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+        super();
+
         mUriMatcher.addURI(AUTHORITY, BashCache.TABLE_NAME, BASH_CACHE);
         mUriMatcher.addURI(AUTHORITY, BashLikes.TABLE_NAME, BASH_LIKES);
-        mUriMatcher.addURI(AUTHORITY, ItCache.TABLE_NAME, IT_CACHE);
-        mUriMatcher.addURI(AUTHORITY, ItLikes.TABLE_NAME, IT_LIKES);
 
-        mProjectionMap = new HashMap<String, String>();
 
         for (String item : new String[] {BashCache._ID, BashCache.ID, BashCache.TEXT, BashCache.RATING, BashCache.DATE}) {
             mProjectionMap.put(item, BashCache.TABLE_NAME + "." + item);
@@ -54,19 +41,6 @@ public class BashHappensDbProvider extends ContentProvider {
             mProjectionMap.put(item, BashLikes.TABLE_NAME + "." + item);
         }
 
-        for (String item : new String[] {ItCache._ID, ItCache.ID, ItCache.HEADER, BashCache.TEXT, BashCache.RATING, BashCache.DATE}) {
-            mProjectionMap.put(item, ItCache.TABLE_NAME + "." + item);
-        }
-
-        for (String item : new String[] {ItLikes._ID, ItLikes.ARTICLE_ID, ItLikes.IS_LIKED}) {
-            mProjectionMap.put(item, ItLikes.TABLE_NAME + "." + item);
-        }
-    }
-
-    @Override
-    public boolean onCreate() {
-        database = new DatabaseHelper(getContext());
-        return true;
     }
 
     @Override
