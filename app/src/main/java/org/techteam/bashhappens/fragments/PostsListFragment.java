@@ -2,6 +2,7 @@ package org.techteam.bashhappens.fragments;
 
 import android.app.Activity;
 import android.app.ListFragment;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import org.techteam.bashhappens.R;
@@ -25,6 +27,8 @@ import java.util.List;
 import java.util.Locale;
 
 public class PostsListFragment extends ListFragment {
+
+    BashOrgListAdapter adapter = null;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -52,7 +56,8 @@ public class PostsListFragment extends ListFragment {
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            setListAdapter(new BashOrgListAdapter((List<BashOrgEntry>) list.getEntries()));
+                            adapter = new BashOrgListAdapter((List<BashOrgEntry>) list.getEntries());
+                            setListAdapter(adapter);
                         }
                     });
                 } catch (IOException e) {
@@ -64,6 +69,17 @@ public class PostsListFragment extends ListFragment {
         });
         th.start();
 
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        super.onListItemClick(l, v, position, id);
+
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, adapter.getItem(position).getText());
+        sendIntent.setType("text/plain");
+        startActivity(sendIntent);
     }
 
     private class BashOrgListAdapter extends ArrayAdapter<BashOrgEntry> {
