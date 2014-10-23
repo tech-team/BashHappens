@@ -32,7 +32,7 @@ public class MainActivity extends Activity {
 
 
 
-        Button b = (Button) findViewById(R.id.button_test);
+        /*Button b = (Button) findViewById(R.id.button_test);
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -62,7 +62,7 @@ public class MainActivity extends Activity {
                 });
                 th.start();
             }
-        });
+        });*/
     }
 
     @Override
