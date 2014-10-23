@@ -21,6 +21,8 @@ public class ItCache implements BaseColumns, ITable {
 
     public static final Uri CONTENT_ID_URI_BASE
             = Uri.parse("content://" + DatabaseHelper.AUTHORITY + "/it_cache/");
+    public static final String CONTENT_TYPE
+            = "org.techteam.bashhappens.db.tables.itcache/org.techteam.bashhappens.db";
 
     public ItCache() {}
 
