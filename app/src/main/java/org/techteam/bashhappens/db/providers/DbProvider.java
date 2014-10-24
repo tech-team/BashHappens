@@ -16,6 +16,7 @@ import java.util.HashMap;
 public abstract class DbProvider extends ContentProvider {
 
     protected DatabaseHelper databaseHelper;
+    protected SQLiteDatabase database;
     protected UriMatcher mUriMatcher;
     protected HashMap<String, String> mProjectionMap;
 
@@ -41,9 +42,9 @@ public abstract class DbProvider extends ContentProvider {
         StringWrapper order = new StringWrapper(sortOrder);
         queryUriMatch(uri, qb, order);
 
-        SQLiteDatabase db = databaseHelper.getReadableDatabase();
+        database = databaseHelper.getReadableDatabase();
 
-        Cursor cur = qb.query(db, projection, selection, selectionArgs,
+        Cursor cur = qb.query(database, projection, selection, selectionArgs,
                 null, null, order.data);
 
         cur.setNotificationUri(getContext().getContentResolver(), uri);
@@ -77,19 +78,19 @@ public abstract class DbProvider extends ContentProvider {
             contentValues = new ContentValues();
         }
 
-        SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        database = databaseHelper.getWritableDatabase();
 
-        return performInsert(uri, db, contentValues);
+        return performInsert(uri, database, contentValues);
     }
 
     protected abstract int performDelete(Uri uri, SQLiteDatabase db);
 
     @Override
     public int delete(Uri uri, String where, String[] whereArgs) {
-        SQLiteDatabase db = databaseHelper.getWritableDatabase();
+        database = databaseHelper.getWritableDatabase();
         int count;
 
-        count = performDelete(uri, db);
+        count = performDelete(uri, database);
 
         getContext().getContentResolver().notifyChange(uri, null);
 

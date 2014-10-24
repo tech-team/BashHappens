@@ -36,6 +36,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        ContentResolution.getBashCache(this);
         /*Button b = (Button) findViewById(R.id.button_test);
         b.setOnClickListener(new View.OnClickListener() {
             @Override

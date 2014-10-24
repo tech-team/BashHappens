@@ -12,8 +12,6 @@ public class ContentResolution {
 
     public static Cursor getBashCache(Activity act) {
         Uri uri = Uri.parse(BashHappensDbProvider.CONTENT_URI + "/" + BashCache.TABLE_NAME);
-        return act.getContentResolver().query(uri,
-                new String[]{BashCache._ID}, null, null, null);
-
+        return act.getContentResolver().query(uri, null, null, null, null);
     }
 }

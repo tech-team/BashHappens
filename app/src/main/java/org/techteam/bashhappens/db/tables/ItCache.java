@@ -27,12 +27,12 @@ public class ItCache implements BaseColumns, ITable {
     public ItCache() {}
 
     private static final String TABLE_CREATE = "CREATE TABLE "
-            + ItCache.TABLE_NAME + "(" + COLUMN_ID + SERIAL
-            + ItCache.ID + INTEGER + SEPARATOR
-            + ItCache.HEADER + TEXT + SEPARATOR
-            + ItCache.TEXT + TEXT + SEPARATOR
-            + ItCache.RATING + INTEGER + SEPARATOR
-            + ItCache.DATE + TIMESTAMP + ");";
+            + ItCache.TABLE_NAME + "(" + COLUMN_ID + TYPE_SERIAL + SEPARATOR
+            + ItCache.ID + TYPE_INTEGER + SEPARATOR
+            + ItCache.HEADER + TYPE_TEXT + SEPARATOR
+            + ItCache.TEXT + TYPE_TEXT + SEPARATOR
+            + ItCache.RATING + TYPE_INTEGER + SEPARATOR
+            + ItCache.DATE + TYPE_TIMESTAMP + ");";
 
     @Override
     public void onCreate(SQLiteDatabase db) {

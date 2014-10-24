@@ -23,9 +23,9 @@ public class ItLikes implements BaseColumns, ITable {
     public ItLikes() {}
 
     private static final String TABLE_CREATE = "CREATE TABLE "
-            + ItLikes.TABLE_NAME + "(" + COLUMN_ID + SERIAL
-            + ItLikes.ARTICLE_ID + INTEGER + SEPARATOR
-            + ItLikes.IS_LIKED + BOOLEAN + ");";
+            + ItLikes.TABLE_NAME + "(" + COLUMN_ID + TYPE_SERIAL + SEPARATOR
+            + ItLikes.ARTICLE_ID + TYPE_INTEGER + SEPARATOR
+            + ItLikes.IS_LIKED + TYPE_BOOLEAN + ");";
 
     @Override
     public void onCreate(SQLiteDatabase db) {
