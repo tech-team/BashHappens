@@ -33,13 +33,13 @@ public class ItHappensProvider extends DbProvider {
     }
 
     @Override
-    public void queryUriMatch(Uri uri, SQLiteQueryBuilder qb, StringBuilder sortOrder) {
+    public void queryUriMatch(Uri uri, SQLiteQueryBuilder qb, StringWrapper sortOrder) {
         if (mUriMatcher.match(uri) == IT_CACHE) {
             qb.setTables(ItCache.TABLE_NAME + " LEFT JOIN "
                     + ItLikes.TABLE_NAME + " ON "
                     + ItCache.ID + " = " + ItLikes.ARTICLE_ID);
-            if (TextUtils.isEmpty(sortOrder)) {
-                sortOrder.append(ItCache.DEFAULT_SORT_ORDER);
+            if (TextUtils.isEmpty(sortOrder.data)) {
+                sortOrder.data = ItCache.DEFAULT_SORT_ORDER;
             }
         }
         else {

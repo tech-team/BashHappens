@@ -17,6 +17,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:authorities="org.techteam.bashhappens.db.DatabaseHelper"
+            android:name=".db.providers.BashHappensDbProvider"
+            android:exported="false">
+        </provider>
+        <provider
+            android:authorities="org.techteam.bashhappens.db.DatabaseHelper"
+            android:name=".db.providers.ItHappensProvider"
+            android:exported="false">
+        </provider>
     </application>
 
 </manifest>

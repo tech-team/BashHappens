@@ -15,7 +15,7 @@ import java.util.HashMap;
 
 public abstract class DbProvider extends ContentProvider {
 
-    protected DatabaseHelper database;
+    protected DatabaseHelper databaseHelper;
     protected UriMatcher mUriMatcher;
     protected HashMap<String, String> mProjectionMap;
 
@@ -26,11 +26,11 @@ public abstract class DbProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        database = new DatabaseHelper(getContext());
-        return true;
+        databaseHelper = new DatabaseHelper(this.getContext());
+        return false;
     }
 
-    protected abstract void queryUriMatch(Uri uri, SQLiteQueryBuilder qb, StringBuilder sortOrder);
+    protected abstract void queryUriMatch(Uri uri, SQLiteQueryBuilder qb, StringWrapper sortOrder);
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
@@ -38,13 +38,13 @@ public abstract class DbProvider extends ContentProvider {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setProjectionMap(mProjectionMap);
 
-        StringBuilder orderBuilder = new StringBuilder(sortOrder);
-        queryUriMatch(uri, qb, orderBuilder);
+        StringWrapper order = new StringWrapper(sortOrder);
+        queryUriMatch(uri, qb, order);
 
-        SQLiteDatabase db = database.getReadableDatabase();
+        SQLiteDatabase db = databaseHelper.getReadableDatabase();
 
         Cursor cur = qb.query(db, projection, selection, selectionArgs,
-                null, null, orderBuilder.toString());
+                null, null, order.data);
 
         cur.setNotificationUri(getContext().getContentResolver(), uri);
         return cur;
@@ -77,7 +77,7 @@ public abstract class DbProvider extends ContentProvider {
             contentValues = new ContentValues();
         }
 
-        SQLiteDatabase db = database.getWritableDatabase();
+        SQLiteDatabase db = databaseHelper.getWritableDatabase();
 
         return performInsert(uri, db, contentValues);
     }
@@ -86,7 +86,7 @@ public abstract class DbProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String where, String[] whereArgs) {
-        SQLiteDatabase db = database.getWritableDatabase();
+        SQLiteDatabase db = databaseHelper.getWritableDatabase();
         int count;
 
         count = performDelete(uri, db);
@@ -98,4 +98,11 @@ public abstract class DbProvider extends ContentProvider {
 
     @Override
     public abstract int update(Uri uri, ContentValues values, String s, String[] strings);
+
+    protected class StringWrapper {
+        public String data;
+        public StringWrapper(String data) {
+            this.data = data;
+        }
+    }
 }

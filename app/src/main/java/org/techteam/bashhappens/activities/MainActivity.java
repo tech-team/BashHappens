@@ -1,6 +1,8 @@
 package org.techteam.bashhappens.activities;
 
 import android.app.Activity;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,10 +13,14 @@ import org.techteam.bashhappens.R;
 import org.techteam.bashhappens.content.ContentEntry;
 import org.techteam.bashhappens.content.ContentFactory;
 import org.techteam.bashhappens.content.ContentList;
+import org.techteam.bashhappens.content.ContentResolution;
 import org.techteam.bashhappens.content.FeedOverflowException;
 import org.techteam.bashhappens.content.ContentSource;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.content.bashorg.BashOrgList;
+import org.techteam.bashhappens.db.DatabaseHelper;
+import org.techteam.bashhappens.db.providers.BashHappensDbProvider;
+import org.techteam.bashhappens.db.tables.BashCache;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -29,8 +35,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
 
         /*Button b = (Button) findViewById(R.id.button_test);
         b.setOnClickListener(new View.OnClickListener() {

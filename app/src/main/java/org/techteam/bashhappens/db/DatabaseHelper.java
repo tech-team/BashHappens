@@ -15,7 +15,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String LOG = "DatabaseHelper";
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "bashhappens.db";
+    private static final String DATABASE_NAME = "bashhappens";
 
     public static final String AUTHORITY = "org.techteam.bashhappens.db.DatabaseHelper";
 

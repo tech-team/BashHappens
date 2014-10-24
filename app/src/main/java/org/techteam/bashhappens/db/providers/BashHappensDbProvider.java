@@ -16,31 +16,32 @@ public class BashHappensDbProvider extends DbProvider {
     private static final int BASH_CACHE = 1;
     private static final int BASH_LIKES = 11;
 
+    public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
+
     public BashHappensDbProvider() {
         super();
 
         mUriMatcher.addURI(AUTHORITY, BashCache.TABLE_NAME, BASH_CACHE);
         mUriMatcher.addURI(AUTHORITY, BashLikes.TABLE_NAME, BASH_LIKES);
 
-
         for (String item : new String[] {BashCache._ID, BashCache.ID, BashCache.TEXT, BashCache.RATING, BashCache.DATE}) {
             mProjectionMap.put(item, BashCache.TABLE_NAME + "." + item);
         }
 
-        for (String item : new String[] {BashLikes._ID, BashLikes.ARTICLE_ID, BashLikes.DIRECTION, BashLikes.IS_BOYAN }) {
+        for (String item : new String[] {BashLikes._ID, BashLikes.ARTICLE_ID, BashLikes.DIRECTION, BashLikes.IS_BAYAN}) {
             mProjectionMap.put(item, BashLikes.TABLE_NAME + "." + item);
         }
 
     }
 
     @Override
-    protected void queryUriMatch(Uri uri, SQLiteQueryBuilder qb, StringBuilder sortOrder) {
+    protected void queryUriMatch(Uri uri, SQLiteQueryBuilder qb, StringWrapper sortOrder) {
         if (mUriMatcher.match(uri) == BASH_CACHE) {
             qb.setTables(BashCache.TABLE_NAME + " LEFT JOIN "
                     + BashLikes.TABLE_NAME + " ON "
                     + BashCache.ID + " = " + BashLikes.ARTICLE_ID);
-            if (TextUtils.isEmpty(sortOrder)) {
-                sortOrder.append(BashCache.DEFAULT_SORT_ORDER);
+            if (TextUtils.isEmpty(sortOrder.data)) {
+                sortOrder.data = BashCache.DEFAULT_SORT_ORDER;
             }
         }
         else {
