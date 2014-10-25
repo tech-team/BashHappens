@@ -1,11 +1,10 @@
 package org.techteam.bashhappens.fragments;
 
-import android.app.Activity;
+import android.os.Handler;
 import android.app.ListFragment;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.techteam.bashhappens.R;
-import org.techteam.bashhappens.content.ContentEntry;
 import org.techteam.bashhappens.content.ContentFactory;
 import org.techteam.bashhappens.content.ContentList;
 import org.techteam.bashhappens.content.ContentSource;
@@ -22,13 +20,29 @@ import org.techteam.bashhappens.content.FeedOverflowException;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class PostsListFragment extends ListFragment {
+public class PostsListFragment
+        extends ListFragment
+        implements SwipeRefreshLayout.OnRefreshListener {
+
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     BashOrgListAdapter adapter = null;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_posts_list, container, false);
+
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.container);
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.setColorScheme(
+                R.color.swipe_color_1, R.color.swipe_color_2,
+                R.color.swipe_color_3, R.color.swipe_color_4);
+
+        return rootView;
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -80,6 +94,20 @@ public class PostsListFragment extends ListFragment {
         sendIntent.putExtra(Intent.EXTRA_TEXT, adapter.getItem(position).getText());
         sendIntent.setType("text/plain");
         startActivity(sendIntent);
+    }
+
+    @Override
+    public void onRefresh() {
+        mSwipeRefreshLayout.setRefreshing(true);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //updateCountries();
+
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        }, 5000);
     }
 
     private class BashOrgListAdapter extends ArrayAdapter<BashOrgEntry> {
