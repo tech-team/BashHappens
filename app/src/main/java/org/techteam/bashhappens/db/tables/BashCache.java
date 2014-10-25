@@ -28,10 +28,10 @@ public class BashCache implements BaseColumns, ITable {
 
     private static final String TABLE_CREATE = "CREATE TABLE "
             + BashCache.TABLE_NAME + "(" + COLUMN_ID + TYPE_SERIAL + SEPARATOR
-            + BashCache.ID + TYPE_INTEGER + SEPARATOR
+            + BashCache.ID + TYPE_TEXT + SEPARATOR
             + BashCache.TEXT + TYPE_TEXT + SEPARATOR
             + BashCache.RATING + TYPE_INTEGER + SEPARATOR
-            + BashCache.DATE + TYPE_TIMESTAMP + ");";
+            + BashCache.DATE + TYPE_TEXT + ");";
 
     @Override
     public void onCreate(SQLiteDatabase db) {

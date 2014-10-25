@@ -36,4 +36,5 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             table.onUpgrade(sqLiteDatabase, i, i2);
         }
     }
+
 }

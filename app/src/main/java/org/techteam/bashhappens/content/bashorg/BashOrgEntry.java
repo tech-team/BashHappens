@@ -9,6 +9,7 @@ public class BashOrgEntry extends ContentEntry {
     private static final String ACTIONS_BAR_CLASS = "actions";
     private static final String TEXT_CLASS = "text";
 
+    //TODO: add string constant names of fields
     private String id;
     private String creationDate;
     private String text;

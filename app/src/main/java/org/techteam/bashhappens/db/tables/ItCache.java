@@ -32,7 +32,7 @@ public class ItCache implements BaseColumns, ITable {
             + ItCache.HEADER + TYPE_TEXT + SEPARATOR
             + ItCache.TEXT + TYPE_TEXT + SEPARATOR
             + ItCache.RATING + TYPE_INTEGER + SEPARATOR
-            + ItCache.DATE + TYPE_TIMESTAMP + ");";
+            + ItCache.DATE + TYPE_TEXT + ");";
 
     @Override
     public void onCreate(SQLiteDatabase db) {
