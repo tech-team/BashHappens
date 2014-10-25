@@ -1,11 +1,10 @@
 package org.techteam.bashhappens.fragments;
 
-import android.app.Activity;
 import android.app.ListFragment;
+import android.app.LoaderManager;
 import android.content.Intent;
-import android.net.Uri;
+import android.content.Loader;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,61 +13,30 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.techteam.bashhappens.R;
-import org.techteam.bashhappens.content.ContentEntry;
 import org.techteam.bashhappens.content.ContentFactory;
 import org.techteam.bashhappens.content.ContentList;
 import org.techteam.bashhappens.content.ContentSource;
-import org.techteam.bashhappens.content.FeedOverflowException;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
+import org.techteam.bashhappens.fragments.loaders.ContentAsyncLoader;
+import org.techteam.bashhappens.util.LoaderIds;
 
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class PostsListFragment extends ListFragment {
+public class PostsListFragment extends ListFragment implements LoaderManager.LoaderCallbacks<ContentList> {
 
-    BashOrgListAdapter adapter = null;
+    private ContentFactory factory = null;
+    private ContentSource content = null;
+    private BashOrgListAdapter adapter = null;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-//        String li = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+        factory = new ContentFactory(Locale.getDefault().toString());
+        content = factory.buildContent(ContentFactory.ContentSection.BASH_ORG_NEWEST);
 
-//        BashOrgEntry entry1 = new BashOrgEntry("#12345", "23.10.2014", li);
-//        BashOrgEntry entry2 = new BashOrgEntry("#12345", "23.10.2014", li);
-//        BashOrgEntry entry3 = new BashOrgEntry("#12345", "23.10.2014", li);
-//
-//        List<BashOrgEntry> list = new ArrayList<BashOrgEntry>();
-//        list.add(entry1);
-//        list.add(entry2);
-//        list.add(entry3);
-
-        Thread th = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    ContentFactory factory = new ContentFactory(Locale.getDefault().toString());
-                    ContentSource content = factory.buildContent(ContentFactory.ContentSection.BASH_ORG_NEWEST);
-                    final ContentList<?> list = content.retrieveNextList();
-
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            adapter = new BashOrgListAdapter((List<BashOrgEntry>) list.getEntries());
-                            setListAdapter(adapter);
-                        }
-                    });
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (FeedOverflowException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        th.start();
-
+        getLoaderManager().initLoader(LoaderIds.CONTENT_LOADER, null, this);
     }
 
     @Override
@@ -80,6 +48,34 @@ public class PostsListFragment extends ListFragment {
         sendIntent.putExtra(Intent.EXTRA_TEXT, adapter.getItem(position).getText());
         sendIntent.setType("text/plain");
         startActivity(sendIntent);
+    }
+
+    @Override
+    public Loader<ContentList> onCreateLoader(int i, Bundle bundle) {
+        switch (i) {
+            case LoaderIds.CONTENT_LOADER:
+                return new ContentAsyncLoader(getActivity(), content);
+        }
+        throw new IllegalArgumentException("Loader with given id is not found");
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void onLoadFinished(Loader<ContentList> contentListLoader, ContentList contentList) {
+        switch (contentList.getStoredContentType()) {
+            case BASH_ORG:
+                adapter = new BashOrgListAdapter(contentList.getEntries());
+                break;
+            case IT_HAPPENS:
+                // TODO: add ItHappens adapter
+                break;
+        }
+        setListAdapter(adapter);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<ContentList> contentListLoader) {
+        // TODO
     }
 
     private class BashOrgListAdapter extends ArrayAdapter<BashOrgEntry> {

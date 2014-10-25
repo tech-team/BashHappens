@@ -20,18 +20,18 @@ public class HttpDownloader {
     public static class Request {
         private String url;
         private List<UrlParams> params;
-        private List<Header> headers;
+        private Headers headers;
         private String encoding;
 
         public Request(String url, String encoding) {
             this(url, null, null, encoding);
         }
 
-        public Request(String url, List<UrlParams> params, List<Header> headers) {
+        public Request(String url, List<UrlParams> params, Headers headers) {
             this(url, params, headers, DEFAULT_ENCODING);
         }
 
-        public Request(String url, List<UrlParams> params, List<Header> headers, String encoding) {
+        public Request(String url, List<UrlParams> params, Headers headers, String encoding) {
             this.url = url;
             this.params = params;
             this.headers = headers;
@@ -46,7 +46,7 @@ public class HttpDownloader {
             return params;
         }
 
-        public List<Header> getHeaders() {
+        public Headers getHeaders() {
             return headers;
         }
 
@@ -63,7 +63,7 @@ public class HttpDownloader {
         return httpGet(request.getUrl(), request.getParams(), request.getHeaders(), request.getEncoding());
     }
 
-    public static String httpGet(String url, List<UrlParams> params, List<Header> headers, String encoding) throws IOException {
+    public static String httpGet(String url, List<UrlParams> params, Headers headers, String encoding) throws IOException {
         URL urlObj = constructUrl(url, params);
         HttpURLConnection connection = null;
         InputStream in = null;
@@ -96,7 +96,7 @@ public class HttpDownloader {
         return httpPost(request.getUrl(), request.getParams(), request.getHeaders(), request.getEncoding());
     }
 
-    public static String httpPost(String url, List<UrlParams> data, List<Header> headers, String encoding) throws IOException {
+    public static String httpPost(String url, List<UrlParams> data, Headers headers, String encoding) throws IOException {
         URL urlObj = constructUrl(url, null);
         HttpURLConnection connection = null;
         InputStream in = null;
@@ -154,9 +154,9 @@ public class HttpDownloader {
         return newUrl.substring(0, newUrl.length() - 1);
     }
 
-    private static void fillHeaders(List<Header> headers, HttpURLConnection connection) {
+    private static void fillHeaders(Headers headers, HttpURLConnection connection) {
         if (headers != null) {
-            for (Header h : headers) {
+            for (Headers.Header h : headers) {
                 connection.setRequestProperty(h.getName(), h.getValue());
             }
         }

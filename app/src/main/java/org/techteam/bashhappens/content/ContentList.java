@@ -19,6 +19,9 @@ public abstract class ContentList<T extends ContentEntry> implements Iterable<T>
         entries.add(entry);
     }
 
+    public ContentType getStoredContentType() {
+        return getEntries().get(0).getContentType();
+    }
 
     @Override
     public Iterator<T> iterator() {

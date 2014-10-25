@@ -9,6 +9,9 @@ public class ContentFactory {
         IT_HAPPENS_NEWEST
     }
 
+    private ContentSection currentSection = null;
+    private ContentSource currentSource = null;
+
     private String locale;
 
     public ContentFactory(String locale) {
@@ -20,12 +23,16 @@ public class ContentFactory {
     }
 
     public ContentSource buildContent(ContentSection section) {
-        switch (section) {
-            case BASH_ORG_NEWEST:
-                return new BashOrgNewest(locale);
-            case IT_HAPPENS_NEWEST:
-                break;
+        if (currentSection != section) {
+            currentSection = section;
+
+            switch (currentSection) {
+                case BASH_ORG_NEWEST:
+                    currentSource = new BashOrgNewest(locale);
+                case IT_HAPPENS_NEWEST:
+                    break;
+            }
         }
-        return null;
+        return currentSource;
     }
 }

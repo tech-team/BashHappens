@@ -5,13 +5,12 @@ import org.jsoup.nodes.Document;
 import org.techteam.bashhappens.content.ContentList;
 import org.techteam.bashhappens.content.FeedOverflowException;
 import org.techteam.bashhappens.content.bashorg.BashOrg;
+import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.content.bashorg.BashOrgList;
-import org.techteam.bashhappens.net.Header;
+import org.techteam.bashhappens.net.Headers;
 import org.techteam.bashhappens.net.HttpDownloader;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class BashOrgNewest extends BashOrg {
 
@@ -33,8 +32,8 @@ public class BashOrgNewest extends BashOrg {
         if (pageNum != NO_PAGE) {
             url += pageNum;
         }
-        List<Header> headers = new ArrayList<Header>();
-        headers.add(new Header("Accept-Language", locale));
+
+        Headers headers = new Headers().add("Accept-Language", locale);
         String page = HttpDownloader.httpGet(new HttpDownloader.Request(url, null, headers, ENCODING));
 
         Document html = Jsoup.parse(page);
@@ -47,7 +46,7 @@ public class BashOrgNewest extends BashOrg {
     }
 
     @Override
-    public ContentList retrieveNextList() throws IOException, FeedOverflowException {
+    public ContentList<BashOrgEntry> retrieveNextList() throws IOException, FeedOverflowException {
         BashOrgList list = retrieveList(currentPage);
         if (currentPage <= minPage && currentPage >= maxPage) {
             throw new FeedOverflowException("Feed is out of bound");
