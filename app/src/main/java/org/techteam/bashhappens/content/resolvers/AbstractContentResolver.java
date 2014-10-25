@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import org.techteam.bashhappens.content.ContentEntry;
+import org.techteam.bashhappens.content.ContentList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,10 +14,10 @@ import java.util.List;
 public abstract class AbstractContentResolver {
 
     protected abstract Uri _getUri();
-    protected abstract List<? extends ContentEntry> getEntries(Cursor cur);
+    protected abstract ContentList<?> getEntries(Cursor cur);
     protected abstract ContentValues convertToContentValues(ContentEntry contentEntry);
 
-    protected List<ContentValues> convertToContentValues(List<? extends ContentEntry> list) {
+    protected List<ContentValues> convertToContentValues(ContentList<?> list) {
         List<ContentValues> contentValues = new ArrayList<ContentValues>();
         for (ContentEntry entry: list) {
             contentValues.add(convertToContentValues(entry));
@@ -24,12 +25,12 @@ public abstract class AbstractContentResolver {
         return contentValues;
     }
 
-    public List<? extends ContentEntry> getCache(Activity activity) {
+    public ContentList<?> getCache(Activity activity) {
         Cursor cur = activity.getContentResolver().query(_getUri(), null, null, null, null);
         return getEntries(cur);
     }
 
-    public List<Integer> fillCache(Activity activity, List<? extends ContentEntry> list) {
+    public List<Integer> fillCache(Activity activity, ContentList<?> list) {
         List<Integer> insertedIds = new ArrayList<Integer>();
         for(ContentValues values: convertToContentValues(list)) {
             insertedIds.add(Integer.valueOf(

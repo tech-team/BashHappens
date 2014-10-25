@@ -6,7 +6,7 @@ import org.techteam.bashhappens.content.ContentList;
 
 import java.util.ArrayList;
 
-public abstract class BashOrgList extends ContentList<BashOrgEntry> {
+public class BashOrgList extends ContentList<BashOrgEntry> {
 
     public BashOrgList(ArrayList<BashOrgEntry> entries) {
         super(entries);
