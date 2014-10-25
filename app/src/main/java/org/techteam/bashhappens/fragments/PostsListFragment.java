@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import org.techteam.bashhappens.R;
+import org.techteam.bashhappens.content.ContentEntry;
 import org.techteam.bashhappens.content.ContentFactory;
 import org.techteam.bashhappens.content.ContentList;
 import org.techteam.bashhappens.content.ContentSource;
@@ -22,6 +23,7 @@ import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.fragments.loaders.ContentAsyncLoader;
 import org.techteam.bashhappens.util.LoaderIds;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
@@ -34,6 +36,7 @@ public class PostsListFragment
     private ContentFactory factory = null;
     private ContentSource content = null;
     private BashOrgListAdapter adapter = null;
+    private List<ContentEntry> list = new LinkedList<ContentEntry>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -52,7 +55,11 @@ public class PostsListFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        factory = new ContentFactory(Locale.getDefault().toString());
+        if (savedInstanceState == null) {
+            factory = new ContentFactory(Locale.getDefault().toString());
+        } else {
+            factory = savedInstanceState.getParcelable("FACTORY");
+        }
         content = factory.buildContent(ContentFactory.ContentSection.BASH_ORG_NEWEST);
 
         getLoaderManager().initLoader(LoaderIds.CONTENT_LOADER, null, this);
@@ -70,17 +77,19 @@ public class PostsListFragment
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("FACTORY", factory);
+    }
+
+    @Override
     public void onRefresh() {
         mSwipeRefreshLayout.setRefreshing(true);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //updateCountries();
-
-                mSwipeRefreshLayout.setRefreshing(false);
-            }
-        }, 5000);
+        // TODO: смотри TODO в onLoadFinished() ниже
+        adapter = null;
+        content = factory.buildContent(ContentFactory.ContentSection.BASH_ORG_NEWEST, true);
+        getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, null, PostsListFragment.this);
     }
 
     @Override
@@ -95,9 +104,16 @@ public class PostsListFragment
     @SuppressWarnings("unchecked")
     @Override
     public void onLoadFinished(Loader<ContentList> contentListLoader, ContentList contentList) {
+        mSwipeRefreshLayout.setRefreshing(false);
+
         switch (contentList.getStoredContentType()) {
             case BASH_ORG:
-                adapter = new BashOrgListAdapter(contentList.getEntries());
+                if (adapter == null) {
+                    // TODO: кажется слишком глупо пересоздавать adapter каждый раз, когда обновляем, надо "добавлять" в начало массива, но в то же время учесть пересоздание адаптера, если меняется источник данных
+                    adapter = new BashOrgListAdapter(contentList.getEntries());
+                } else {
+                    adapter.addAll(contentList.getEntries());
+                }
                 break;
             case IT_HAPPENS:
                 // TODO: add ItHappens adapter

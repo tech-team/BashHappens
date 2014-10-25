@@ -1,5 +1,8 @@
 package org.techteam.bashhappens.content.bashorg.newest;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.techteam.bashhappens.content.ContentList;
@@ -54,4 +57,43 @@ public class BashOrgNewest extends BashOrg {
         --currentPage;
         return list;
     }
+
+
+
+
+    public BashOrgNewest(Parcel in) {
+        super(in.readString());
+
+        int[] vals = new int[3];
+        in.readIntArray(vals);
+        minPage = vals[0];
+        maxPage = vals[1];
+        currentPage = vals[2];
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(locale);
+        parcel.writeIntArray(new int[]{
+                minPage,
+                maxPage,
+                currentPage
+        });
+    }
+
+    public static final Parcelable.Creator<BashOrgNewest> CREATOR
+            = new Parcelable.Creator<BashOrgNewest>() {
+        public BashOrgNewest createFromParcel(Parcel in) {
+            return new BashOrgNewest(in);
+        }
+
+        public BashOrgNewest[] newArray(int size) {
+            return new BashOrgNewest[size];
+        }
+    };
 }

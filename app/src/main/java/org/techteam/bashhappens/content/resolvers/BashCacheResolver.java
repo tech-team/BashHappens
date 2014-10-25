@@ -23,7 +23,7 @@ public class BashCacheResolver extends AbstractContentResolver {
     protected BashOrgList getEntries(Cursor cur) {
         cur.moveToFirst();
 
-        ArrayList<BashOrgEntry> bashOrgEntryList = new ArrayList<BashOrgEntry>();
+        BashOrgList bashOrgEntryList = new BashOrgList();
         while (!cur.isAfterLast()) {
             BashOrgEntry entry = new BashOrgEntry(cur.getString(cur.getColumnIndex("id")),
                                                   cur.getString(cur.getColumnIndex("date")),
@@ -32,7 +32,7 @@ public class BashCacheResolver extends AbstractContentResolver {
             bashOrgEntryList.add(entry);
         }
         cur.close();
-        return new BashOrgList(bashOrgEntryList);
+        return bashOrgEntryList;
     }
 
     @Override

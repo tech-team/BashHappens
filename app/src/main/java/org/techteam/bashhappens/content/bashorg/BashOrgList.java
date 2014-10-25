@@ -12,6 +12,9 @@ public class BashOrgList extends ContentList<BashOrgEntry> {
         super(entries);
     }
 
+    public BashOrgList() {
+    }
+
     protected static ArrayList<BashOrgEntry> listFromHtml(Element html) {
         Elements items = html.getElementsByClass(BashOrgEntry.DOM_CLASS_NAME);
 

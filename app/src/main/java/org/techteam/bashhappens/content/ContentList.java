@@ -11,6 +11,10 @@ public abstract class ContentList<T extends ContentEntry> implements Iterable<T>
         this.entries = entries;
     }
 
+    protected ContentList() {
+        entries = new ArrayList<T>();
+    }
+
     public ArrayList<T> getEntries() {
         return entries;
     }
