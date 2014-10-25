@@ -1,11 +1,11 @@
 package org.techteam.bashhappens.fragments;
 
-import android.os.Handler;
 import android.app.ListFragment;
 import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,12 +18,10 @@ import org.techteam.bashhappens.R;
 import org.techteam.bashhappens.content.ContentFactory;
 import org.techteam.bashhappens.content.ContentList;
 import org.techteam.bashhappens.content.ContentSource;
-import org.techteam.bashhappens.content.FeedOverflowException;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.fragments.loaders.ContentAsyncLoader;
 import org.techteam.bashhappens.util.LoaderIds;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
@@ -33,7 +31,6 @@ public class PostsListFragment
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    BashOrgListAdapter adapter = null;
     private ContentFactory factory = null;
     private ContentSource content = null;
     private BashOrgListAdapter adapter = null;
