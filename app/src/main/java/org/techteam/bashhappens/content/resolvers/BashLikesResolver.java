@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import org.techteam.bashhappens.content.ContentEntry;
+import org.techteam.bashhappens.content.ContentList;
 import org.techteam.bashhappens.db.providers.BashHappensDbProvider;
 import org.techteam.bashhappens.db.tables.BashLikes;
 
@@ -17,7 +18,7 @@ public class BashLikesResolver extends AbstractContentResolver {
     }
 
     @Override
-    protected List<? extends ContentEntry> getEntries(Cursor cur) {
+    protected ContentList<?> getEntries(Cursor cur) {
         return null;
     }
 

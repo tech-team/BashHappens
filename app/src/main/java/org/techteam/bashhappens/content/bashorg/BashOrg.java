@@ -2,16 +2,10 @@ package org.techteam.bashhappens.content.bashorg;
 
 import org.techteam.bashhappens.content.ContentSource;
 
-public abstract class BashOrg implements ContentSource {
-
-    protected String locale;
+public abstract class BashOrg extends ContentSource {
 
     protected BashOrg(String locale) {
-        this.locale = locale;
-    }
-
-    public String getLocale() {
-        return locale;
+        super(locale);
     }
 }
 

@@ -6,6 +6,7 @@ import android.net.Uri;
 
 import org.techteam.bashhappens.content.ContentEntry;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
+import org.techteam.bashhappens.content.bashorg.BashOrgList;
 import org.techteam.bashhappens.db.providers.BashHappensDbProvider;
 import org.techteam.bashhappens.db.tables.BashCache;
 
@@ -19,10 +20,10 @@ public class BashCacheResolver extends AbstractContentResolver {
         return Uri.parse(BashHappensDbProvider.CONTENT_URI + "/" + BashCache.TABLE_NAME);
     }
     @Override
-    protected List<BashOrgEntry> getEntries(Cursor cur) {
+    protected BashOrgList getEntries(Cursor cur) {
         cur.moveToFirst();
 
-        List<BashOrgEntry> bashOrgEntryList = new ArrayList<BashOrgEntry>();
+        ArrayList<BashOrgEntry> bashOrgEntryList = new ArrayList<BashOrgEntry>();
         while (!cur.isAfterLast()) {
             BashOrgEntry entry = new BashOrgEntry(cur.getString(cur.getColumnIndex("id")),
                                                   cur.getString(cur.getColumnIndex("date")),
@@ -31,7 +32,7 @@ public class BashCacheResolver extends AbstractContentResolver {
             bashOrgEntryList.add(entry);
         }
         cur.close();
-        return bashOrgEntryList;
+        return new BashOrgList(bashOrgEntryList);
     }
 
     @Override
