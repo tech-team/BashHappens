@@ -10,30 +10,26 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import org.techteam.bashhappens.R;
 import org.techteam.bashhappens.content.ContentFactory;
 import org.techteam.bashhappens.content.ContentSource;
+import org.techteam.bashhappens.gui.adapters.SectionsListAdapter;
 import org.techteam.bashhappens.gui.fragments.PostsListFragment;
+import org.techteam.bashhappens.gui.adapters.SectionsBuilder;
 import org.techteam.bashhappens.util.Toaster;
 
+import java.util.List;
 import java.util.Locale;
 
 
 public class MainActivity extends Activity {
 
-    ContentFactory factory = new ContentFactory(Locale.getDefault().toString());
-    ContentSource content = null;
-
-    private String[] sections;
+    private List<SectionsBuilder.Section> sections;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mDrawerList;
-
-    private String drawerTitle = "BashHappens";
-    private String currentTitle = drawerTitle; //change to default section's name
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,13 +41,13 @@ public class MainActivity extends Activity {
                     .add(R.id.content_frame, new PostsListFragment()).commit();
         }
 
-        sections = getSections();//getResources().getStringArray(R.array.planets_array);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
         // Set the adapter for the list view
-        mDrawerList.setAdapter(new ArrayAdapter<String>(this,
-                android.R.layout.simple_list_item_1, sections));
+        sections = SectionsBuilder.getSections();
+        SectionsListAdapter sectionsListAdapter = new SectionsListAdapter(this.getBaseContext(), sections);
+        mDrawerList.setAdapter(sectionsListAdapter);
         // Set the list's click listener
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
@@ -67,13 +63,11 @@ public class MainActivity extends Activity {
             /** Called when a drawer has settled in a completely closed state. */
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
-                setTitle(MainActivity.this.currentTitle);
             }
 
             /** Called when a drawer has settled in a completely open state. */
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                setTitle(drawerTitle);
             }
         };
 
@@ -100,16 +94,6 @@ public class MainActivity extends Activity {
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private String[] getSections() {
-        //TODO: may be move it to content package, maybe to resources, maybe both, maybe not
-
-        String[] sections = new String[] {
-                "Bash.org", "ITHappens"
-        };
-
-        return sections;
-    }
-
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView parent, View view, int position, long id) {
@@ -117,32 +101,20 @@ public class MainActivity extends Activity {
         }
     }
 
-    /** Swaps fragments in the main content view */
     private void selectItem(int position) {
-        // Create a new fragment and specify the planet to show based on position
-        /*Fragment fragment = new PlanetFragment();
-        Bundle args = new Bundle();
-        args.putInt(PlanetFragment.ARG_PLANET_NUMBER, position);
-        fragment.setArguments(args);
+        SectionsBuilder.Section section = sections.get(position);
+        Toaster.toast(getBaseContext(), section.getActionBarText());
 
-        // Insert the fragment by replacing any existing fragment
-        FragmentManager fragmentManager = getFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.content_frame, fragment)
-                .commit();*/
-
-        Toaster.toast(getBaseContext(), sections[position]);
+        //TODO: change data source here via section.getContentSection()
 
         // Highlight the selected item, update the title, and close the drawer
-        mDrawerList.setItemChecked(position, true);
-        setTitle(sections[position]);
+        mDrawerList.setItemChecked(position, true); //TODO: it does nothing
+        setTitle(section.getActionBarText());
         mDrawerLayout.closeDrawer(mDrawerList);
     }
 
     @Override
     public void setTitle(CharSequence title) {
-        this.currentTitle = title.toString();
-
         ActionBar actionBar = getActionBar();
         if (actionBar != null)
             actionBar.setTitle(title);
