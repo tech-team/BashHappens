@@ -1,4 +1,4 @@
-package org.techteam.bashhappens.fragments;
+package org.techteam.bashhappens.gui.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

@@ -1,9 +1,7 @@
-package org.techteam.bashhappens.activities;
+package org.techteam.bashhappens.gui.activities;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -18,7 +16,7 @@ import android.widget.ListView;
 import org.techteam.bashhappens.R;
 import org.techteam.bashhappens.content.ContentFactory;
 import org.techteam.bashhappens.content.ContentSource;
-import org.techteam.bashhappens.fragments.PostsListFragment;
+import org.techteam.bashhappens.gui.fragments.PostsListFragment;
 import org.techteam.bashhappens.util.Toaster;
 
 import java.util.Locale;

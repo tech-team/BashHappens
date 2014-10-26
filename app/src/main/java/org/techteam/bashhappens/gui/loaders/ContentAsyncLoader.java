@@ -1,4 +1,4 @@
-package org.techteam.bashhappens.fragments.loaders;
+package org.techteam.bashhappens.gui.loaders;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;

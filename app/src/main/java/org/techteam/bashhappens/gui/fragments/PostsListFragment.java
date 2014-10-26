@@ -1,7 +1,6 @@
-package org.techteam.bashhappens.fragments;
+package org.techteam.bashhappens.gui.fragments;
 
 import android.app.Fragment;
-import android.app.ListFragment;
 import android.app.LoaderManager;
 import android.content.Loader;
 import android.os.Bundle;
@@ -11,17 +10,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ListAdapter;
-import android.widget.TextView;
 
 import org.techteam.bashhappens.R;
 import org.techteam.bashhappens.content.ContentEntry;
 import org.techteam.bashhappens.content.ContentFactory;
 import org.techteam.bashhappens.content.ContentList;
 import org.techteam.bashhappens.content.ContentSource;
-import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
-import org.techteam.bashhappens.fragments.loaders.ContentAsyncLoader;
+import org.techteam.bashhappens.gui.adapters.BashOrgListAdapter;
+import org.techteam.bashhappens.gui.loaders.ContentAsyncLoader;
 import org.techteam.bashhappens.util.LoaderIds;
 import org.techteam.bashhappens.util.Toaster;
 

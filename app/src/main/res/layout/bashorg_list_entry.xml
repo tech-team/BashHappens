@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     card_view:cardCornerRadius="4dp"
-    tools:context="org.techteam.bashhappens.fragments.PostsListFragment" >
+    tools:context="org.techteam.bashhappens.gui.fragments.PostsListFragment" >
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

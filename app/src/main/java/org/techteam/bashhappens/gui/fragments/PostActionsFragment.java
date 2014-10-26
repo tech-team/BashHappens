@@ -1,4 +1,4 @@
-package org.techteam.bashhappens.fragments;
+package org.techteam.bashhappens.gui.fragments;
 
 import android.app.Activity;
 import android.net.Uri;
