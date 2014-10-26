@@ -1,8 +1,5 @@
 package org.techteam.bashhappens.content.bashorg;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import org.jsoup.nodes.Element;
 import org.techteam.bashhappens.content.ContentEntry;
 import org.techteam.bashhappens.content.ContentType;
@@ -43,7 +40,8 @@ public class BashOrgEntry extends ContentEntry {
         String text;
         try {
             actionsBar = element.getElementsByClass(ACTIONS_BAR_CLASS).get(0);
-            text = element.getElementsByClass(TEXT_CLASS).get(0).text();
+            text = element.getElementsByClass(TEXT_CLASS).get(0).html();
+            text = text.replaceAll("<br.*>", "");
         } catch (Exception ignored) {
             return null;
         }
