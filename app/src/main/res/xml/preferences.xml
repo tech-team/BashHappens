@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="@string/pref_visual"
+        android:key="@string/pref_visual_key">
+
+        <CheckBoxPreference
+            android:key="@string/pref_shorten_long_posts_key"
+            android:title="@string/pref_shorten_long_posts_title"
+            android:summary="@string/pref_shorten_long_posts_summ"
+            android:defaultValue="false" />
+
+        <CheckBoxPreference
+            android:key="@string/pref_justify_by_width_key"
+            android:title="@string/pref_justify_by_width_title"
+            android:summary="@string/pref_justify_by_width_summ"
+            android:defaultValue="false" />
+
+        <ListPreference
+            android:key="@string/pref_text_size_key"
+            android:title="@string/pref_text_size_title"
+            android:entries="@array/text_size"
+            android:entryValues="@array/text_size_alias"
+            />
+
+        <CheckBoxPreference
+            android:key="@string/pref_night_mode_key"
+            android:title="@string/pref_night_mode_title"
+            android:summary="@string/pref_night_mode_summ"
+            android:defaultValue="false" />
+    </PreferenceCategory>
+</PreferenceScreen>

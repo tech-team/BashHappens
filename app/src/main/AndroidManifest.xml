@@ -18,6 +18,15 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".gui.activities.SettingsActivity"
+            android:label="@string/settings_activity_title" >
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="org.techteam.bashhappens.activities.MainActivity" />
+        </activity>
+
         <provider
             android:authorities="org.techteam.bashhappens.db.DatabaseHelper"
             android:name=".db.providers.BashHappensDbProvider"
