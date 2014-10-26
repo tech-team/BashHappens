@@ -19,5 +19,5 @@ public abstract class ContentSource<T extends ContentEntry> implements Parcelabl
         this.locale = locale;
     }
 
-    public abstract ContentList<T> retrieveNextList() throws IOException, FeedOverflowException;
+    public abstract ContentList<T> retrieveNextList() throws IOException, FeedOverflowException, ContentParseException;
 }

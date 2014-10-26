@@ -4,6 +4,7 @@ import android.content.AsyncTaskLoader;
 import android.content.Context;
 
 import org.techteam.bashhappens.content.ContentList;
+import org.techteam.bashhappens.content.ContentParseException;
 import org.techteam.bashhappens.content.ContentSource;
 import org.techteam.bashhappens.content.FeedOverflowException;
 
@@ -28,6 +29,9 @@ public class ContentAsyncLoader extends AsyncTaskLoader<ContentList> {
             e.printStackTrace();
         } catch (FeedOverflowException e) {
             // TODO
+            e.printStackTrace();
+        } catch (ContentParseException e) {
+            // TODO: display a parse error; so nothing cannot be displayed
             e.printStackTrace();
         }
         return list;

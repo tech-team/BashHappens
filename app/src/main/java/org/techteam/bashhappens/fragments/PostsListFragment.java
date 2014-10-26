@@ -33,6 +33,10 @@ public class PostsListFragment
         extends Fragment
         implements SwipeRefreshLayout.OnRefreshListener, LoaderManager.LoaderCallbacks<ContentList> {
 
+    private static final class BundleKeys {
+        public static final String FACTORY = "FACTORY";
+    }
+
     private SwipeRefreshLayout mSwipeRefreshLayout;
     RecyclerView.LayoutManager mLayoutManager;
     private RecyclerView recyclerView;
@@ -68,7 +72,7 @@ public class PostsListFragment
         if (savedInstanceState == null) {
             factory = new ContentFactory(Locale.getDefault().toString());
         } else {
-            factory = savedInstanceState.getParcelable("FACTORY");
+            factory = savedInstanceState.getParcelable(BundleKeys.FACTORY);
         }
         content = factory.buildContent(ContentFactory.ContentSection.BASH_ORG_NEWEST);
 
@@ -89,7 +93,7 @@ public class PostsListFragment
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelable("FACTORY", factory);
+        outState.putParcelable(BundleKeys.FACTORY, factory);
     }
 
     @Override

@@ -1,13 +1,19 @@
 package org.techteam.bashhappens.content.bashorg;
 
+import android.util.Log;
+
 import org.jsoup.nodes.Element;
 import org.techteam.bashhappens.content.ContentEntry;
 import org.techteam.bashhappens.content.ContentType;
 
 public class BashOrgEntry extends ContentEntry {
-    public static final String DOM_CLASS_NAME = "quote";
-    private static final String ACTIONS_BAR_CLASS = "actions";
-    private static final String TEXT_CLASS = "text";
+    private static final String LOG_TAG = BashOrgEntry.class.toString();
+
+    public static final class DOM {
+        public static final String DOM_CLASS_NAME = "quote";
+        private static final String ACTIONS_BAR_CLASS = "actions";
+        private static final String TEXT_CLASS = "text";
+    }
 
     public static final ContentType CONTENT_TYPE = ContentType.BASH_ORG;
 
@@ -38,13 +44,9 @@ public class BashOrgEntry extends ContentEntry {
     public static BashOrgEntry fromHtml(Element element) {
         Element actionsBar;
         String text;
-        try {
-            actionsBar = element.getElementsByClass(ACTIONS_BAR_CLASS).get(0);
-            text = element.getElementsByClass(TEXT_CLASS).get(0).html();
-            text = text.replaceAll("<br.*>", "");
-        } catch (Exception ignored) {
-            return null;
-        }
+        actionsBar = element.getElementsByClass(DOM.ACTIONS_BAR_CLASS).get(0);
+        text = element.getElementsByClass(DOM.TEXT_CLASS).get(0).html();
+        text = text.replaceAll("<br.*>", "");
 
         String id = actionsBar.getElementsByClass("id").get(0).text().substring(1);
         String creationDate = actionsBar.getElementsByClass("date").text();
