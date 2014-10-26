@@ -44,9 +44,13 @@ public class BashOrgEntry extends ContentEntry {
     public static BashOrgEntry fromHtml(Element element) {
         Element actionsBar;
         String text;
-        actionsBar = element.getElementsByClass(DOM.ACTIONS_BAR_CLASS).get(0);
-        text = element.getElementsByClass(DOM.TEXT_CLASS).get(0).html();
-        text = text.replaceAll("<br.*>", "");
+        try {
+            actionsBar = element.getElementsByClass(DOM.ACTIONS_BAR_CLASS).get(0);
+            text = element.getElementsByClass(DOM.TEXT_CLASS).get(0).html();
+            text = text.replaceAll("<br.*>", "");
+        } catch (Exception ignored) {
+            return null;
+        }
 
         String id = actionsBar.getElementsByClass("id").get(0).text().substring(1);
         String creationDate = actionsBar.getElementsByClass("date").text();
