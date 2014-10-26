@@ -1,17 +1,18 @@
 package org.techteam.bashhappens.fragments;
 
+import android.app.Fragment;
 import android.app.ListFragment;
 import android.app.LoaderManager;
-import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 
 import org.techteam.bashhappens.R;
@@ -22,16 +23,19 @@ import org.techteam.bashhappens.content.ContentSource;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.fragments.loaders.ContentAsyncLoader;
 import org.techteam.bashhappens.util.LoaderIds;
+import org.techteam.bashhappens.util.Toaster;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
 public class PostsListFragment
-        extends ListFragment
+        extends Fragment
         implements SwipeRefreshLayout.OnRefreshListener, LoaderManager.LoaderCallbacks<ContentList> {
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    RecyclerView.LayoutManager mLayoutManager;
+    private RecyclerView recyclerView;
 
     private ContentFactory factory = null;
     private ContentSource content = null;
@@ -41,6 +45,12 @@ public class PostsListFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_posts_list, container, false);
+
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.recycler);
+        recyclerView.setHasFixedSize(true);
+
+        mLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerView.setLayoutManager(mLayoutManager);
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.container);
         mSwipeRefreshLayout.setOnRefreshListener(this);
@@ -65,16 +75,16 @@ public class PostsListFragment
         getLoaderManager().initLoader(LoaderIds.CONTENT_LOADER, null, this);
     }
 
-    @Override
-    public void onListItemClick(ListView l, View v, int position, long id) {
-        super.onListItemClick(l, v, position, id);
-
-        Intent sendIntent = new Intent();
-        sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, adapter.getItem(position).getText());
-        sendIntent.setType("text/plain");
-        startActivity(sendIntent);
-    }
+//    @Override
+//    public void onListItemClick(ListView l, View v, int position, long id) {
+//        super.onListItemClick(l, v, position, id);
+//
+//        Intent sendIntent = new Intent();
+//        sendIntent.setAction(Intent.ACTION_SEND);
+//        sendIntent.putExtra(Intent.EXTRA_TEXT, adapter.getItem(position).getText());
+//        sendIntent.setType("text/plain");
+//        startActivity(sendIntent);
+//    }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -86,8 +96,9 @@ public class PostsListFragment
     public void onRefresh() {
         mSwipeRefreshLayout.setRefreshing(true);
 
+        Toaster.toast(getActivity().getBaseContext(), R.string.loading);
         // TODO: смотри TODO в onLoadFinished() ниже
-        adapter = null;
+        //adapter = null;
         content = factory.buildContent(ContentFactory.ContentSection.BASH_ORG_NEWEST, true);
         getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, null, PostsListFragment.this);
     }
@@ -111,6 +122,7 @@ public class PostsListFragment
                 if (adapter == null) {
                     // TODO: кажется слишком глупо пересоздавать adapter каждый раз, когда обновляем, надо "добавлять" в начало массива, но в то же время учесть пересоздание адаптера, если меняется источник данных
                     adapter = new BashOrgListAdapter(contentList.getEntries());
+                    recyclerView.setAdapter(adapter);
                 } else {
                     adapter.addAll(contentList.getEntries());
                 }
@@ -119,45 +131,10 @@ public class PostsListFragment
                 // TODO: add ItHappens adapter
                 break;
         }
-        setListAdapter(adapter);
     }
 
     @Override
     public void onLoaderReset(Loader<ContentList> contentListLoader) {
         // TODO
-    }
-
-    private class BashOrgListAdapter extends ArrayAdapter<BashOrgEntry> {
-
-        public BashOrgListAdapter(List<BashOrgEntry> objects) {
-            super(getActivity(), 0, objects);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder viewHolder;
-            if (convertView == null) {
-                convertView = LayoutInflater.from(getContext()).inflate(R.layout.bashorg_list_entry, parent, false);
-                viewHolder = new ViewHolder();
-
-                viewHolder.id = (TextView) convertView.findViewById(R.id.post_id);
-                viewHolder.date = (TextView) convertView.findViewById(R.id.post_date);
-                viewHolder.text = (TextView) convertView.findViewById(R.id.post_text);
-                convertView.setTag(viewHolder);
-            } else {
-                viewHolder = (ViewHolder) convertView.getTag();
-            }
-
-            viewHolder.id.setText(getItem(position).getId());
-            viewHolder.date.setText(getItem(position).getCreationDate());
-            viewHolder.text.setText(getItem(position).getText());
-            return convertView;
-        }
-
-        private class ViewHolder {
-            public TextView id;
-            public TextView date;
-            public TextView text;
-        }
     }
 }
