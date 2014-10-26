@@ -70,6 +70,7 @@ public class BashOrgListAdapter
         holder.id.setText(dataset.get(position).getId());
         holder.date.setText(dataset.get(position).getCreationDate());
         holder.text.setText(dataset.get(position).getText());
+        // TODO: add rating
     }
 
     // Return the size of your dataset (invoked by the layout manager)

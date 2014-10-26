@@ -1,4 +1,4 @@
-package org.techteam.bashhappens.content;
+package org.techteam.bashhappens.content.exceptions;
 
 public class ContentParseException extends Exception {
 

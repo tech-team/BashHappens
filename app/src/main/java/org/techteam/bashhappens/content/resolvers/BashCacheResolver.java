@@ -27,7 +27,8 @@ public class BashCacheResolver extends AbstractContentResolver {
         while (!cur.isAfterLast()) {
             BashOrgEntry entry = new BashOrgEntry(cur.getString(cur.getColumnIndex("id")),
                                                   cur.getString(cur.getColumnIndex("date")),
-                                                  cur.getString(cur.getColumnIndex("text")));
+                                                  cur.getString(cur.getColumnIndex("text")),
+                                                  cur.getString(cur.getColumnIndex("rating")));
             //TODO: Fill likes (acquired by query)
             bashOrgEntryList.add(entry);
         }
@@ -38,9 +39,12 @@ public class BashCacheResolver extends AbstractContentResolver {
     @Override
     protected ContentValues convertToContentValues(ContentEntry entry) {
         ContentValues values = new ContentValues();
-        values.put("id", ((BashOrgEntry) entry).getId());
-        values.put("text", ((BashOrgEntry) entry).getText());
-        values.put("date", ((BashOrgEntry) entry).getText());
+        BashOrgEntry bashOrgEntry = (BashOrgEntry) entry;
+
+        values.put("id", bashOrgEntry.getId());
+        values.put("text", bashOrgEntry.getText());
+        values.put("date", bashOrgEntry.getCreationDate());
+        values.put("rating", bashOrgEntry.getRating());
         return values;
     }
 

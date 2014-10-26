@@ -2,6 +2,9 @@ package org.techteam.bashhappens.content;
 
 import android.os.Parcelable;
 
+import org.techteam.bashhappens.content.exceptions.ContentParseException;
+import org.techteam.bashhappens.content.exceptions.FeedOverException;
+
 import java.io.IOException;
 
 public abstract class ContentSource<T extends ContentEntry> implements Parcelable {
@@ -19,5 +22,5 @@ public abstract class ContentSource<T extends ContentEntry> implements Parcelabl
         this.locale = locale;
     }
 
-    public abstract ContentList<T> retrieveNextList() throws IOException, FeedOverflowException, ContentParseException;
+    public abstract ContentList<T> retrieveNextList() throws IOException, FeedOverException, ContentParseException;
 }
