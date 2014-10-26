@@ -9,6 +9,7 @@ import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.content.bashorg.BashOrgList;
 import org.techteam.bashhappens.db.providers.BashHappensDbProvider;
 import org.techteam.bashhappens.db.tables.BashCache;
+import org.techteam.bashhappens.db.tables.BashLikes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,12 +26,14 @@ public class BashCacheResolver extends AbstractContentResolver {
 
         BashOrgList bashOrgEntryList = new BashOrgList();
         while (!cur.isAfterLast()) {
-            BashOrgEntry entry = new BashOrgEntry(cur.getString(cur.getColumnIndex("id")),
-                                                  cur.getString(cur.getColumnIndex("date")),
-                                                  cur.getString(cur.getColumnIndex("text")),
-                                                  cur.getString(cur.getColumnIndex("rating")));
-            //TODO: Fill likes (acquired by query)
+            BashOrgEntry entry = new BashOrgEntry(cur.getString(cur.getColumnIndex(BashCache.ID)),
+                                                  cur.getString(cur.getColumnIndex(BashCache.DATE)),
+                                                  cur.getString(cur.getColumnIndex(BashCache.TEXT)),
+                                                  cur.getString(cur.getColumnIndex(BashCache.RATING)),
+                                                  cur.getString(cur.getColumnIndex(BashLikes.DIRECTION)),
+                                                  cur.getInt(cur.getColumnIndex(BashLikes.IS_BAYAN)) == 1);
             bashOrgEntryList.add(entry);
+            cur.moveToNext();
         }
         cur.close();
         return bashOrgEntryList;
@@ -41,10 +44,10 @@ public class BashCacheResolver extends AbstractContentResolver {
         ContentValues values = new ContentValues();
         BashOrgEntry bashOrgEntry = (BashOrgEntry) entry;
 
-        values.put("id", bashOrgEntry.getId());
-        values.put("text", bashOrgEntry.getText());
-        values.put("date", bashOrgEntry.getCreationDate());
-        values.put("rating", bashOrgEntry.getRating());
+        values.put(BashCache.ID, bashOrgEntry.getId());
+        values.put(BashCache.TEXT, bashOrgEntry.getText());
+        values.put(BashCache.DATE, bashOrgEntry.getCreationDate());
+        values.put(BashCache.RATING, bashOrgEntry.getRating());
         return values;
     }
 

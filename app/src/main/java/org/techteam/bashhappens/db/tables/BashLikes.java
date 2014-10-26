@@ -26,7 +26,7 @@ public class BashLikes implements BaseColumns, ITable {
     private static final String TABLE_CREATE = "CREATE TABLE "
             + BashLikes.TABLE_NAME + "(" + COLUMN_ID + TYPE_SERIAL + SEPARATOR
             + BashLikes.ARTICLE_ID + TYPE_TEXT + SEPARATOR
-            + BashLikes.DIRECTION + TYPE_INTEGER + SEPARATOR
+            + BashLikes.DIRECTION + TYPE_TEXT + SEPARATOR
             + BashLikes.IS_BAYAN + TYPE_BOOLEAN + ");";
 
     @Override

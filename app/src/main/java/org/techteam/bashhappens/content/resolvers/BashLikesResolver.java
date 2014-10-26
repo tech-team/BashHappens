@@ -6,6 +6,7 @@ import android.net.Uri;
 
 import org.techteam.bashhappens.content.ContentEntry;
 import org.techteam.bashhappens.content.ContentList;
+import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.db.providers.BashHappensDbProvider;
 import org.techteam.bashhappens.db.tables.BashLikes;
 
@@ -25,8 +26,11 @@ public class BashLikesResolver extends AbstractContentResolver {
     @Override
     protected ContentValues convertToContentValues(ContentEntry entry) {
         ContentValues values = new ContentValues();
-        //TODO: BashLikesEntry
-        //values.put("article_id", ((BashLikesEntry) entry))
+        BashOrgEntry bashOrgEntry = (BashOrgEntry) entry;
+
+        values.put("article_id", bashOrgEntry.getId());
+        values.put("direction", bashOrgEntry.getDirection());
+        values.put("isBayan", bashOrgEntry.getIsBayan());
         return values;
     }
 }

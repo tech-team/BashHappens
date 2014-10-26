@@ -36,11 +36,12 @@ public class BashOrgEntry extends ContentEntry {
 
     public static final ContentType CONTENT_TYPE = ContentType.BASH_ORG;
 
-    //TODO: add string constant names of fields
     private String id;
     private String creationDate;
     private String text;
     private String rating;
+    private String direction; // like direction
+    private boolean isBayan;
 
     public BashOrgEntry(String id, String creationDate, String text, String rating) {
         super(CONTENT_TYPE);
@@ -48,6 +49,15 @@ public class BashOrgEntry extends ContentEntry {
         this.creationDate = creationDate;
         this.text = text;
         this.rating = rating;
+    }
+    public BashOrgEntry(String id, String creationDate, String text, String rating, String direction, boolean isBayan) {
+        super(CONTENT_TYPE);
+        this.id = id;
+        this.creationDate = creationDate;
+        this.text = text;
+        this.rating = rating;
+        this.direction = direction;
+        this.isBayan = isBayan;
     }
 
     public String getId() {
@@ -64,6 +74,14 @@ public class BashOrgEntry extends ContentEntry {
 
     public String getRating() {
         return rating;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public boolean getIsBayan() {
+        return isBayan;
     }
 
     public void increaseRating() throws VoteException, IOException {

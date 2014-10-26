@@ -14,15 +14,12 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import org.techteam.bashhappens.R;
-import org.techteam.bashhappens.content.ContentFactory;
-import org.techteam.bashhappens.content.ContentSource;
 import org.techteam.bashhappens.gui.adapters.SectionsListAdapter;
 import org.techteam.bashhappens.gui.fragments.PostsListFragment;
 import org.techteam.bashhappens.gui.adapters.SectionsBuilder;
 import org.techteam.bashhappens.util.Toaster;
 
 import java.util.List;
-import java.util.Locale;
 
 
 public class MainActivity extends Activity {

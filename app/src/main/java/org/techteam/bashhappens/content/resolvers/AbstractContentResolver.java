@@ -42,6 +42,10 @@ public abstract class AbstractContentResolver {
         return insertedIds;
     }
 
+    public int clearCache(Activity activity) {
+        return activity.getContentResolver().delete(_getUri(), null, null);
+    }
+
     public int insertEntry(Activity activity, ContentEntry entry) {
         return Integer.valueOf(activity
                                .getContentResolver()
