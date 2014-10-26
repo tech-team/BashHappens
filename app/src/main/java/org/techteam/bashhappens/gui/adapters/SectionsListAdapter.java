@@ -47,7 +47,7 @@ public class SectionsListAdapter
             viewHolder.text.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.BOTTOM);
         } else {
             viewHolder.text.setEnabled(true);
-            viewHolder.text.setGravity(Gravity.START | Gravity.BOTTOM);
+            viewHolder.text.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
         }
 
         return convertView;
