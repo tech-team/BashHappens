@@ -4,5 +4,6 @@
     <color name="swipe_color_2">#FF6600</color>
     <color name="swipe_color_3">#006600</color>
     <color name="swipe_color_4">#CC2900</color>
+    <color name="grey_color">#ffdcdcdc</color>
 
 </resources>
