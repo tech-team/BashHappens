@@ -1,5 +1,7 @@
 package org.techteam.bashhappens.content.bashorg.newest;
 
+import android.util.Log;
+
 import org.jsoup.nodes.Element;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.content.bashorg.BashOrgList;
@@ -7,6 +9,7 @@ import org.techteam.bashhappens.content.bashorg.BashOrgList;
 import java.util.ArrayList;
 
 public class BashOrgListNewest extends BashOrgList {
+    private static final String LOG_TAG = BashOrgListNewest.class.toString();
 
     private static final String PAGER_CLASS= "page";
 
@@ -35,16 +38,20 @@ public class BashOrgListNewest extends BashOrgList {
     }
 
     public static BashOrgListNewest fromHtml(Element html) {
-        // TODO: handle all jsoup exceptions
-        Element pager = html.getElementsByClass(PAGER_CLASS).get(0);
+        try {
+            Element pager = html.getElementsByClass(PAGER_CLASS).get(0);
 
-        int minPageNum = Integer.parseInt(pager.attr("min"));
-        int maxPageNum = Integer.parseInt(pager.attr("max"));
-        int pageNum = Integer.parseInt(pager.attr("value"));
+            int minPageNum = Integer.parseInt(pager.attr("min"));
+            int maxPageNum = Integer.parseInt(pager.attr("max"));
+            int pageNum = Integer.parseInt(pager.attr("value"));
 
-        ArrayList<BashOrgEntry> entries = BashOrgList.listFromHtml(html);
+            ArrayList<BashOrgEntry> entries = BashOrgList.listFromHtml(html);
 
-        return new BashOrgListNewest(minPageNum, maxPageNum, pageNum, entries);
+            return new BashOrgListNewest(minPageNum, maxPageNum, pageNum, entries);
+        } catch (Exception e) {
+            Log.w(LOG_TAG, e);
+            return null;
+        }
     }
 
 }

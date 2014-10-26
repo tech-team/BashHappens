@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.techteam.bashhappens.content.ContentList;
+import org.techteam.bashhappens.content.ContentParseException;
 import org.techteam.bashhappens.content.FeedOverflowException;
 import org.techteam.bashhappens.content.bashorg.BashOrg;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
@@ -41,16 +42,24 @@ public class BashOrgNewest extends BashOrg {
 
         Document html = Jsoup.parse(page);
         BashOrgListNewest list = BashOrgListNewest.fromHtml(html);
-        minPage = list.getMinPageNum();
-        maxPage = list.getMaxPageNum();
-        currentPage = list.getPageNum();
+
+        if (list != null) {
+            minPage = list.getMinPageNum();
+            maxPage = list.getMaxPageNum();
+            currentPage = list.getPageNum();
+        }
 
         return list;
     }
 
     @Override
-    public ContentList<BashOrgEntry> retrieveNextList() throws IOException, FeedOverflowException {
+    public ContentList<BashOrgEntry> retrieveNextList() throws IOException, FeedOverflowException, ContentParseException {
         BashOrgList list = retrieveList(currentPage);
+
+        if (list == null) {
+            throw new ContentParseException("Content couldn't be parsed");
+        }
+
         if (currentPage <= minPage && currentPage >= maxPage) {
             throw new FeedOverflowException("Feed is out of bound");
         }
