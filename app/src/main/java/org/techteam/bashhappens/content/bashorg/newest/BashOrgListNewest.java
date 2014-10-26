@@ -38,20 +38,15 @@ public class BashOrgListNewest extends BashOrgList {
     }
 
     public static BashOrgListNewest fromHtml(Element html) {
-        try {
-            Element pager = html.getElementsByClass(PAGER_CLASS).get(0);
+        Element pager = html.getElementsByClass(PAGER_CLASS).get(0);
 
-            int minPageNum = Integer.parseInt(pager.attr("min"));
-            int maxPageNum = Integer.parseInt(pager.attr("max"));
-            int pageNum = Integer.parseInt(pager.attr("value"));
+        int minPageNum = Integer.parseInt(pager.attr("min"));
+        int maxPageNum = Integer.parseInt(pager.attr("max"));
+        int pageNum = Integer.parseInt(pager.attr("value"));
 
-            ArrayList<BashOrgEntry> entries = BashOrgList.listFromHtml(html);
+        ArrayList<BashOrgEntry> entries = BashOrgList.listFromHtml(html);
 
-            return new BashOrgListNewest(minPageNum, maxPageNum, pageNum, entries);
-        } catch (Exception e) {
-            Log.w(LOG_TAG, e);
-            return null;
-        }
+        return new BashOrgListNewest(minPageNum, maxPageNum, pageNum, entries);
     }
 
 }

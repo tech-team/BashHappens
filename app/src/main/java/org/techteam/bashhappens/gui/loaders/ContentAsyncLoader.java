@@ -4,9 +4,9 @@ import android.content.AsyncTaskLoader;
 import android.content.Context;
 
 import org.techteam.bashhappens.content.ContentList;
-import org.techteam.bashhappens.content.ContentParseException;
+import org.techteam.bashhappens.content.exceptions.ContentParseException;
 import org.techteam.bashhappens.content.ContentSource;
-import org.techteam.bashhappens.content.FeedOverflowException;
+import org.techteam.bashhappens.content.exceptions.FeedOverException;
 
 import java.io.IOException;
 
@@ -27,7 +27,7 @@ public class ContentAsyncLoader extends AsyncTaskLoader<ContentList> {
         } catch (IOException e) {
             // TODO
             e.printStackTrace();
-        } catch (FeedOverflowException e) {
+        } catch (FeedOverException e) {
             // TODO
             e.printStackTrace();
         } catch (ContentParseException e) {

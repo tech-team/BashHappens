@@ -5,9 +5,10 @@ import android.os.Parcelable;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.techteam.bashhappens.content.Constants;
 import org.techteam.bashhappens.content.ContentList;
-import org.techteam.bashhappens.content.ContentParseException;
-import org.techteam.bashhappens.content.FeedOverflowException;
+import org.techteam.bashhappens.content.exceptions.ContentParseException;
+import org.techteam.bashhappens.content.exceptions.FeedOverException;
 import org.techteam.bashhappens.content.bashorg.BashOrg;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.content.bashorg.BashOrgList;
@@ -19,13 +20,13 @@ import java.io.IOException;
 public class BashOrgNewest extends BashOrg {
 
     public static final String BASH_URL = "http://bash.im/index/";
-    public static final String ENCODING = "cp1251";
 
     private static final int NO_PAGE = -1;
 
     private int minPage = NO_PAGE;
     private int maxPage = NO_PAGE;
     private int currentPage = NO_PAGE;
+    private boolean feedOver = false;
 
     public BashOrgNewest(String locale) {
         super(locale);
@@ -38,7 +39,7 @@ public class BashOrgNewest extends BashOrg {
         }
 
         Headers headers = new Headers().add("Accept-Language", locale);
-        String page = HttpDownloader.httpGet(new HttpDownloader.Request(url, null, headers, ENCODING));
+        String page = HttpDownloader.httpGet(new HttpDownloader.Request(url, null, headers, Constants.ENCODING));
 
         Document html = Jsoup.parse(page);
         BashOrgListNewest list = BashOrgListNewest.fromHtml(html);
@@ -53,18 +54,29 @@ public class BashOrgNewest extends BashOrg {
     }
 
     @Override
-    public ContentList<BashOrgEntry> retrieveNextList() throws IOException, FeedOverflowException, ContentParseException {
-        BashOrgList list = retrieveList(currentPage);
-
-        if (list == null) {
-            throw new ContentParseException("Content couldn't be parsed");
+    public ContentList<BashOrgEntry> retrieveNextList() throws IOException, FeedOverException, ContentParseException {
+        if (feedOver) {
+            throw new FeedOverException("Feed is over");
         }
 
-        if (currentPage <= minPage && currentPage >= maxPage) {
-            throw new FeedOverflowException("Feed is out of bound");
+        BashOrgList list = null;
+        try {
+            list = retrieveList(currentPage);
+        } catch (Exception e) {
+            throw new ContentParseException("Content couldn't be parsed", e);
         }
-        --currentPage;
+
+        if (checkFeedOver()) {
+            feedOver = true;
+        } else {
+            --currentPage;
+        }
+
         return list;
+    }
+
+    private boolean checkFeedOver() {
+        return currentPage <= minPage && currentPage >= maxPage;
     }
 
 
@@ -78,6 +90,7 @@ public class BashOrgNewest extends BashOrg {
         minPage = vals[0];
         maxPage = vals[1];
         currentPage = vals[2];
+        feedOver = checkFeedOver();
     }
 
     @Override

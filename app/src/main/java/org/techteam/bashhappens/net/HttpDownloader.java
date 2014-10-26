@@ -92,6 +92,10 @@ public class HttpDownloader {
         }
     }
 
+    public static String httpPost(String url) throws IOException {
+        return httpPost(url, null, null, DEFAULT_ENCODING);
+    }
+
     public static String httpPost(Request request) throws IOException {
         return httpPost(request.getUrl(), request.getParams(), request.getHeaders(), request.getEncoding());
     }
