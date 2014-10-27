@@ -44,25 +44,59 @@
             android:orientation="horizontal"
             style="@android:style/Theme.Holo.Light.Panel" >
             <Button
+                android:id="@+id/post_share"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:singleLine="true"
                 style="?android:attr/buttonBarButtonStyle"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
                 android:text="Share" />
 
             <Button
+                android:id="@+id/post_fav"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 style="?android:attr/buttonBarButtonStyle"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
                 android:text="Fav" />
 
             <Button
+                android:id="@+id/post_bayan"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 style="?android:attr/buttonBarButtonStyle"
-                android:text="Like" />
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
+                android:text="[:||||:]" />
+
+            <Button
+                android:id="@+id/post_like"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                style="?android:attr/buttonBarButtonStyle"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
+                android:text="+1" />
+
+            <TextView
+                android:id="@+id/post_rating"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
+                android:text="100" />
+
+            <Button
+                android:id="@+id/post_dislike"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                style="?android:attr/buttonBarButtonStyle"
+                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
+                android:text="-1" />
         </LinearLayout>
 
     </RelativeLayout>
