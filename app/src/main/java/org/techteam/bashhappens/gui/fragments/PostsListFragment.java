@@ -75,17 +75,6 @@ public class PostsListFragment
         getLoaderManager().initLoader(LoaderIds.CONTENT_LOADER, null, this);
     }
 
-//    @Override
-//    public void onListItemClick(ListView l, View v, int position, long id) {
-//        super.onListItemClick(l, v, position, id);
-//
-//        Intent sendIntent = new Intent();
-//        sendIntent.setAction(Intent.ACTION_SEND);
-//        sendIntent.putExtra(Intent.EXTRA_TEXT, adapter.getItem(position).getText());
-//        sendIntent.setType("text/plain");
-//        startActivity(sendIntent);
-//    }
-
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);

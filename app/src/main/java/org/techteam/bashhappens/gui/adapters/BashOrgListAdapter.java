@@ -1,13 +1,17 @@
 package org.techteam.bashhappens.gui.adapters;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import org.techteam.bashhappens.R;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
+import org.techteam.bashhappens.util.Toaster;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,17 +35,36 @@ public class BashOrgListAdapter
     public static class ViewHolder
             extends RecyclerView.ViewHolder {
 
-        // each data item is just a string in this case
+        //header
         public TextView id;
         public TextView date;
+
+        //content
         public TextView text;
+
+        //bottom buttons panel
+        public Button share;
+        public Button fav;
+        public Button bayan;
+        public Button like;
+        public TextView rating;
+        public Button dislike;
+
 
         public ViewHolder(View v) {
             super(v);
 
             id = (TextView) v.findViewById(R.id.post_id);
             date = (TextView) v.findViewById(R.id.post_date);
+
             text = (TextView) v.findViewById(R.id.post_text);
+
+            share = (Button) v.findViewById(R.id.post_share);
+            fav = (Button) v.findViewById(R.id.post_fav);
+            bayan = (Button) v.findViewById(R.id.post_bayan);
+            like = (Button) v.findViewById(R.id.post_like);
+            rating = (TextView) v.findViewById(R.id.post_rating);
+            dislike = (Button) v.findViewById(R.id.post_dislike);
         }
     }
 
@@ -65,12 +88,79 @@ public class BashOrgListAdapter
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        // - get element from your dataset at this position
-        // - replace the contents of the view with that element
-        holder.id.setText(dataset.get(position).getId());
-        holder.date.setText(dataset.get(position).getCreationDate());
-        holder.text.setText(dataset.get(position).getText());
-        // TODO: add rating
+        final BashOrgEntry entry = dataset.get(position);
+
+        //set data
+        holder.id.setText(entry.getId());
+        holder.date.setText(entry.getCreationDate());
+        holder.text.setText(entry.getText());
+
+        holder.rating.setText(entry.getRating());
+
+        //TODO: set buttons state according to DB
+
+        //set handlers
+        holder.share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Context context = view.getContext();
+
+                Toaster.toast(context,
+                        "Share pressed for entry.id: " + entry.getId());
+
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT,
+                        BashOrgListAdapter.this.formatEntryForSharing(entry));
+                sendIntent.setType("text/plain");
+                context.startActivity(sendIntent);
+            }
+        });
+
+        holder.fav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Context context = view.getContext();
+
+                Toaster.toast(context,
+                        "Fav pressed for entry.id: " + entry.getId());
+            }
+        });
+
+        holder.bayan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Context context = view.getContext();
+
+                Toaster.toast(context,
+                        "Bayan pressed for entry.id: " + entry.getId());
+            }
+        });
+
+        holder.like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Context context = view.getContext();
+
+                Toaster.toast(context,
+                        "Like pressed for entry.id: " + entry.getId());
+            }
+        });
+
+        holder.dislike.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Context context = view.getContext();
+
+                Toaster.toast(context,
+                        "Dislike pressed for entry.id: " + entry.getId());
+            }
+        });
+    }
+
+    private String formatEntryForSharing(BashOrgEntry entry) {
+        //TODO: make it look nice
+        return entry.getText();
     }
 
     // Return the size of your dataset (invoked by the layout manager)
