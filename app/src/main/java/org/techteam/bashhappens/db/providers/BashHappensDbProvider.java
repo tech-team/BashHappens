@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import org.techteam.bashhappens.db.tables.BashBayan;
 import org.techteam.bashhappens.db.tables.BashCache;
 import org.techteam.bashhappens.db.tables.BashLikes;
 
@@ -14,7 +15,8 @@ import static org.techteam.bashhappens.db.DatabaseHelper.AUTHORITY;
 public class BashHappensDbProvider extends DbProvider {
 
     private static final int BASH_CACHE = 1;
-    private static final int BASH_LIKES = 11;
+    private static final int BASH_LIKES = 2;
+    private static final int BASH_BAYAN = 3;
 
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 
@@ -23,15 +25,17 @@ public class BashHappensDbProvider extends DbProvider {
 
         mUriMatcher.addURI(AUTHORITY, BashCache.TABLE_NAME, BASH_CACHE);
         mUriMatcher.addURI(AUTHORITY, BashLikes.TABLE_NAME, BASH_LIKES);
+        mUriMatcher.addURI(AUTHORITY, BashBayan.TABLE_NAME, BASH_BAYAN);
 
         for (String item : new String[] {BashCache._ID, BashCache.ID, BashCache.TEXT, BashCache.RATING, BashCache.DATE}) {
             mProjectionMap.put(item, BashCache.TABLE_NAME + "." + item);
         }
-
-        for (String item : new String[] {BashLikes._ID, BashLikes.ARTICLE_ID, BashLikes.DIRECTION, BashLikes.IS_BAYAN}) {
+        for (String item : new String[] {BashLikes._ID, BashLikes.ARTICLE_ID, BashLikes.DIRECTION}) {
             mProjectionMap.put(item, BashLikes.TABLE_NAME + "." + item);
         }
-
+        for (String item : new String[] {BashBayan._ID, BashBayan.ARTICLE_ID, BashBayan.IS_BAYAN}) {
+            mProjectionMap.put(item, BashBayan.TABLE_NAME + "." + item);
+        }
     }
 
     @Override
@@ -39,8 +43,11 @@ public class BashHappensDbProvider extends DbProvider {
         if (mUriMatcher.match(uri) == BASH_CACHE) {
             qb.setTables(BashCache.TABLE_NAME + " LEFT JOIN "
                     + BashLikes.TABLE_NAME + " ON "
-                    + BashCache.ID + " = " + BashLikes.ARTICLE_ID);
-            if (TextUtils.isEmpty(sortOrder.data)) {
+                    + BashCache.ID + " = " + BashLikes.ARTICLE_ID
+                    + " LEFT JOIN " + BashBayan.TABLE_NAME + " ON "
+                    + BashCache.ID + " = " + BashBayan.ARTICLE_ID
+                    + " AS isBayan");
+            if (sortOrder.data == null) {
                 sortOrder.data = BashCache.DEFAULT_SORT_ORDER;
             }
         }
@@ -56,6 +63,8 @@ public class BashHappensDbProvider extends DbProvider {
                 return BashCache.CONTENT_TYPE;
             case BASH_LIKES:
                 return BashLikes.CONTENT_TYPE;
+            case BASH_BAYAN:
+                return BashBayan.CONTENT_TYPE;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -68,18 +77,23 @@ public class BashHappensDbProvider extends DbProvider {
                 return _insert(db, BashCache.TABLE_NAME, BashCache.CONTENT_ID_URI_BASE, contentValues);
             case BASH_LIKES:
                 return _insert(db, BashLikes.TABLE_NAME, BashLikes.CONTENT_ID_URI_BASE, contentValues);
+            case BASH_BAYAN:
+                return _insert(db, BashBayan.TABLE_NAME, BashBayan.CONTENT_ID_URI_BASE, contentValues);
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
     }
 
     @Override
-    protected synchronized int performDelete(Uri uri, SQLiteDatabase db) {
+    protected synchronized int performDelete(Uri uri, SQLiteDatabase db,
+                                             String where, String[] whereArgs) {
         switch (mUriMatcher.match(uri)) {
             case BASH_CACHE:
-                return db.delete(BashCache.TABLE_NAME, null, null);
+                return db.delete(BashCache.TABLE_NAME, where, whereArgs);
             case BASH_LIKES:
-                return db.delete(BashLikes.TABLE_NAME, null, null);
+                return db.delete(BashLikes.TABLE_NAME, where, whereArgs);
+            case BASH_BAYAN:
+                return db.delete(BashBayan.TABLE_NAME, where, whereArgs);
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }

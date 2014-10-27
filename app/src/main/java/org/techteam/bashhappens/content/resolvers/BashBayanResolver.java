@@ -8,13 +8,12 @@ import org.techteam.bashhappens.content.ContentEntry;
 import org.techteam.bashhappens.content.ContentList;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.db.providers.BashHappensDbProvider;
-import org.techteam.bashhappens.db.tables.BashLikes;
+import org.techteam.bashhappens.db.tables.BashBayan;
 
-
-public class BashLikesResolver extends AbstractContentResolver {
+public class BashBayanResolver extends AbstractContentResolver {
     @Override
     protected Uri _getUri() {
-        return Uri.parse(BashHappensDbProvider.CONTENT_URI + "/" + BashLikes.TABLE_NAME);
+        return Uri.parse(BashHappensDbProvider.CONTENT_URI + "/" + BashBayan.TABLE_NAME);
     }
 
     @Override
@@ -28,13 +27,14 @@ public class BashLikesResolver extends AbstractContentResolver {
         BashOrgEntry bashOrgEntry = (BashOrgEntry) contentEntry;
 
         values.put("article_id", bashOrgEntry.getId());
-        values.put("direction", bashOrgEntry.getDirection());
+        values.put("isBayan", bashOrgEntry.getIsBayan());
         return values;
     }
 
     @Override
     protected QueryField getDeletionField(ContentEntry contentEntry) {
-        return new QueryField(BashLikes.ARTICLE_ID, new String[]{((BashOrgEntry) contentEntry).getId()});
+        return new QueryField(BashBayan.ARTICLE_ID,
+                              new String[]{((BashOrgEntry) contentEntry).getId()});
     }
 
 }

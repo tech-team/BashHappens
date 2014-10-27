@@ -10,12 +10,14 @@ import org.techteam.bashhappens.content.ContentList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractContentResolver {
 
     protected abstract Uri _getUri();
-    protected abstract ContentList<?> getEntries(Cursor cur);
+    protected abstract ContentList<?> getEntriesList(Cursor cur);
     protected abstract ContentValues convertToContentValues(ContentEntry contentEntry);
+    protected abstract QueryField getDeletionField(ContentEntry contentEntry);
 
     protected List<ContentValues> convertToContentValues(ContentList<?> list) {
         List<ContentValues> contentValues = new ArrayList<ContentValues>();
@@ -25,9 +27,21 @@ public abstract class AbstractContentResolver {
         return contentValues;
     }
 
-    public ContentList<?> getCache(Activity activity) {
-        Cursor cur = activity.getContentResolver().query(_getUri(), null, null, null, null);
-        return getEntries(cur);
+    public ContentList<?> getAllEntries(Activity activity) {
+        return getEntries(activity, null, null, null, null);
+    }
+    public ContentList<?> getNotSortedEntries(Activity activity) {
+        return getEntries(activity, null, null, null, "");
+    }
+    public ContentList<?> getEntries(Activity activity, String[] projection,
+                                     String selection, String[] selectionArgs,
+                                     String sortOrder) {
+        Cursor cur = activity.getContentResolver().query(_getUri(),
+                                                         projection,
+                                                         selection,
+                                                         selectionArgs,
+                                                         sortOrder);
+        return getEntriesList(cur);
     }
 
     public List<Integer> fillCache(Activity activity, ContentList<?> list) {
@@ -51,5 +65,21 @@ public abstract class AbstractContentResolver {
                                .getContentResolver()
                                .insert(_getUri(), convertToContentValues(entry))
                                .getLastPathSegment());
+    }
+
+    public int deleteEntry(Activity activity, ContentEntry entry) {
+        QueryField field = getDeletionField(entry);
+        return activity.getContentResolver()
+                       .delete(_getUri(), field.where , field.whereArgs);
+    }
+
+    protected class QueryField {
+        public String where;
+        public String[] whereArgs;
+
+        public QueryField(String where, String[] whereArgs) {
+            this.where = where + " = ?";
+            this.whereArgs = whereArgs;
+        }
     }
 }

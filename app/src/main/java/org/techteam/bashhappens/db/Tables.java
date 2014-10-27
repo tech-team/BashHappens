@@ -6,6 +6,7 @@ public abstract class Tables {
     public static final ITable[] TABLES = new ITable[] {
                                        new BashCache(),
                                        new BashLikes(),
+                                       new BashBayan(),
                                        new ItCache(),
                                        new ItLikes()
                                     };

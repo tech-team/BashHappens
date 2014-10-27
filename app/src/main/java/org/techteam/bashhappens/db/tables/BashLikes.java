@@ -14,7 +14,6 @@ public class BashLikes implements BaseColumns, ITable {
     public static final String TABLE_NAME = "bash_likes";
     public static final String ARTICLE_ID = "article_id";
     public static final String DIRECTION = "direction";
-    public static final String IS_BAYAN = "is_bayan";
 
     public static final Uri CONTENT_ID_URI_BASE
             = Uri.parse("content://" + DatabaseHelper.AUTHORITY + "/bash_likes/");
@@ -26,8 +25,7 @@ public class BashLikes implements BaseColumns, ITable {
     private static final String TABLE_CREATE = "CREATE TABLE "
             + BashLikes.TABLE_NAME + "(" + COLUMN_ID + TYPE_SERIAL + SEPARATOR
             + BashLikes.ARTICLE_ID + TYPE_TEXT + SEPARATOR
-            + BashLikes.DIRECTION + TYPE_TEXT + SEPARATOR
-            + BashLikes.IS_BAYAN + TYPE_BOOLEAN + ");";
+            + BashLikes.DIRECTION + TYPE_TEXT + ");";
 
     @Override
     public void onCreate(SQLiteDatabase db) {

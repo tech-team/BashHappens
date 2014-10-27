@@ -8,11 +8,14 @@ import org.techteam.bashhappens.content.ContentEntry;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.content.bashorg.BashOrgList;
 import org.techteam.bashhappens.db.providers.BashHappensDbProvider;
+import org.techteam.bashhappens.db.tables.BashBayan;
 import org.techteam.bashhappens.db.tables.BashCache;
 import org.techteam.bashhappens.db.tables.BashLikes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BashCacheResolver extends AbstractContentResolver {
 
@@ -20,8 +23,12 @@ public class BashCacheResolver extends AbstractContentResolver {
     protected Uri _getUri() {
         return Uri.parse(BashHappensDbProvider.CONTENT_URI + "/" + BashCache.TABLE_NAME);
     }
+    protected QueryField getDeletionField(ContentEntry contentEntry) {
+        return new QueryField(BashCache.ID, new String[]{((BashOrgEntry) contentEntry).getId()});
+    }
+
     @Override
-    protected BashOrgList getEntries(Cursor cur) {
+    protected BashOrgList getEntriesList(Cursor cur) {
         cur.moveToFirst();
 
         BashOrgList bashOrgEntryList = new BashOrgList();
@@ -31,7 +38,7 @@ public class BashCacheResolver extends AbstractContentResolver {
                                                   cur.getString(cur.getColumnIndex(BashCache.TEXT)),
                                                   cur.getString(cur.getColumnIndex(BashCache.RATING)),
                                                   cur.getString(cur.getColumnIndex(BashLikes.DIRECTION)),
-                                                  cur.getInt(cur.getColumnIndex(BashLikes.IS_BAYAN)) == 1);
+                                                  cur.getInt(cur.getColumnIndex(BashBayan.IS_BAYAN)) == 1);
             bashOrgEntryList.add(entry);
             cur.moveToNext();
         }
@@ -50,12 +57,5 @@ public class BashCacheResolver extends AbstractContentResolver {
         values.put(BashCache.RATING, bashOrgEntry.getRating());
         return values;
     }
-
-    /*
-    public static void rateBashArticle(Activity act, ContentValues values) {
-        Uri uri = Uri.parse(BashHappensDbProvider.CONTENT_URI + "/" + BashLikes.TABLE_NAME);
-        act.getContentResolver().insert(uri, values);
-    }
-    */
 
 }

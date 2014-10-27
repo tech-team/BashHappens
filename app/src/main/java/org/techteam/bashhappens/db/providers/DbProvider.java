@@ -83,14 +83,15 @@ public abstract class DbProvider extends ContentProvider {
         return performInsert(uri, database, contentValues);
     }
 
-    protected abstract int performDelete(Uri uri, SQLiteDatabase db);
+    protected abstract int performDelete(Uri uri, SQLiteDatabase db,
+                                         String where, String[] whereArgs);
 
     @Override
     public int delete(Uri uri, String where, String[] whereArgs) {
         database = databaseHelper.getWritableDatabase();
         int count;
 
-        count = performDelete(uri, database);
+        count = performDelete(uri, database, where, whereArgs);
 
         getContext().getContentResolver().notifyChange(uri, null);
 
@@ -101,7 +102,7 @@ public abstract class DbProvider extends ContentProvider {
     public abstract int update(Uri uri, ContentValues values, String s, String[] strings);
 
     protected class StringWrapper {
-        public String data;
+        public String data = null;
         public StringWrapper(String data) {
             this.data = data;
         }
