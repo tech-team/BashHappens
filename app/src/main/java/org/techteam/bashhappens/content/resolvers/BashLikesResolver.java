@@ -27,8 +27,8 @@ public class BashLikesResolver extends AbstractContentResolver {
         ContentValues values = new ContentValues();
         BashOrgEntry bashOrgEntry = (BashOrgEntry) contentEntry;
 
-        values.put("article_id", bashOrgEntry.getId());
-        values.put("direction", bashOrgEntry.getDirection());
+        values.put(BashLikes.ARTICLE_ID, bashOrgEntry.getId());
+        values.put(BashLikes.DIRECTION, bashOrgEntry.getDirection());
         return values;
     }
 

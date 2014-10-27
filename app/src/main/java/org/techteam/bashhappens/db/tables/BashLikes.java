@@ -23,9 +23,9 @@ public class BashLikes implements BaseColumns, ITable {
     public BashLikes() {}
 
     private static final String TABLE_CREATE = "CREATE TABLE "
-            + BashLikes.TABLE_NAME + "(" + COLUMN_ID + TYPE_SERIAL + SEPARATOR
-            + BashLikes.ARTICLE_ID + TYPE_TEXT + SEPARATOR
-            + BashLikes.DIRECTION + TYPE_TEXT + ");";
+            + TABLE_NAME + "(" + COLUMN_ID + TYPE_SERIAL + SEPARATOR
+            + ARTICLE_ID + TYPE_TEXT + SEPARATOR
+            + DIRECTION + TYPE_TEXT + ");";
 
     @Override
     public void onCreate(SQLiteDatabase db) {

@@ -10,7 +10,7 @@ import org.techteam.bashhappens.db.ITable;
 
 import static org.techteam.bashhappens.db.DataTypes.COLUMN_ID;
 import static org.techteam.bashhappens.db.DataTypes.SEPARATOR;
-import static org.techteam.bashhappens.db.DataTypes.TYPE_BOOLEAN;
+import static org.techteam.bashhappens.db.DataTypes.TYPE_INTEGER;
 import static org.techteam.bashhappens.db.DataTypes.TYPE_SERIAL;
 import static org.techteam.bashhappens.db.DataTypes.TYPE_TEXT;
 
@@ -29,7 +29,7 @@ public class BashBayan implements BaseColumns, ITable {
     private static final String TABLE_CREATE = "CREATE TABLE "
             + TABLE_NAME + "(" + COLUMN_ID + TYPE_SERIAL + SEPARATOR
             + ARTICLE_ID + TYPE_TEXT + SEPARATOR
-            + IS_BAYAN + TYPE_BOOLEAN + ");";
+            + IS_BAYAN + TYPE_INTEGER + ");";
 
     @Override
     public void onCreate(SQLiteDatabase db) {

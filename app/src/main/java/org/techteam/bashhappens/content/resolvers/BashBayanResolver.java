@@ -26,8 +26,8 @@ public class BashBayanResolver extends AbstractContentResolver {
         ContentValues values = new ContentValues();
         BashOrgEntry bashOrgEntry = (BashOrgEntry) contentEntry;
 
-        values.put("article_id", bashOrgEntry.getId());
-        values.put("isBayan", bashOrgEntry.getIsBayan());
+        values.put(BashBayan.ARTICLE_ID, bashOrgEntry.getId());
+        values.put(BashBayan.IS_BAYAN, bashOrgEntry.getIsBayan() ? 1 : 0);
         return values;
     }
 

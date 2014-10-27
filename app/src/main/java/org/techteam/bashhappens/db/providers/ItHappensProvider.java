@@ -71,13 +71,15 @@ public class ItHappensProvider extends DbProvider {
         }
     }
 
+
     @Override
-    protected synchronized int performDelete(Uri uri, SQLiteDatabase db) {
+    protected synchronized int performDelete(Uri uri, SQLiteDatabase db,
+                                             String where, String[] whereArgs) {
         switch (mUriMatcher.match(uri)) {
             case IT_CACHE:
-                return db.delete(ItCache.TABLE_NAME, null, null);
+                return db.delete(ItCache.TABLE_NAME, where, whereArgs);
             case IT_LIKES:
-                return db.delete(ItLikes.TABLE_NAME, null, null);
+                return db.delete(ItLikes.TABLE_NAME, where, whereArgs);
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }

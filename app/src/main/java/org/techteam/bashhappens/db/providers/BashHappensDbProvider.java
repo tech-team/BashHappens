@@ -43,10 +43,11 @@ public class BashHappensDbProvider extends DbProvider {
         if (mUriMatcher.match(uri) == BASH_CACHE) {
             qb.setTables(BashCache.TABLE_NAME + " LEFT JOIN "
                     + BashLikes.TABLE_NAME + " ON "
-                    + BashCache.ID + " = " + BashLikes.ARTICLE_ID
+                    + BashCache.TABLE_NAME + "." + BashCache.ID
+                    + " = " + BashLikes.TABLE_NAME + "." + BashLikes.ARTICLE_ID
                     + " LEFT JOIN " + BashBayan.TABLE_NAME + " ON "
-                    + BashCache.ID + " = " + BashBayan.ARTICLE_ID
-                    + " AS isBayan");
+                    + BashCache.TABLE_NAME + "." + BashCache.ID
+                    + " = " + BashBayan.TABLE_NAME + "." + BashBayan.ARTICLE_ID);
             if (sortOrder.data == null) {
                 sortOrder.data = BashCache.DEFAULT_SORT_ORDER;
             }

@@ -36,6 +36,7 @@ public abstract class AbstractContentResolver {
     public ContentList<?> getEntries(Activity activity, String[] projection,
                                      String selection, String[] selectionArgs,
                                      String sortOrder) {
+        selection += " = ?";
         Cursor cur = activity.getContentResolver().query(_getUri(),
                                                          projection,
                                                          selection,
@@ -44,7 +45,7 @@ public abstract class AbstractContentResolver {
         return getEntriesList(cur);
     }
 
-    public List<Integer> fillCache(Activity activity, ContentList<?> list) {
+    public List<Integer> insertEntries(Activity activity, ContentList<?> list) {
         List<Integer> insertedIds = new ArrayList<Integer>();
         for(ContentValues values: convertToContentValues(list)) {
             insertedIds.add(Integer.valueOf(
@@ -56,7 +57,7 @@ public abstract class AbstractContentResolver {
         return insertedIds;
     }
 
-    public int clearCache(Activity activity) {
+    public int deleteAllEntries(Activity activity) {
         return activity.getContentResolver().delete(_getUri(), null, null);
     }
 

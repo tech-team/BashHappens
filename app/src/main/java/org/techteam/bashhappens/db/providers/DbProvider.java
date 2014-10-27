@@ -57,7 +57,7 @@ public abstract class DbProvider extends ContentProvider {
     protected abstract Uri performInsert(Uri uri, SQLiteDatabase db, ContentValues contentValues);
 
     protected synchronized Uri _insert(SQLiteDatabase db, String tableName, Uri uriBase, ContentValues values) {
-        long rowId = db.insert(tableName, null, values);
+        long rowId = db.insertOrThrow(tableName, null, values);
 
         if (rowId > 0) {
             Uri noteUri = ContentUris.withAppendedId(uriBase, rowId);
