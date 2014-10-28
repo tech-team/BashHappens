@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import org.techteam.bashhappens.R;
@@ -43,12 +44,12 @@ public class BashOrgListAdapter
         public TextView text;
 
         //bottom buttons panel
-        public Button share;
-        public Button fav;
+        public ImageButton share;
+        public ImageButton fav;
         public Button bayan;
-        public Button like;
+        public ImageButton like;
         public TextView rating;
-        public Button dislike;
+        public ImageButton dislike;
 
 
         public ViewHolder(View v) {
@@ -59,12 +60,12 @@ public class BashOrgListAdapter
 
             text = (TextView) v.findViewById(R.id.post_text);
 
-            share = (Button) v.findViewById(R.id.post_share);
-            fav = (Button) v.findViewById(R.id.post_fav);
+            share = (ImageButton) v.findViewById(R.id.post_share);
+            fav = (ImageButton) v.findViewById(R.id.post_fav);
             bayan = (Button) v.findViewById(R.id.post_bayan);
-            like = (Button) v.findViewById(R.id.post_like);
+            like = (ImageButton) v.findViewById(R.id.post_like);
             rating = (TextView) v.findViewById(R.id.post_rating);
-            dislike = (Button) v.findViewById(R.id.post_dislike);
+            dislike = (ImageButton) v.findViewById(R.id.post_dislike);
         }
     }
 

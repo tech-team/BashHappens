@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     card_view:cardCornerRadius="4dp"
+    card_view:contentPaddingBottom="-20dp"
     android:layout_marginTop="3dp"
     android:layout_marginBottom="3dp"
     tools:context="org.techteam.bashhappens.gui.fragments.PostsListFragment" >
@@ -20,6 +21,7 @@
             android:layout_alignParentLeft="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="@style/post_header"
             android:text="#12345" />
 
         <TextView
@@ -27,40 +29,59 @@
             android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            style="@style/post_header"
             android:text="23.10.14" />
 
         <TextView
             android:id="@+id/post_text"
             android:layout_below="@id/post_id"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-            />
+            android:layout_height="wrap_content" />
+
+        <View
+            android:id="@+id/hr"
+            android:layout_width="fill_parent"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp"
+            android:layout_height="1dp"
+            android:background="#DDDDDD"
+            android:layout_below="@id/post_text" />
 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/post_text"
+            android:layout_below="@id/hr"
             android:orientation="horizontal"
             style="@android:style/Theme.Holo.Light.Panel" >
-            <Button
-                android:id="@+id/post_share"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:singleLine="true"
-                style="?android:attr/buttonBarButtonStyle"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
-                android:text="Share" />
 
-            <Button
-                android:id="@+id/post_fav"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                style="?android:attr/buttonBarButtonStyle"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
-                android:text="Fav" />
+                android:gravity="center_vertical" >
+
+                <ImageButton
+                    android:id="@+id/post_dislike"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:src="@android:drawable/button_onoff_indicator_off" />
+
+                <TextView
+                    android:id="@+id/post_rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    style="@style/post_header"
+                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small" />
+
+                <ImageButton
+                    android:id="@+id/post_like"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:src="@android:drawable/ic_input_add" />
+                </LinearLayout>
 
             <Button
                 android:id="@+id/post_bayan"
@@ -71,32 +92,23 @@
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
                 android:text="[:||||:]" />
 
-            <Button
-                android:id="@+id/post_like"
+            <ImageButton
+                android:id="@+id/post_share"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:singleLine="true"
+                style="?android:attr/buttonBarButtonStyle"
+                android:src="@android:drawable/ic_menu_share" />
+
+            <ImageButton
+                android:id="@+id/post_fav"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 style="?android:attr/buttonBarButtonStyle"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
-                android:text="+1" />
+                android:src="@android:drawable/btn_star_big_off" />
 
-            <TextView
-                android:id="@+id/post_rating"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
-                android:text="100" />
-
-            <Button
-                android:id="@+id/post_dislike"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                style="?android:attr/buttonBarButtonStyle"
-                android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
-                android:text="-1" />
         </LinearLayout>
 
     </RelativeLayout>
