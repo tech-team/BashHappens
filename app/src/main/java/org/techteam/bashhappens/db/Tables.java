@@ -7,6 +7,7 @@ public abstract class Tables {
                                        new BashCache(),
                                        new BashLikes(),
                                        new BashBayan(),
+                                       new BashFavs(),
                                        new ItCache(),
                                        new ItLikes()
                                     };

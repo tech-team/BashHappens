@@ -8,18 +8,21 @@ import android.util.Log;
 import org.techteam.bashhappens.db.DatabaseHelper;
 import org.techteam.bashhappens.db.ITable;
 
-import static org.techteam.bashhappens.db.DataTypes.*;
+import static org.techteam.bashhappens.db.DataTypes.COLUMN_ID;
+import static org.techteam.bashhappens.db.DataTypes.SEPARATOR;
+import static org.techteam.bashhappens.db.DataTypes.TYPE_SERIAL;
+import static org.techteam.bashhappens.db.DataTypes.TYPE_TEXT;
 
-public class BashCache extends BashTable implements ITable {
+public class BashFavs extends BashTable implements ITable {
 
-    public static final String TABLE_NAME = "bash_cache";
+    public static final String TABLE_NAME = "bash_favs";
 
     public static final Uri CONTENT_ID_URI_BASE
-            = Uri.parse("content://" + DatabaseHelper.AUTHORITY + "/bash_cache/");
+            = Uri.parse("content://" + DatabaseHelper.AUTHORITY + "/bash_favs/");
     public static final String CONTENT_TYPE
-            = "org.techteam.bashhappens.db.tables.bashcache/org.techteam.bashhappens.db";
+            = "org.techteam.bashhappens.db.tables.bashfavs/org.techteam.bashhappens.db";
 
-    public BashCache() {}
+    public BashFavs() {}
 
     private static final String TABLE_CREATE = "CREATE TABLE "
             + TABLE_NAME + "(" + COLUMN_ID + TYPE_SERIAL + SEPARATOR
@@ -35,11 +38,12 @@ public class BashCache extends BashTable implements ITable {
 
     @Override
     public void onUpgrade(SQLiteDatabase database, int oldVersion,
-                                 int newVersion) {
-        Log.w(BashCache.class.getName(), "Upgrading database from version "
+                          int newVersion) {
+        Log.w(BashFavs.class.getName(), "Upgrading database from version "
                 + oldVersion + " to " + newVersion
                 + ", which will destroy all old data");
         database.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(database);
     }
 }
+

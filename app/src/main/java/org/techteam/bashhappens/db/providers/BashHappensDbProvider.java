@@ -8,7 +8,9 @@ import android.text.TextUtils;
 
 import org.techteam.bashhappens.db.tables.BashBayan;
 import org.techteam.bashhappens.db.tables.BashCache;
+import org.techteam.bashhappens.db.tables.BashFavs;
 import org.techteam.bashhappens.db.tables.BashLikes;
+import org.techteam.bashhappens.db.tables.BashTable;
 
 import static org.techteam.bashhappens.db.DatabaseHelper.AUTHORITY;
 
@@ -17,6 +19,7 @@ public class BashHappensDbProvider extends DbProvider {
     private static final int BASH_CACHE = 1;
     private static final int BASH_LIKES = 2;
     private static final int BASH_BAYAN = 3;
+    private static final int BASH_FAVS = 4;
 
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 
@@ -26,34 +29,41 @@ public class BashHappensDbProvider extends DbProvider {
         mUriMatcher.addURI(AUTHORITY, BashCache.TABLE_NAME, BASH_CACHE);
         mUriMatcher.addURI(AUTHORITY, BashLikes.TABLE_NAME, BASH_LIKES);
         mUriMatcher.addURI(AUTHORITY, BashBayan.TABLE_NAME, BASH_BAYAN);
+        mUriMatcher.addURI(AUTHORITY, BashFavs.TABLE_NAME, BASH_FAVS);
 
         for (String item : new String[] {BashCache._ID, BashCache.ID, BashCache.TEXT, BashCache.RATING, BashCache.DATE}) {
-            mProjectionMap.put(item, BashCache.TABLE_NAME + "." + item);
+            mProjectionMap.put(item, item);
         }
-        for (String item : new String[] {BashLikes._ID, BashLikes.ARTICLE_ID, BashLikes.DIRECTION}) {
-            mProjectionMap.put(item, BashLikes.TABLE_NAME + "." + item);
+        for (String item : new String[] {BashLikes.ARTICLE_ID, BashLikes.DIRECTION}) {
+            mProjectionMap.put(item, item);
         }
-        for (String item : new String[] {BashBayan._ID, BashBayan.ARTICLE_ID, BashBayan.IS_BAYAN}) {
-            mProjectionMap.put(item, BashBayan.TABLE_NAME + "." + item);
-        }
+
+        mProjectionMap.put(BashBayan.IS_BAYAN, BashBayan.IS_BAYAN);
     }
 
     @Override
     protected void queryUriMatch(Uri uri, SQLiteQueryBuilder qb, StringWrapper sortOrder) {
-        if (mUriMatcher.match(uri) == BASH_CACHE) {
-            qb.setTables(BashCache.TABLE_NAME + " LEFT JOIN "
-                    + BashLikes.TABLE_NAME + " ON "
-                    + BashCache.TABLE_NAME + "." + BashCache.ID
-                    + " = " + BashLikes.TABLE_NAME + "." + BashLikes.ARTICLE_ID
-                    + " LEFT JOIN " + BashBayan.TABLE_NAME + " ON "
-                    + BashCache.TABLE_NAME + "." + BashCache.ID
-                    + " = " + BashBayan.TABLE_NAME + "." + BashBayan.ARTICLE_ID);
-            if (sortOrder.data == null) {
-                sortOrder.data = BashCache.DEFAULT_SORT_ORDER;
-            }
+        int match = mUriMatcher.match(uri);
+        StringBuilder query = new StringBuilder();
+        if (match == BASH_CACHE) {
+            query.append(BashCache.TABLE_NAME);
+        }
+        else if (match == BASH_FAVS) {
+            query.append(BashFavs.TABLE_NAME);
         }
         else {
             throw new IllegalArgumentException("Unknown URI" + uri);
+        }
+        query.append(" LEFT JOIN "
+                + BashLikes.TABLE_NAME + " ON "
+                + BashTable.ID
+                + " = " + BashLikes.TABLE_NAME + "." + BashLikes.ARTICLE_ID
+                + " LEFT JOIN " + BashBayan.TABLE_NAME + " ON "
+                + BashTable.ID
+                + " = " + BashBayan.TABLE_NAME + "." + BashBayan.ARTICLE_ID);
+        qb.setTables(query.toString());
+        if (sortOrder.data == null) {
+            sortOrder.data = BashTable.DEFAULT_SORT_ORDER;
         }
     }
 
@@ -66,6 +76,8 @@ public class BashHappensDbProvider extends DbProvider {
                 return BashLikes.CONTENT_TYPE;
             case BASH_BAYAN:
                 return BashBayan.CONTENT_TYPE;
+            case BASH_FAVS:
+                return BashFavs.CONTENT_TYPE;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -80,6 +92,8 @@ public class BashHappensDbProvider extends DbProvider {
                 return _insert(db, BashLikes.TABLE_NAME, BashLikes.CONTENT_ID_URI_BASE, contentValues);
             case BASH_BAYAN:
                 return _insert(db, BashBayan.TABLE_NAME, BashBayan.CONTENT_ID_URI_BASE, contentValues);
+            case BASH_FAVS:
+                return _insert(db, BashFavs.TABLE_NAME, BashFavs.CONTENT_ID_URI_BASE, contentValues);
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -95,6 +109,8 @@ public class BashHappensDbProvider extends DbProvider {
                 return db.delete(BashLikes.TABLE_NAME, where, whereArgs);
             case BASH_BAYAN:
                 return db.delete(BashBayan.TABLE_NAME, where, whereArgs);
+            case BASH_FAVS:
+                return db.delete(BashFavs.TABLE_NAME, where, whereArgs);
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }

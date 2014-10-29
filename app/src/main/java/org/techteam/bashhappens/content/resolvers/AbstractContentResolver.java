@@ -36,7 +36,9 @@ public abstract class AbstractContentResolver {
     public ContentList<?> getEntries(Activity activity, String[] projection,
                                      String selection, String[] selectionArgs,
                                      String sortOrder) {
-        selection += " = ?";
+        if (selection != null) {
+            selection += " = ?";
+        }
         Cursor cur = activity.getContentResolver().query(_getUri(),
                                                          projection,
                                                          selection,
@@ -61,14 +63,14 @@ public abstract class AbstractContentResolver {
         return activity.getContentResolver().delete(_getUri(), null, null);
     }
 
-    public int insertEntry(Activity activity, ContentEntry entry) {
+    public <T extends ContentEntry> int insertEntry(Activity activity, T entry) {
         return Integer.valueOf(activity
                                .getContentResolver()
                                .insert(_getUri(), convertToContentValues(entry))
                                .getLastPathSegment());
     }
 
-    public int deleteEntry(Activity activity, ContentEntry entry) {
+    public <T extends ContentEntry> int deleteEntry(Activity activity, T entry) {
         QueryField field = getDeletionField(entry);
         return activity.getContentResolver()
                        .delete(_getUri(), field.where , field.whereArgs);
