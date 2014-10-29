@@ -42,7 +42,7 @@ public class SectionsBuilder {
 
     public static class SelectableSection implements Section {
         public SelectableSection(String label, GroupSection group, ContentFactory.ContentSection contentSection) {
-            this.sideMenuText = " " + label;
+            this.sideMenuText = label;
             this.actionBarText = group.getSideMenuText() + ":" + sideMenuText;
             this.contentSection = contentSection;
         }
