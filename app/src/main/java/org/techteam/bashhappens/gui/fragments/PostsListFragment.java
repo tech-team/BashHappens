@@ -1,5 +1,6 @@
 package org.techteam.bashhappens.gui.fragments;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.LoaderManager;
 import android.content.Loader;
@@ -16,6 +17,7 @@ import org.techteam.bashhappens.content.ContentEntry;
 import org.techteam.bashhappens.content.ContentFactory;
 import org.techteam.bashhappens.content.ContentList;
 import org.techteam.bashhappens.content.ContentSource;
+import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.gui.adapters.BashOrgListAdapter;
 import org.techteam.bashhappens.gui.loaders.ContentAsyncLoader;
 import org.techteam.bashhappens.util.LoaderIds;
@@ -28,6 +30,8 @@ import java.util.Locale;
 public class PostsListFragment
         extends Fragment
         implements SwipeRefreshLayout.OnRefreshListener, LoaderManager.LoaderCallbacks<ContentList> {
+
+    private OnBashVoteCallback bashVoteCallback;
 
     private static final class BundleKeys {
         public static final String FACTORY = "FACTORY";
@@ -62,6 +66,18 @@ public class PostsListFragment
     }
 
     @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        try {
+            bashVoteCallback = (OnBashVoteCallback) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement " + OnBashVoteCallback.class.getName());
+        }
+    }
+
+    @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
@@ -87,7 +103,7 @@ public class PostsListFragment
 
         Toaster.toast(getActivity().getBaseContext(), R.string.loading);
         // TODO: смотри TODO в onLoadFinished() ниже
-        //adapter = null;
+        adapter = null;
         content = factory.buildContent(ContentFactory.ContentSection.BASH_ORG_NEWEST, true);
         getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, null, PostsListFragment.this);
     }
@@ -110,7 +126,7 @@ public class PostsListFragment
             case BASH_ORG:
                 if (adapter == null) {
                     // TODO: кажется слишком глупо пересоздавать adapter каждый раз, когда обновляем, надо "добавлять" в начало массива, но в то же время учесть пересоздание адаптера, если меняется источник данных
-                    adapter = new BashOrgListAdapter(contentList.getEntries());
+                    adapter = new BashOrgListAdapter(bashVoteCallback, contentList.getEntries());
                     recyclerView.setAdapter(adapter);
                 } else {
                     adapter.addAll(contentList.getEntries());
@@ -125,5 +141,14 @@ public class PostsListFragment
     @Override
     public void onLoaderReset(Loader<ContentList> contentListLoader) {
         // TODO
+    }
+
+
+
+    public interface OnBashVoteCallback {
+        void onVote(BashOrgEntry entry, BashOrgEntry.VoteDirection direction);
+    }
+
+    public interface OnItHappensVoteCallback {
     }
 }

@@ -37,6 +37,11 @@
             android:name=".db.providers.ItHappensProvider"
             android:exported="false">
         </provider>
+
+        <service
+            android:name="org.techteam.bashhappens.gui.services.BashVoteService"
+            android:exported="false" >
+        </service>
     </application>
 
 </manifest>
