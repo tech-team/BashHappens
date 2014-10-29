@@ -1,5 +1,6 @@
 package org.techteam.bashhappens.content.bashorg.newest;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -32,7 +33,7 @@ public class BashOrgNewest extends BashOrg {
         super(locale);
     }
 
-    private BashOrgList retrieveList(int pageNum) throws IOException {
+    private BashOrgList retrieveList(Context context, int pageNum) throws IOException {
         String url = BASH_URL;
         if (pageNum != NO_PAGE) {
             url += pageNum;
@@ -42,7 +43,7 @@ public class BashOrgNewest extends BashOrg {
         String page = HttpDownloader.httpGet(new HttpDownloader.Request(url, null, headers, Constants.ENCODING));
 
         Document html = Jsoup.parse(page);
-        BashOrgListNewest list = BashOrgListNewest.fromHtml(html);
+        BashOrgListNewest list = BashOrgListNewest.fromHtml(context, html);
 
         if (list != null) {
             minPage = list.getMinPageNum();
@@ -54,14 +55,14 @@ public class BashOrgNewest extends BashOrg {
     }
 
     @Override
-    public ContentList<BashOrgEntry> retrieveNextList() throws IOException, FeedOverException, ContentParseException {
+    public ContentList<BashOrgEntry> retrieveNextList(Context context) throws IOException, FeedOverException, ContentParseException {
         if (feedOver) {
             throw new FeedOverException("Feed is over");
         }
 
         BashOrgList list = null;
         try {
-            list = retrieveList(currentPage);
+            list = retrieveList(context, currentPage);
         } catch (Exception e) {
             throw new ContentParseException("Content couldn't be parsed", e);
         }

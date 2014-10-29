@@ -1,5 +1,7 @@
 package org.techteam.bashhappens.content.bashorg;
 
+import android.content.Context;
+
 import org.jsoup.nodes.Element;
 import org.techteam.bashhappens.content.ContentEntry;
 import org.techteam.bashhappens.content.ContentType;
@@ -35,7 +37,7 @@ public class BashOrgEntry extends ContentEntry {
     private String creationDate;
     private String text;
     private String rating;
-    private int direction;
+    private int direction = 0;
     private boolean isBayan;
 
     public BashOrgEntry(String id, String creationDate, String text, String rating) {

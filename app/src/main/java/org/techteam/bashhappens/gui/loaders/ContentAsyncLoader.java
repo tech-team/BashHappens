@@ -21,7 +21,7 @@ public class ContentAsyncLoader extends MyAsyncLoader<ContentList> {
     public ContentList loadInBackground() {
         ContentList list = null;
         try {
-            list = contentSource.retrieveNextList();
+            list = contentSource.retrieveNextList(getContext());
         } catch (IOException e) {
             // TODO
             e.printStackTrace();
