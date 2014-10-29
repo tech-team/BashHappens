@@ -7,8 +7,13 @@ import android.net.Uri;
 
 import org.techteam.bashhappens.content.ContentEntry;
 import org.techteam.bashhappens.content.ContentList;
+import org.techteam.bashhappens.db.tables.BashBayan;
+import org.techteam.bashhappens.db.tables.BashCache;
+import org.techteam.bashhappens.db.tables.BashFavs;
+import org.techteam.bashhappens.db.tables.BashLikes;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +23,7 @@ public abstract class AbstractContentResolver {
     protected abstract ContentList<?> getEntriesList(Cursor cur);
     protected abstract ContentValues convertToContentValues(ContentEntry contentEntry);
     protected abstract QueryField getDeletionField(ContentEntry contentEntry);
+    protected abstract String[] getProjection();
 
     protected List<ContentValues> convertToContentValues(ContentList<?> list) {
         List<ContentValues> contentValues = new ArrayList<ContentValues>();
@@ -38,6 +44,9 @@ public abstract class AbstractContentResolver {
                                      String sortOrder) {
         if (selection != null) {
             selection += " = ?";
+        }
+        if (projection == null) {
+            projection = getProjection();
         }
         Cursor cur = context.getContentResolver().query(_getUri(),
                                                          projection,
@@ -84,5 +93,14 @@ public abstract class AbstractContentResolver {
             this.where = where + " = ?";
             this.whereArgs = whereArgs;
         }
+    }
+
+    public static Map<String, Integer> truncateAll(Context context) {
+        Map<String, Integer> deletions = new HashMap<String, Integer>();
+        deletions.put(BashCache.TABLE_NAME, new BashCacheResolver().deleteAllEntries(context));
+        deletions.put(BashLikes.TABLE_NAME, new BashLikesResolver().deleteAllEntries(context));
+        deletions.put(BashBayan.TABLE_NAME, new BashBayanResolver().deleteAllEntries(context));
+        deletions.put(BashFavs.TABLE_NAME, new BashFavsResolver().deleteAllEntries(context));
+        return deletions;
     }
 }

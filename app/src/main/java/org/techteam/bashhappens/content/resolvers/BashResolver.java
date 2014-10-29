@@ -20,9 +20,13 @@ public abstract class BashResolver extends AbstractContentResolver {
 
     @Override
     public ContentList<?> getAllEntries(Context context) {
-        String[] projection = {BashTable.ID, BashTable.TEXT, BashTable.DATE, BashTable.RATING,
+        return getEntries(context, getProjection(), null, null, null);
+    }
+
+    @Override
+    protected String[] getProjection() {
+        return new String[] {BashTable.ID, BashTable.TEXT, BashTable.DATE, BashTable.RATING,
                 BashLikes.DIRECTION, BashBayan.IS_BAYAN};
-        return getEntries(context, projection, null, null, null);
     }
 
     @Override
@@ -31,12 +35,14 @@ public abstract class BashResolver extends AbstractContentResolver {
 
         BashOrgList bashOrgEntryList = new BashOrgList();
         while (!cur.isAfterLast()) {
-            BashOrgEntry entry = new BashOrgEntry(cur.getString(cur.getColumnIndex(BashTable.ID)),
-                    cur.getString(cur.getColumnIndex(BashTable.DATE)),
-                    cur.getString(cur.getColumnIndex(BashTable.TEXT)),
-                    cur.getString(cur.getColumnIndex(BashTable.RATING)),
-                    cur.getInt(cur.getColumnIndex(BashLikes.DIRECTION)),
-                    cur.getInt(cur.getColumnIndex(BashBayan.IS_BAYAN)) == 1);
+            BashOrgEntry entry = new BashOrgEntry()
+                    .setId(cur.getString(cur.getColumnIndex(BashTable.ID)))
+                    .setCreationDate(cur.getString(cur.getColumnIndex(BashTable.DATE)))
+                    .setText(cur.getString(cur.getColumnIndex(BashTable.TEXT)))
+                    .setRating(cur.getString(cur.getColumnIndex(BashTable.RATING)))
+                    .setDirection(cur.getInt(cur.getColumnIndex(BashLikes.DIRECTION)))
+                    .setBayan(cur.getInt(cur.getColumnIndex(BashBayan.IS_BAYAN)) == 1);
+
             bashOrgEntryList.add(entry);
             cur.moveToNext();
         }

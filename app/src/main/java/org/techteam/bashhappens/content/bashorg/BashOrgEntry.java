@@ -75,8 +75,9 @@ public class BashOrgEntry extends ContentEntry {
         return rating;
     }
 
-    public void setRating(String rating) {
+    public BashOrgEntry setRating(String rating) {
         this.rating = rating;
+        return this;
     }
 
     public int getDirection() {
