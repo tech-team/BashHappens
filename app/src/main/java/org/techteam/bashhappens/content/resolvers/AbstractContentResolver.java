@@ -1,7 +1,7 @@
 package org.techteam.bashhappens.content.resolvers;
 
-import android.app.Activity;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
@@ -27,19 +27,19 @@ public abstract class AbstractContentResolver {
         return contentValues;
     }
 
-    public ContentList<?> getAllEntries(Activity activity) {
-        return getEntries(activity, null, null, null, null);
+    public ContentList<?> getAllEntries(Context context) {
+        return getEntries(context, null, null, null, null);
     }
-    public ContentList<?> getNotSortedEntries(Activity activity) {
-        return getEntries(activity, null, null, null, "");
+    public ContentList<?> getNotSortedEntries(Context context) {
+        return getEntries(context, null, null, null, "");
     }
-    public ContentList<?> getEntries(Activity activity, String[] projection,
+    public ContentList<?> getEntries(Context context, String[] projection,
                                      String selection, String[] selectionArgs,
                                      String sortOrder) {
         if (selection != null) {
             selection += " = ?";
         }
-        Cursor cur = activity.getContentResolver().query(_getUri(),
+        Cursor cur = context.getContentResolver().query(_getUri(),
                                                          projection,
                                                          selection,
                                                          selectionArgs,
@@ -47,11 +47,11 @@ public abstract class AbstractContentResolver {
         return getEntriesList(cur);
     }
 
-    public List<Integer> insertEntries(Activity activity, ContentList<?> list) {
+    public List<Integer> insertEntries(Context context, ContentList<?> list) {
         List<Integer> insertedIds = new ArrayList<Integer>();
         for(ContentValues values: convertToContentValues(list)) {
             insertedIds.add(Integer.valueOf(
-                            activity
+                            context
                             .getContentResolver()
                             .insert(_getUri(), values)
                             .getLastPathSegment()));
@@ -59,20 +59,20 @@ public abstract class AbstractContentResolver {
         return insertedIds;
     }
 
-    public int deleteAllEntries(Activity activity) {
-        return activity.getContentResolver().delete(_getUri(), null, null);
+    public int deleteAllEntries(Context context) {
+        return context.getContentResolver().delete(_getUri(), null, null);
     }
 
-    public <T extends ContentEntry> int insertEntry(Activity activity, T entry) {
-        return Integer.valueOf(activity
+    public <T extends ContentEntry> int insertEntry(Context context, T entry) {
+        return Integer.valueOf(context
                                .getContentResolver()
                                .insert(_getUri(), convertToContentValues(entry))
                                .getLastPathSegment());
     }
 
-    public <T extends ContentEntry> int deleteEntry(Activity activity, T entry) {
+    public <T extends ContentEntry> int deleteEntry(Context context, T entry) {
         QueryField field = getDeletionField(entry);
-        return activity.getContentResolver()
+        return context.getContentResolver()
                        .delete(_getUri(), field.where , field.whereArgs);
     }
 

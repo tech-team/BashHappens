@@ -1,12 +1,16 @@
 package org.techteam.bashhappens.gui.services;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import org.techteam.bashhappens.content.Constants;
+import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.content.exceptions.VoteException;
+import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
+import org.techteam.bashhappens.content.resolvers.BashLikesResolver;
 import org.techteam.bashhappens.net.HttpDownloader;
 import org.techteam.bashhappens.net.UrlParams;
 
@@ -58,6 +62,11 @@ public class BashVoteService extends IntentService {
             }
 
             String newRating = changeRating(id, rating, direction);
+
+            AbstractContentResolver resolver = new BashLikesResolver();
+            resolver.insertEntry(this, new BashOrgEntry().setId(id)
+                                                         .setDirection(direction));
+
             localIntent = BroadcasterIntentBuilder.buildVoteSuccessIntent(entryPosition, id, newRating);
         }
         catch (IOException e) {

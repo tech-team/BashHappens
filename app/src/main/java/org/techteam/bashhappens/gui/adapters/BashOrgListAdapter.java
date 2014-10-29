@@ -109,7 +109,8 @@ public class BashOrgListAdapter
         final VotedCallback votedCallback = new VotedCallback() {
             @Override
             public void onVoted(BashOrgEntry entry) {
-                holder.rating.setText(entry.getText());
+                holder.rating.setText(entry.getRating());
+
                 // TODO: make things on voted
             }
         };
@@ -177,10 +178,6 @@ public class BashOrgListAdapter
         return dataset.get(position);
     }
 
-
-    public void onVoted(BashOrgEntry entry) {
-        // TODO: handle voted event
-    }
 
     private String formatEntryForSharing(BashOrgEntry entry) {
         //TODO: make it look nice

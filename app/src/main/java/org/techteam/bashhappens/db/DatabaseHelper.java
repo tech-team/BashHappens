@@ -14,7 +14,7 @@ import org.techteam.bashhappens.db.tables.ItLikes;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String LOG = "DatabaseHelper";
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
     private static final String DATABASE_NAME = "bashhappens";
 
     public static final String AUTHORITY = "org.techteam.bashhappens.db.DatabaseHelper";

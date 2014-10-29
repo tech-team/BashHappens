@@ -35,7 +35,7 @@ public class BashOrgEntry extends ContentEntry {
     private String creationDate;
     private String text;
     private String rating;
-    private String direction; // like direction
+    private int direction;
     private boolean isBayan;
 
     public BashOrgEntry(String id, String creationDate, String text, String rating) {
@@ -45,7 +45,7 @@ public class BashOrgEntry extends ContentEntry {
         this.text = text;
         this.rating = rating;
     }
-    public BashOrgEntry(String id, String creationDate, String text, String rating, String direction, boolean isBayan) {
+    public BashOrgEntry(String id, String creationDate, String text, String rating, int direction, boolean isBayan) {
         super(CONTENT_TYPE);
         this.id = id;
         this.creationDate = creationDate;
@@ -53,6 +53,10 @@ public class BashOrgEntry extends ContentEntry {
         this.rating = rating;
         this.direction = direction;
         this.isBayan = isBayan;
+    }
+
+    public BashOrgEntry() {
+        super(CONTENT_TYPE);
     }
 
     public String getId() {
@@ -75,12 +79,37 @@ public class BashOrgEntry extends ContentEntry {
         this.rating = rating;
     }
 
-    public String getDirection() {
+    public int getDirection() {
         return direction;
     }
 
     public boolean getIsBayan() {
         return isBayan;
+    }
+
+    public BashOrgEntry setId(String id) {
+        this.id = id;
+        return this;
+    }
+
+    public BashOrgEntry setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
+        return this;
+    }
+
+    public BashOrgEntry setText(String text) {
+        this.text = text;
+        return this;
+    }
+
+    public BashOrgEntry setDirection(int direction) {
+        this.direction = direction;
+        return this;
+    }
+
+    public BashOrgEntry setBayan(boolean isBayan) {
+        this.isBayan = isBayan;
+        return this;
     }
 
     public static BashOrgEntry fromHtml(Element element) {

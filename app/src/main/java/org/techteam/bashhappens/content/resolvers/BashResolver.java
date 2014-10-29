@@ -1,7 +1,8 @@
 package org.techteam.bashhappens.content.resolvers;
 
-import android.app.Activity;
+
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
@@ -18,10 +19,10 @@ public abstract class BashResolver extends AbstractContentResolver {
     protected abstract Uri _getUri();
 
     @Override
-    public ContentList<?> getAllEntries(Activity activity) {
+    public ContentList<?> getAllEntries(Context context) {
         String[] projection = {BashTable.ID, BashTable.TEXT, BashTable.DATE, BashTable.RATING,
                 BashLikes.DIRECTION, BashBayan.IS_BAYAN};
-        return getEntries(activity, projection, null, null, null);
+        return getEntries(context, projection, null, null, null);
     }
 
     @Override
@@ -34,7 +35,7 @@ public abstract class BashResolver extends AbstractContentResolver {
                     cur.getString(cur.getColumnIndex(BashTable.DATE)),
                     cur.getString(cur.getColumnIndex(BashTable.TEXT)),
                     cur.getString(cur.getColumnIndex(BashTable.RATING)),
-                    cur.getString(cur.getColumnIndex(BashLikes.DIRECTION)),
+                    cur.getInt(cur.getColumnIndex(BashLikes.DIRECTION)),
                     cur.getInt(cur.getColumnIndex(BashBayan.IS_BAYAN)) == 1);
             bashOrgEntryList.add(entry);
             cur.moveToNext();
