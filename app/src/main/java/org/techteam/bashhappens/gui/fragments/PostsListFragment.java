@@ -25,6 +25,7 @@ import org.techteam.bashhappens.content.ContentSource;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.gui.adapters.BashOrgListAdapter;
 import org.techteam.bashhappens.gui.loaders.ContentAsyncLoader;
+import org.techteam.bashhappens.gui.loaders.LoadIntention;
 import org.techteam.bashhappens.gui.loaders.LoaderIds;
 import org.techteam.bashhappens.gui.services.ServiceManager;
 import org.techteam.bashhappens.gui.services.VoteServiceConstants;
@@ -32,19 +33,22 @@ import org.techteam.bashhappens.util.Toaster;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Queue;
 
 public class PostsListFragment
         extends Fragment
         implements SwipeRefreshLayout.OnRefreshListener,
-        OnBashEventCallback {
-
-
+        OnBashEventCallback,
+        OnListScrolledDownCallback {
 
     private static final class BundleKeys {
         public static final String FACTORY = "FACTORY";
     }
+
+    private Queue<Runnable> delayedAdapterNotifications = new LinkedList<Runnable>();
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -52,7 +56,7 @@ public class PostsListFragment
 
     private ContentFactory factory = null;
     private ContentSource content = null;
-    private BashOrgListAdapter adapter = null;
+    private BashOrgListAdapter adapter = new BashOrgListAdapter(PostsListFragment.this, PostsListFragment.this, null);
 
     private ServiceManager serviceManager = null;
     private VoteBroadcastReceiver voteBroadcastReceiver;
@@ -75,15 +79,37 @@ public class PostsListFragment
         public void onLoadFinished(Loader<ContentList> contentListLoader, ContentList contentList) {
             mSwipeRefreshLayout.setRefreshing(false);
 
+            //TODO: obtain that value from Bundle
+            int intention = LoadIntention.APPEND;
+
             switch (contentList.getStoredContentType()) {
                 case BASH_ORG:
-                    ArrayList<BashOrgEntry> entries = contentList.getEntries();
-                    if (adapter == null) {
-                        // TODO: кажется слишком глупо пересоздавать adapter каждый раз, когда обновляем, надо "добавлять" в начало массива, но в то же время учесть пересоздание адаптера, если меняется источник данных
-                        adapter = new BashOrgListAdapter(PostsListFragment.this, entries);
-                        recyclerView.setAdapter(adapter);
-                    } else {
+                    final ArrayList<BashOrgEntry> entries = contentList.getEntries();
+                    if (intention == LoadIntention.REFRESH) {
+                        adapter.setAll(entries);
+                        if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
+                            adapter.notifyDataSetChanged();
+                        } else {
+                            delayedAdapterNotifications.add(new Runnable() {
+                                @Override
+                                public void run() {
+                                    adapter.notifyDataSetChanged();
+                                }
+                            });
+                        }
+                    } else if (intention == LoadIntention.APPEND) {
+                        final int oldCount = adapter.getItemCount();
                         adapter.addAll(entries);
+                        if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
+                            adapter.notifyItemRangeInserted(oldCount, entries.size());
+                        } else {
+                            delayedAdapterNotifications.add(new Runnable() {
+                                @Override
+                                public void run() {
+                                    adapter.notifyItemRangeInserted(oldCount, entries.size());
+                                }
+                            });
+                        }
                     }
                     break;
                 case IT_HAPPENS:
@@ -107,10 +133,33 @@ public class PostsListFragment
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setAdapter(adapter);
+
+        //TODO: write comment on this kostil'
+        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                    for (Runnable r: delayedAdapterNotifications)
+                        r.run();
+
+                    delayedAdapterNotifications.clear();
+                }
+            }
+        });
+
+        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+        });
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.container);
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setColorScheme(
+        mSwipeRefreshLayout.setColorSchemeResources(
                 R.color.swipe_color_1, R.color.swipe_color_2,
                 R.color.swipe_color_3, R.color.swipe_color_4);
 
@@ -157,12 +206,17 @@ public class PostsListFragment
 
         Toaster.toast(getActivity().getBaseContext(), R.string.loading);
         // TODO: смотри TODO в onLoadFinished() ниже
-        adapter = null;
         content = factory.buildContent(ContentFactory.ContentSection.BASH_ORG_NEWEST, true);
         getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, null, contentListLoaderCallbacks);
     }
 
-
+    @Override
+    public void onScrolledDown() {
+        Toaster.toast(getActivity().getBaseContext(), "onScrolledDown");
+        //TODO: add flag into Bundle to mark intention: "refresh" or "append"
+        //TODO: see LoadIntention
+        getLoaderManager().initLoader(LoaderIds.CONTENT_LOADER, null, contentListLoaderCallbacks);
+    }
 
 
 

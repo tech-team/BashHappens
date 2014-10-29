@@ -13,6 +13,7 @@ import android.widget.TextView;
 import org.techteam.bashhappens.R;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.gui.fragments.OnBashEventCallback;
+import org.techteam.bashhappens.gui.fragments.OnListScrolledDownCallback;
 import org.techteam.bashhappens.gui.fragments.PostsListFragment;
 import org.techteam.bashhappens.util.Toaster;
 
@@ -22,14 +23,15 @@ import java.util.List;
 public class BashOrgListAdapter
         extends RecyclerView.Adapter<BashOrgListAdapter.ViewHolder> {
     private final OnBashEventCallback voteCallback;
+    private final OnListScrolledDownCallback scrolledDownCallback;
     private List<BashOrgEntry> dataset;
 
     private int VIEW_TYPE_ENTRY = 0;
     private int VIEW_TYPE_FOOTER = 1;
 
     public void setAll(ArrayList<BashOrgEntry> entries) {
-        //TODO: i don't think it will work such easy
-        dataset = entries;
+        dataset.clear();
+        dataset.addAll(entries);
     }
 
     public void addAll(ArrayList<BashOrgEntry> entries) {
@@ -77,9 +79,15 @@ public class BashOrgListAdapter
 
     // Provide a suitable constructor (depends on the kind of dataset)
     public BashOrgListAdapter(OnBashEventCallback voteCallback,
+                              OnListScrolledDownCallback scrolledDownCallback,
                               List<BashOrgEntry> dataset) {
         this.voteCallback = voteCallback;
-        this.dataset = dataset;
+        this.scrolledDownCallback = scrolledDownCallback;
+
+        if (dataset != null)
+            this.dataset = dataset;
+        else
+            this.dataset = new ArrayList<BashOrgEntry>();
     }
 
     // Create new views (invoked by the layout manager)
@@ -104,8 +112,11 @@ public class BashOrgListAdapter
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        if (position == dataset.size())
-            return; //footer
+        //footer visible
+        if (position == dataset.size()) {
+            scrolledDownCallback.onScrolledDown();
+            return;
+        }
 
         final BashOrgEntry entry = dataset.get(position);
 

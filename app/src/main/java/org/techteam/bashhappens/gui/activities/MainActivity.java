@@ -12,7 +12,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,16 +19,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import org.techteam.bashhappens.R;
-import org.techteam.bashhappens.content.ContentList;
-import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
-import org.techteam.bashhappens.content.resolvers.BashBayanResolver;
-import org.techteam.bashhappens.content.resolvers.BashCacheResolver;
-import org.techteam.bashhappens.content.resolvers.BashFavsResolver;
-import org.techteam.bashhappens.content.resolvers.BashLikesResolver;
-import org.techteam.bashhappens.db.tables.BashLikes;
-import org.techteam.bashhappens.db.tables.BashTable;
-import org.techteam.bashhappens.gui.adapters.SectionsBuilder;
-import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.gui.adapters.SectionsBuilder;
 import org.techteam.bashhappens.gui.adapters.SectionsListAdapter;
 import org.techteam.bashhappens.gui.fragments.PostsListFragment;
@@ -37,9 +26,7 @@ import org.techteam.bashhappens.gui.services.ServiceManager;
 import org.techteam.bashhappens.gui.services.VoteServiceConstants;
 import org.techteam.bashhappens.util.Toaster;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 public class MainActivity
