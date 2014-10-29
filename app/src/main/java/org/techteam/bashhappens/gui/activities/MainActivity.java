@@ -50,10 +50,6 @@ public class MainActivity
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mDrawerList;
 
-
-    private ServiceManager serviceManager = new ServiceManager(MainActivity.this);
-    private VoteBroadcastReceiver voteBroadcastReceiver;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -105,18 +101,6 @@ public class MainActivity
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        registerBroadcastReceivers();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        unregisterBroadcastReceivers();
     }
 
     @Override
@@ -193,55 +177,4 @@ public class MainActivity
         startActivity(settingsIntent);
     }
 
-
-    private void registerBroadcastReceivers() {
-        IntentFilter translationIntentFilter = new IntentFilter(VoteServiceConstants.BROADCASTER_NAME);
-        voteBroadcastReceiver = new VoteBroadcastReceiver();
-        LocalBroadcastManager.getInstance(MainActivity.this)
-                .registerReceiver(voteBroadcastReceiver, translationIntentFilter);
-    }
-
-    private void unregisterBroadcastReceivers() {
-        LocalBroadcastManager.getInstance(MainActivity.this)
-                .unregisterReceiver(voteBroadcastReceiver);
-    }
-
-
-
-
-
-
-    public final class VoteBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String id = intent.getStringExtra(VoteServiceConstants.ID);
-            String newRating = intent.getStringExtra(VoteServiceConstants.NEW_RATING);
-
-            if (newRating != null) {
-
-                Toaster.toast(context.getApplicationContext(), "Changed rating for entry #" + id);
-
-//                Translation translation = Translation.fromJsonString(data);
-//
-//                if (translation.getCode() != TranslateErrors.ERR_OK) {
-//                    Toaster.toast(context.getApplicationContext(),
-//                            TranslateErrors.getErrorMessage(translation.getCode()));
-//                } else {
-//                    TranslatorUI f = getTranslatorUIFragment();
-//                    if (f != null) {
-//                        f.setTranslatedText(translation.getText());
-//                    } else {
-//                        Toaster.toastLong(getBaseContext(), R.string.unexpected_error);
-//                    }
-//                }
-            }
-            else {
-                String error = intent.getStringExtra(VoteServiceConstants.ERROR);
-                Toaster.toast(context.getApplicationContext(), "Error for #" + id + ". " + error);
-//                Translation translation = new Translation(exception);
-//                Toaster.toastLong(MainActivity.this.getBaseContext(),
-//                        translation.getException());
-            }
-        }
-    }
 }

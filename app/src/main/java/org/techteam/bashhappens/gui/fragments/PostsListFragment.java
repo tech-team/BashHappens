@@ -122,13 +122,6 @@ public class PostsListFragment
         super.onAttach(activity);
 
         serviceManager = new ServiceManager(activity);
-
-//        try {
-//            bashVoteCallback = (OnBashEventCallback) activity;
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException(activity.toString()
-//                    + " must implement " + OnBashEventCallback.class.getName());
-//        }
     }
 
     @Override

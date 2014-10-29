@@ -89,7 +89,7 @@ public class BashVoteService extends IntentService {
 
             boolean status = vote(id, direction);
             if (status) {
-                ++ratingInt;
+                ratingInt = direction > 0 ? ratingInt + 1: ratingInt - 1;
                 newRating = ((Integer) ratingInt).toString();
             } else {
                 throw new VoteException();

@@ -1,5 +1,6 @@
 package org.techteam.bashhappens.content.bashorg.newest;
 
+import android.content.Context;
 import android.util.Log;
 
 import org.jsoup.nodes.Element;
@@ -37,14 +38,14 @@ public class BashOrgListNewest extends BashOrgList {
         return pageNum;
     }
 
-    public static BashOrgListNewest fromHtml(Element html) {
+    public static BashOrgListNewest fromHtml(Context context, Element html) {
         Element pager = html.getElementsByClass(PAGER_CLASS).get(0);
 
         int minPageNum = Integer.parseInt(pager.attr("min"));
         int maxPageNum = Integer.parseInt(pager.attr("max"));
         int pageNum = Integer.parseInt(pager.attr("value"));
 
-        ArrayList<BashOrgEntry> entries = BashOrgList.listFromHtml(html);
+        ArrayList<BashOrgEntry> entries = BashOrgList.listFromHtml(context, html);
 
         return new BashOrgListNewest(minPageNum, maxPageNum, pageNum, entries);
     }
