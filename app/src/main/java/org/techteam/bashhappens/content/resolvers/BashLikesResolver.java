@@ -7,7 +7,9 @@ import android.net.Uri;
 import org.techteam.bashhappens.content.ContentEntry;
 import org.techteam.bashhappens.content.ContentList;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
+import org.techteam.bashhappens.content.bashorg.BashOrgList;
 import org.techteam.bashhappens.db.providers.BashHappensDbProvider;
+import org.techteam.bashhappens.db.tables.BashFavs;
 import org.techteam.bashhappens.db.tables.BashLikes;
 
 
@@ -18,8 +20,25 @@ public class BashLikesResolver extends AbstractContentResolver {
     }
 
     @Override
+    protected String[] getProjection() {
+        return new String[]{BashLikes.ARTICLE_ID, BashLikes.DIRECTION};
+    }
+
+    @Override
     protected ContentList<?> getEntriesList(Cursor cur) {
-        return null;
+        cur.moveToFirst();
+
+        BashOrgList bashOrgEntryList = new BashOrgList();
+        while (!cur.isAfterLast()) {
+            BashOrgEntry entry = new BashOrgEntry()
+                    .setId(cur.getString(cur.getColumnIndex(BashLikes.ARTICLE_ID)))
+                    .setDirection(cur.getInt(cur.getColumnIndex(BashLikes.DIRECTION)));
+
+            bashOrgEntryList.add(entry);
+            cur.moveToNext();
+        }
+        cur.close();
+        return bashOrgEntryList;
     }
 
     @Override

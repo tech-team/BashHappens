@@ -43,16 +43,22 @@ public class BashHappensDbProvider extends DbProvider {
 
     @Override
     protected void queryUriMatch(Uri uri, SQLiteQueryBuilder qb, StringWrapper sortOrder) {
-        int match = mUriMatcher.match(uri);
         StringBuilder query = new StringBuilder();
-        if (match == BASH_CACHE) {
-            query.append(BashCache.TABLE_NAME);
-        }
-        else if (match == BASH_FAVS) {
-            query.append(BashFavs.TABLE_NAME);
-        }
-        else {
-            throw new IllegalArgumentException("Unknown URI" + uri);
+        switch(mUriMatcher.match(uri)) {
+            case BASH_CACHE:
+                query.append(BashCache.TABLE_NAME);
+                break;
+            case BASH_FAVS:
+                query.append(BashFavs.TABLE_NAME);
+                break;
+            case BASH_LIKES:
+                qb.setTables(BashLikes.TABLE_NAME);
+                return;
+            case BASH_BAYAN:
+                qb.setTables(BashBayan.TABLE_NAME);
+                return;
+            default:
+                throw new IllegalArgumentException("Unknown URI" + uri);
         }
         query.append(" LEFT JOIN "
                 + BashLikes.TABLE_NAME + " ON "
