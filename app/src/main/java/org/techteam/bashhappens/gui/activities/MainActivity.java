@@ -2,11 +2,15 @@ package org.techteam.bashhappens.gui.activities;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,30 +18,27 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import org.techteam.bashhappens.R;
-import org.techteam.bashhappens.content.ContentEntry;
-import org.techteam.bashhappens.content.ContentList;
-import org.techteam.bashhappens.content.bashorg.BashOrg;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
-import org.techteam.bashhappens.content.bashorg.BashOrgList;
-import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
-import org.techteam.bashhappens.content.resolvers.BashBayanResolver;
-import org.techteam.bashhappens.content.resolvers.BashCacheResolver;
-import org.techteam.bashhappens.content.resolvers.BashLikesResolver;
-import org.techteam.bashhappens.db.tables.BashCache;
+import org.techteam.bashhappens.gui.adapters.SectionsBuilder;
 import org.techteam.bashhappens.gui.adapters.SectionsListAdapter;
 import org.techteam.bashhappens.gui.fragments.PostsListFragment;
-import org.techteam.bashhappens.gui.adapters.SectionsBuilder;
+import org.techteam.bashhappens.gui.services.ServiceManager;
+import org.techteam.bashhappens.gui.services.VoteServiceConstants;
 import org.techteam.bashhappens.util.Toaster;
 
 import java.util.List;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements PostsListFragment.OnBashVoteCallback {
 
     private List<SectionsBuilder.Section> sections;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mDrawerList;
+
+
+    private ServiceManager serviceManager = new ServiceManager(MainActivity.this);
+    private VoteBroadcastReceiver voteBroadcastReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +88,18 @@ public class MainActivity extends Activity {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        registerBroadcastReceivers();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        unregisterBroadcastReceivers();
     }
 
     @Override
@@ -161,5 +174,62 @@ public class MainActivity extends Activity {
     private void showSettings() {
         Intent settingsIntent = new Intent(MainActivity.this, SettingsActivity.class);
         startActivity(settingsIntent);
+    }
+
+
+    private void registerBroadcastReceivers() {
+        IntentFilter translationIntentFilter = new IntentFilter(VoteServiceConstants.BROADCASTER_NAME);
+        voteBroadcastReceiver = new VoteBroadcastReceiver();
+        LocalBroadcastManager.getInstance(MainActivity.this)
+                .registerReceiver(voteBroadcastReceiver, translationIntentFilter);
+    }
+
+    private void unregisterBroadcastReceivers() {
+        LocalBroadcastManager.getInstance(MainActivity.this)
+                .unregisterReceiver(voteBroadcastReceiver);
+    }
+
+
+    @Override
+    public void onVote(BashOrgEntry entry, BashOrgEntry.VoteDirection direction) {
+        serviceManager.startBashVoteService(entry, direction);
+    }
+
+
+
+
+
+    public final class VoteBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String id = intent.getStringExtra(VoteServiceConstants.ID);
+            String newRating = intent.getStringExtra(VoteServiceConstants.NEW_RATING);
+
+            if (newRating != null) {
+
+                Toaster.toast(context.getApplicationContext(), "Changed rating for entry #" + id);
+
+//                Translation translation = Translation.fromJsonString(data);
+//
+//                if (translation.getCode() != TranslateErrors.ERR_OK) {
+//                    Toaster.toast(context.getApplicationContext(),
+//                            TranslateErrors.getErrorMessage(translation.getCode()));
+//                } else {
+//                    TranslatorUI f = getTranslatorUIFragment();
+//                    if (f != null) {
+//                        f.setTranslatedText(translation.getText());
+//                    } else {
+//                        Toaster.toastLong(getBaseContext(), R.string.unexpected_error);
+//                    }
+//                }
+            }
+            else {
+                String error = intent.getStringExtra(VoteServiceConstants.ERROR);
+                Toaster.toast(context.getApplicationContext(), "Error for #" + id + ". " + error);
+//                Translation translation = new Translation(exception);
+//                Toaster.toastLong(MainActivity.this.getBaseContext(),
+//                        translation.getException());
+            }
+        }
     }
 }

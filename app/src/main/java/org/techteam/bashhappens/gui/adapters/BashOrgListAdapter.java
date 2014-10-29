@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import org.techteam.bashhappens.R;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
+import org.techteam.bashhappens.gui.fragments.PostsListFragment;
 import org.techteam.bashhappens.util.Toaster;
 
 import java.util.ArrayList;
@@ -19,7 +20,8 @@ import java.util.List;
 
 public class BashOrgListAdapter
         extends RecyclerView.Adapter<BashOrgListAdapter.ViewHolder> {
-    List<BashOrgEntry> dataset;
+    private final PostsListFragment.OnBashVoteCallback voteCallback;
+    private List<BashOrgEntry> dataset;
 
     public void setAll(ArrayList<BashOrgEntry> entries) {
         //TODO: i don't think it will work such easy
@@ -70,7 +72,9 @@ public class BashOrgListAdapter
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public BashOrgListAdapter(List<BashOrgEntry> dataset) {
+    public BashOrgListAdapter(PostsListFragment.OnBashVoteCallback voteCallback,
+                              List<BashOrgEntry> dataset) {
+        this.voteCallback = voteCallback;
         this.dataset = dataset;
     }
 
@@ -142,7 +146,7 @@ public class BashOrgListAdapter
             @Override
             public void onClick(View view) {
                 Context context = view.getContext();
-
+                voteCallback.onVote(entry, BashOrgEntry.VoteDirection.UP);
                 Toaster.toast(context,
                         "Like pressed for entry.id: " + entry.getId());
             }
@@ -152,7 +156,7 @@ public class BashOrgListAdapter
             @Override
             public void onClick(View view) {
                 Context context = view.getContext();
-
+                voteCallback.onVote(entry, BashOrgEntry.VoteDirection.DOWN);
                 Toaster.toast(context,
                         "Dislike pressed for entry.id: " + entry.getId());
             }
