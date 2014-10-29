@@ -24,6 +24,9 @@ public class BashOrgListAdapter
     private final OnBashEventCallback voteCallback;
     private List<BashOrgEntry> dataset;
 
+    private int VIEW_TYPE_ENTRY = 0;
+    private int VIEW_TYPE_FOOTER = 1;
+
     public void setAll(ArrayList<BashOrgEntry> entries) {
         //TODO: i don't think it will work such easy
         dataset = entries;
@@ -83,17 +86,27 @@ public class BashOrgListAdapter
     @Override
     public BashOrgListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                             int viewType) {
-        // create a new view
-        View v = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.bashorg_list_entry, parent, false);
+        if (viewType == VIEW_TYPE_ENTRY) {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.bashorg_list_entry, parent, false);
 
-        BashOrgListAdapter.ViewHolder vh = new ViewHolder(v);
-        return vh;
+            BashOrgListAdapter.ViewHolder vh = new ViewHolder(v);
+            return vh;
+        } else {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.list_loading_entry, parent, false);
+
+            BashOrgListAdapter.ViewHolder vh = new ViewHolder(v);
+            return vh;
+        }
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
+        if (position == dataset.size())
+            return; //footer
+
         final BashOrgEntry entry = dataset.get(position);
 
         //set data
@@ -178,7 +191,6 @@ public class BashOrgListAdapter
         return dataset.get(position);
     }
 
-
     private String formatEntryForSharing(BashOrgEntry entry) {
         //TODO: make it look nice
         return entry.getText();
@@ -187,11 +199,13 @@ public class BashOrgListAdapter
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return dataset.size();
+        return dataset.size() + 1; //+footer
     }
 
-
-
+    @Override
+    public int getItemViewType(int position) {
+        return position < dataset.size() ? VIEW_TYPE_ENTRY : VIEW_TYPE_FOOTER;
+    }
 
     public interface VotedCallback {
         void onVoted(BashOrgEntry entry);
