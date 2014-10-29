@@ -33,8 +33,7 @@ import java.util.List;
 
 
 public class MainActivity
-        extends ActionBarActivity
-        implements PostsListFragment.OnBashVoteCallback {
+        extends ActionBarActivity {
 
     private List<SectionsBuilder.Section> sections;
     private DrawerLayout mDrawerLayout;
@@ -197,11 +196,6 @@ public class MainActivity
                 .unregisterReceiver(voteBroadcastReceiver);
     }
 
-
-    @Override
-    public void onVote(BashOrgEntry entry, BashOrgEntry.VoteDirection direction) {
-        serviceManager.startBashVoteService(entry, direction);
-    }
 
 
 

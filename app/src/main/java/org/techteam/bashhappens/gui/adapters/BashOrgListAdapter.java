@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import org.techteam.bashhappens.R;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
+import org.techteam.bashhappens.gui.fragments.OnBashEventCallback;
 import org.techteam.bashhappens.gui.fragments.PostsListFragment;
 import org.techteam.bashhappens.util.Toaster;
 
@@ -20,7 +21,7 @@ import java.util.List;
 
 public class BashOrgListAdapter
         extends RecyclerView.Adapter<BashOrgListAdapter.ViewHolder> {
-    private final PostsListFragment.OnBashVoteCallback voteCallback;
+    private final OnBashEventCallback voteCallback;
     private List<BashOrgEntry> dataset;
 
     public void setAll(ArrayList<BashOrgEntry> entries) {
@@ -72,7 +73,7 @@ public class BashOrgListAdapter
     }
 
     // Provide a suitable constructor (depends on the kind of dataset)
-    public BashOrgListAdapter(PostsListFragment.OnBashVoteCallback voteCallback,
+    public BashOrgListAdapter(OnBashEventCallback voteCallback,
                               List<BashOrgEntry> dataset) {
         this.voteCallback = voteCallback;
         this.dataset = dataset;
@@ -92,7 +93,7 @@ public class BashOrgListAdapter
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         final BashOrgEntry entry = dataset.get(position);
 
         //set data
@@ -103,6 +104,15 @@ public class BashOrgListAdapter
         holder.rating.setText(entry.getRating());
 
         //TODO: set buttons state according to DB
+
+
+        final VotedCallback votedCallback = new VotedCallback() {
+            @Override
+            public void onVoted(BashOrgEntry entry) {
+                holder.rating.setText(entry.getText());
+                // TODO: make things on voted
+            }
+        };
 
         //set handlers
         holder.share.setOnClickListener(new View.OnClickListener() {
@@ -146,7 +156,7 @@ public class BashOrgListAdapter
             @Override
             public void onClick(View view) {
                 Context context = view.getContext();
-                voteCallback.onVote(entry, BashOrgEntry.VoteDirection.UP);
+                voteCallback.onMakeVote(entry, position, BashOrgEntry.VoteDirection.UP, votedCallback);
                 Toaster.toast(context,
                         "Like pressed for entry.id: " + entry.getId());
             }
@@ -156,11 +166,20 @@ public class BashOrgListAdapter
             @Override
             public void onClick(View view) {
                 Context context = view.getContext();
-                voteCallback.onVote(entry, BashOrgEntry.VoteDirection.DOWN);
+                voteCallback.onMakeVote(entry, position, BashOrgEntry.VoteDirection.DOWN, votedCallback);
                 Toaster.toast(context,
                         "Dislike pressed for entry.id: " + entry.getId());
             }
         });
+    }
+
+    public BashOrgEntry get(int position) {
+        return dataset.get(position);
+    }
+
+
+    public void onVoted(BashOrgEntry entry) {
+        // TODO: handle voted event
     }
 
     private String formatEntryForSharing(BashOrgEntry entry) {
@@ -172,5 +191,12 @@ public class BashOrgListAdapter
     @Override
     public int getItemCount() {
         return dataset.size();
+    }
+
+
+
+
+    public interface VotedCallback {
+        void onVoted(BashOrgEntry entry);
     }
 }

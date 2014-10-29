@@ -19,7 +19,8 @@ public class BashVoteService extends IntentService {
     public static final class IntentKeys {
         public static final String ID = "id";
         public static final String RATING = "rating";
-        public static final String DIRECITON = "direction";
+        public static final String DIRECTION = "direction";
+        public static final String ENTRY_POSITION = "entryPosition";
     }
 
     public static final class Urls {
@@ -44,9 +45,11 @@ public class BashVoteService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        int entryPosition = intent.getIntExtra(IntentKeys.ENTRY_POSITION, -1);
+
         String id = intent.getStringExtra(IntentKeys.ID);
         String rating = intent.getStringExtra(IntentKeys.RATING);
-        int direction = intent.getIntExtra(IntentKeys.DIRECITON, 0);
+        int direction = intent.getIntExtra(IntentKeys.DIRECTION, 0);
 
         Intent localIntent;
         try {
@@ -55,14 +58,14 @@ public class BashVoteService extends IntentService {
             }
 
             String newRating = changeRating(id, rating, direction);
-            localIntent = BroadcasterIntentBuilder.buildVoteSuccessIntent(id, newRating);
+            localIntent = BroadcasterIntentBuilder.buildVoteSuccessIntent(entryPosition, id, newRating);
         }
         catch (IOException e) {
             Log.w(NAME, e);
-            localIntent = BroadcasterIntentBuilder.buildVoteErrorIntent(id, e.getMessage());
+            localIntent = BroadcasterIntentBuilder.buildVoteErrorIntent(entryPosition, id, e.getMessage());
         } catch (VoteException e) {
             Log.w(NAME, e);
-            localIntent = BroadcasterIntentBuilder.buildVoteErrorIntent(id, e.getMessage());
+            localIntent = BroadcasterIntentBuilder.buildVoteErrorIntent(entryPosition, id, e.getMessage());
         }
 
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);

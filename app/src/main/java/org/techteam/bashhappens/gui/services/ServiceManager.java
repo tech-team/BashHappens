@@ -7,7 +7,7 @@ import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 
 public final class ServiceManager {
     private final Context context;
-    private Intent translationIntent;
+    private Intent voteIntent;
 
     public ServiceManager(final Context context) {
         this.context = context;
@@ -17,11 +17,11 @@ public final class ServiceManager {
         return context;
     }
 
-    public void startBashVoteService(BashOrgEntry entry, BashOrgEntry.VoteDirection voteDirection) {
-        if (translationIntent != null) {
-            context.stopService(translationIntent);
+    public void startBashVoteService(BashOrgEntry entry, int entryPosition, BashOrgEntry.VoteDirection voteDirection) {
+        if (voteIntent != null) {
+            context.stopService(voteIntent);
         }
-        translationIntent = ServiceIntentBuilder.voteBashIntent(context, entry.getId(), entry.getRating(), voteDirection.toDirection());
-        context.startService(translationIntent);
+        voteIntent = ServiceIntentBuilder.voteBashIntent(context, entryPosition, entry.getId(), entry.getRating(), voteDirection.toDirection());
+        context.startService(voteIntent);
     }
 }

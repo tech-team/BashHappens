@@ -13,38 +13,95 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.techteam.bashhappens.R;
-import org.techteam.bashhappens.content.ContentEntry;
 import org.techteam.bashhappens.content.ContentFactory;
 import org.techteam.bashhappens.content.ContentList;
 import org.techteam.bashhappens.content.ContentSource;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.gui.adapters.BashOrgListAdapter;
 import org.techteam.bashhappens.gui.loaders.ContentAsyncLoader;
-import org.techteam.bashhappens.util.LoaderIds;
+import org.techteam.bashhappens.gui.loaders.LoaderIds;
 import org.techteam.bashhappens.util.Toaster;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class PostsListFragment
         extends Fragment
-        implements SwipeRefreshLayout.OnRefreshListener, LoaderManager.LoaderCallbacks<ContentList> {
+        implements SwipeRefreshLayout.OnRefreshListener,
+        OnBashEventCallback {
 
-    private OnBashVoteCallback bashVoteCallback;
+
 
     private static final class BundleKeys {
         public static final String FACTORY = "FACTORY";
     }
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    RecyclerView.LayoutManager mLayoutManager;
+    private RecyclerView.LayoutManager mLayoutManager;
     private RecyclerView recyclerView;
 
     private ContentFactory factory = null;
     private ContentSource content = null;
     private BashOrgListAdapter adapter = null;
-    private List<ContentEntry> list = new LinkedList<ContentEntry>();
+
+//    private VoteBroadcastReceiver voteBroadcastReceiver;
+
+    private LoaderManager.LoaderCallbacks<ContentList> contentListLoaderCallbacks = new LoaderManager.LoaderCallbacks<ContentList>() {
+
+        @Override
+        public Loader<ContentList> onCreateLoader(int i, Bundle bundle) {
+            switch (i) {
+                case LoaderIds.CONTENT_LOADER:
+                    return new ContentAsyncLoader(getActivity(), content);
+            }
+            throw new IllegalArgumentException("Loader with given id is not found");
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public void onLoadFinished(Loader<ContentList> contentListLoader, ContentList contentList) {
+            mSwipeRefreshLayout.setRefreshing(false);
+
+            switch (contentList.getStoredContentType()) {
+                case BASH_ORG:
+                    ArrayList<BashOrgEntry> entries = contentList.getEntries();
+                    if (adapter == null) {
+                        // TODO: кажется слишком глупо пересоздавать adapter каждый раз, когда обновляем, надо "добавлять" в начало массива, но в то же время учесть пересоздание адаптера, если меняется источник данных
+                        adapter = new BashOrgListAdapter(PostsListFragment.this, entries);
+                        recyclerView.setAdapter(adapter);
+                    } else {
+                        adapter.addAll(entries);
+                    }
+                    break;
+                case IT_HAPPENS:
+                    // TODO: add ItHappens adapter
+                    break;
+            }
+        }
+
+        @Override
+        public void onLoaderReset(Loader<ContentList> contentListLoader) {
+            // TODO
+        }
+    };
+
+
+    private LoaderManager.LoaderCallbacks<Void> voteLoaderCallbacks = new LoaderManager.LoaderCallbacks<Void>() {
+        @Override
+        public Loader<Void> onCreateLoader(int i, Bundle bundle) {
+            return null;
+        }
+
+        @Override
+        public void onLoadFinished(Loader<Void> contentListLoader, Void v) {
+
+        }
+
+        @Override
+        public void onLoaderReset(Loader<Void> contentListLoader) {
+
+        }
+    };
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -69,12 +126,12 @@ public class PostsListFragment
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        try {
-            bashVoteCallback = (OnBashVoteCallback) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement " + OnBashVoteCallback.class.getName());
-        }
+//        try {
+//            bashVoteCallback = (OnBashEventCallback) activity;
+//        } catch (ClassCastException e) {
+//            throw new ClassCastException(activity.toString()
+//                    + " must implement " + OnBashEventCallback.class.getName());
+//        }
     }
 
     @Override
@@ -88,7 +145,7 @@ public class PostsListFragment
         }
         content = factory.buildContent(ContentFactory.ContentSection.BASH_ORG_NEWEST);
 
-        getLoaderManager().initLoader(LoaderIds.CONTENT_LOADER, null, this);
+        getLoaderManager().initLoader(LoaderIds.CONTENT_LOADER, null, contentListLoaderCallbacks);
     }
 
     @Override
@@ -105,50 +162,72 @@ public class PostsListFragment
         // TODO: смотри TODO в onLoadFinished() ниже
         adapter = null;
         content = factory.buildContent(ContentFactory.ContentSection.BASH_ORG_NEWEST, true);
-        getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, null, PostsListFragment.this);
+        getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, null, contentListLoaderCallbacks);
     }
+
+
+
+
+
 
     @Override
-    public Loader<ContentList> onCreateLoader(int i, Bundle bundle) {
-        switch (i) {
-            case LoaderIds.CONTENT_LOADER:
-                return new ContentAsyncLoader(getActivity(), content);
-        }
-        throw new IllegalArgumentException("Loader with given id is not found");
+    public void onMakeVote(BashOrgEntry entry, int entryPosition, BashOrgEntry.VoteDirection direction, BashOrgListAdapter.VotedCallback votedCallback) {
+        getLoaderManager().restartLoader(LoaderIds.VOTE_LOADER, null, voteLoaderCallbacks);
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public void onLoadFinished(Loader<ContentList> contentListLoader, ContentList contentList) {
-        mSwipeRefreshLayout.setRefreshing(false);
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        registerBroadcastReceivers();
+//    }
+//
+//    @Override
+//    public void onPause() {
+//        super.onPause();
+//        unregisterBroadcastReceivers();
+//    }
+//
+//
+//
+//    private void registerBroadcastReceivers() {
+//        IntentFilter translationIntentFilter = new IntentFilter(VoteServiceConstants.BROADCASTER_NAME);
+//        voteBroadcastReceiver = new VoteBroadcastReceiver();
+//        LocalBroadcastManager.getInstance(PostsListFragment.this.getActivity())
+//                .registerReceiver(voteBroadcastReceiver, translationIntentFilter);
+//    }
+//
+//    private void unregisterBroadcastReceivers() {
+//        LocalBroadcastManager.getInstance(PostsListFragment.this.getActivity())
+//                .unregisterReceiver(voteBroadcastReceiver);
+//    }
 
-        switch (contentList.getStoredContentType()) {
-            case BASH_ORG:
-                if (adapter == null) {
-                    // TODO: кажется слишком глупо пересоздавать adapter каждый раз, когда обновляем, надо "добавлять" в начало массива, но в то же время учесть пересоздание адаптера, если меняется источник данных
-                    adapter = new BashOrgListAdapter(bashVoteCallback, contentList.getEntries());
-                    recyclerView.setAdapter(adapter);
-                } else {
-                    adapter.addAll(contentList.getEntries());
-                }
-                break;
-            case IT_HAPPENS:
-                // TODO: add ItHappens adapter
-                break;
-        }
-    }
-
-    @Override
-    public void onLoaderReset(Loader<ContentList> contentListLoader) {
-        // TODO
-    }
 
 
 
-    public interface OnBashVoteCallback {
-        void onVote(BashOrgEntry entry, BashOrgEntry.VoteDirection direction);
-    }
 
-    public interface OnItHappensVoteCallback {
-    }
+
+
+
+
+
+//    public final class VoteBroadcastReceiver extends BroadcastReceiver {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            String id = intent.getStringExtra(VoteServiceConstants.ID);
+//            String newRating = intent.getStringExtra(VoteServiceConstants.NEW_RATING);
+//            int position = intent.getIntExtra(VoteServiceConstants.ENTRY_POSITION, -1);
+//
+//            BashOrgEntry entry = adapter.get(position);
+//            entry.setRating(newRating);
+//
+//            if (newRating != null) {
+//                adapter.onVoted(entry);
+//                Toaster.toast(context.getApplicationContext(), "Changed rating for entry #" + id);
+//            }
+//            else {
+//                String error = intent.getStringExtra(VoteServiceConstants.ERROR);
+//                Toaster.toast(context.getApplicationContext(), "Error for #" + id + ". " + error);
+//            }
+//        }
+//    }
 }
