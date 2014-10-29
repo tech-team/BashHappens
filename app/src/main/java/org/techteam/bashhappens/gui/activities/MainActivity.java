@@ -1,5 +1,7 @@
 package org.techteam.bashhappens.gui.activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
@@ -30,7 +32,9 @@ import org.techteam.bashhappens.util.Toaster;
 import java.util.List;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity
+        extends ActionBarActivity
+        implements PostsListFragment.OnBashVoteCallback {
 
     private List<SectionsBuilder.Section> sections;
     private DrawerLayout mDrawerLayout;
