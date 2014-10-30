@@ -153,12 +153,7 @@ public class BashOrgListAdapter
                 Toaster.toast(context,
                         "Share pressed for entry.id: " + entry.getId());
 
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT,
-                        BashOrgListAdapter.this.formatEntryForSharing(entry));
-                sendIntent.setType("text/plain");
-                context.startActivity(sendIntent);
+                share(context, entry);
             }
         });
 
@@ -203,13 +198,40 @@ public class BashOrgListAdapter
         });
     }
 
+    private void share(Context context, BashOrgEntry entry) {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT,
+                BashOrgListAdapter.this.formatEntryForSharing(context, entry));
+        sendIntent.setType("text/plain");
+        context.startActivity(sendIntent);
+    }
+
     public BashOrgEntry get(int position) {
         return dataset.get(position);
     }
 
-    private String formatEntryForSharing(BashOrgEntry entry) {
-        //TODO: make it look nice
-        return entry.getText();
+    private String formatEntryForSharing(Context context, BashOrgEntry entry) {
+        StringBuilder sb = new StringBuilder();
+
+        String delimiter = "\n";
+        String emptyLine = " \n";
+        String hashTag = "#" + context.getString(R.string.app_name);
+
+        sb.append(context.getString(R.string.app_name));
+        sb.append(delimiter);
+        sb.append(entry.getCreationDate());
+        sb.append(delimiter);
+        sb.append(emptyLine);
+        sb.append(entry.getText());
+        sb.append(delimiter);
+        //TODO: append real link
+        sb.append(delimiter);
+        sb.append("http://bash.im");
+        sb.append(delimiter);
+        sb.append(hashTag);
+
+        return sb.toString();
     }
 
     // Return the size of your dataset (invoked by the layout manager)
