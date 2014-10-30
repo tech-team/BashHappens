@@ -81,7 +81,7 @@ public class PostsListFragment
             mSwipeRefreshLayout.setRefreshing(false);
 
             //TODO: obtain that value from Bundle
-            int intention = LoadIntention.APPEND;
+            int intention = LoadIntention.REFRESH;
 
             switch (contentList.getStoredContentType()) {
                 case BASH_ORG:
