@@ -11,7 +11,10 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:minHeight="?attr/actionBarSize"
-        android:theme="@style/Base.Theme.AppCompat.Light.DarkActionBar"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        style="@style/HeaderBar"
+        app:theme="@style/ActionBarThemeOverlay"
+        app:popupTheme="@style/ActionBarPopupThemeOverlay"
         />
 
     <LinearLayout
