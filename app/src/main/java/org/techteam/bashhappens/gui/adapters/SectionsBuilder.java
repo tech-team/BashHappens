@@ -43,7 +43,7 @@ public class SectionsBuilder {
     public static class SelectableSection implements Section {
         public SelectableSection(String label, GroupSection group, ContentFactory.ContentSection contentSection) {
             this.sideMenuText = label;
-            this.actionBarText = group.getSideMenuText() + ":" + sideMenuText;
+            this.actionBarText = group.getSideMenuText() + ": " + sideMenuText;
             this.contentSection = contentSection;
         }
 
@@ -136,5 +136,9 @@ public class SectionsBuilder {
                 ContentFactory.ContentSection.IT_HAPPENS_NEWEST));
 
         return sections;
+    }
+
+    public static int getDefaultSectionId() {
+        return 1;
     }
 }

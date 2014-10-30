@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:minHeight="?attr/actionBarSize"
-        android:background="#3DAEFF"
+        android:theme="@style/Base.Theme.AppCompat.Light.DarkActionBar"
         />
 
     <android.support.v4.widget.DrawerLayout

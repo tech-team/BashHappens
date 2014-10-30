@@ -1,12 +1,8 @@
 package org.techteam.bashhappens.gui.activities;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -22,8 +18,6 @@ import org.techteam.bashhappens.R;
 import org.techteam.bashhappens.gui.adapters.SectionsBuilder;
 import org.techteam.bashhappens.gui.adapters.SectionsListAdapter;
 import org.techteam.bashhappens.gui.fragments.PostsListFragment;
-import org.techteam.bashhappens.gui.services.ServiceManager;
-import org.techteam.bashhappens.gui.services.VoteServiceConstants;
 import org.techteam.bashhappens.util.Toaster;
 
 import java.util.List;
@@ -36,6 +30,8 @@ public class MainActivity
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mDrawerList;
+
+    private SectionsListAdapter sectionsListAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +51,10 @@ public class MainActivity
 
         // Set the adapter for the list view
         sections = SectionsBuilder.getSections();
-        SectionsListAdapter sectionsListAdapter = new SectionsListAdapter(this.getBaseContext(), sections);
+        sectionsListAdapter = new SectionsListAdapter(this.getBaseContext(), sections);
         mDrawerList.setAdapter(sectionsListAdapter);
+        selectItem(SectionsBuilder.getDefaultSectionId());
+
         // Set the list's click listener
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
@@ -64,7 +62,7 @@ public class MainActivity
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,                  /* host Activity */
                 mDrawerLayout,         /* DrawerLayout object */
-                toolbar,  /* nav drawer icon to replace 'Up' caret */
+                //toolbar,  /* nav drawer icon to replace 'Up' caret */
                 R.string.drawer_open,  /* "open drawer" description */
                 R.string.drawer_close  /* "close drawer" description */
         ) {
@@ -117,7 +115,7 @@ public class MainActivity
         //TODO: change data source here via section.getContentSection()
 
         // Highlight the selected item, update the title, and close the drawer
-        mDrawerList.setItemChecked(position, true); //TODO: it does nothing
+        sectionsListAdapter.selectItem(position);
         setTitle(section.getActionBarText());
         mDrawerLayout.closeDrawer(mDrawerList);
     }

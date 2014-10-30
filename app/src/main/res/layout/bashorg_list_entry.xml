@@ -65,7 +65,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="?android:attr/buttonBarButtonStyle"
-                    android:src="@android:drawable/button_onoff_indicator_off" />
+                    android:src="@drawable/ic_action_bad"
+                    android:contentDescription="@string/post_dislike" />
 
                 <TextView
                     android:id="@+id/post_rating"
@@ -80,7 +81,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="?android:attr/buttonBarButtonStyle"
-                    android:src="@android:drawable/ic_input_add" />
+                    android:src="@drawable/ic_action_good"
+                    android:contentDescription="@string/post_like" />
                 </LinearLayout>
 
             <Button
@@ -99,7 +101,8 @@
                 android:layout_weight="1"
                 android:singleLine="true"
                 style="?android:attr/buttonBarButtonStyle"
-                android:src="@android:drawable/ic_menu_share" />
+                android:src="@drawable/ic_action_share"
+                android:contentDescription="@string/post_share" />
 
             <ImageButton
                 android:id="@+id/post_fav"
@@ -107,7 +110,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 style="?android:attr/buttonBarButtonStyle"
-                android:src="@android:drawable/btn_star_big_off" />
+                android:src="@drawable/ic_action_not_important"
+                android:contentDescription="@string/post_fav" />
 
         </LinearLayout>
 

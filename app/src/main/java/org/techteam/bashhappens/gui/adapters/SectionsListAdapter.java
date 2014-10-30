@@ -1,6 +1,7 @@
 package org.techteam.bashhappens.gui.adapters;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -17,13 +18,11 @@ public class SectionsListAdapter
         extends ArrayAdapter<SectionsBuilder.Section> {
 
 
+    private int selectedItem;
+
     public SectionsListAdapter(Context context, List<SectionsBuilder.Section> sections) {
         super(context, 0, sections);
     }
-
-//    public List<SectionsBuilder.Section> getSections() {
-//        return sections;
-//    }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -47,7 +46,15 @@ public class SectionsListAdapter
 
         viewHolder.text.setText(section.getSideMenuText());
 
+        viewHolder.text.setTypeface(null,
+                position == selectedItem ? Typeface.BOLD : Typeface.NORMAL);
+
         return convertView;
+    }
+
+    public void selectItem(int selectedItem){
+        this.selectedItem = selectedItem;
+        notifyDataSetChanged();
     }
 
     @Override

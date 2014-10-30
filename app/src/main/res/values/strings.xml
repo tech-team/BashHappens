@@ -22,5 +22,9 @@
     <string name="pref_text_size_key">pref_text_size_key</string>
     <string name="pref_text_size_title">Text size</string>
     <string name="settings_activity_title">Settings</string>
+    <string name="post_dislike">Dislike</string>
+    <string name="post_like">Like</string>
+    <string name="post_share">Share</string>
+    <string name="post_fav">Add to favorites</string>
 
 </resources>
