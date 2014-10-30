@@ -116,7 +116,7 @@ public class SectionsBuilder {
                 ContentFactory.ContentSection.BASH_ORG_NEWEST));
 
 
-        //*********************ITHAPPENS************************
+        //*********************IT HAPPENS***********************
         GroupSection itHappens = new GroupSection("IT Happens");
 
         sections.add(itHappens);
