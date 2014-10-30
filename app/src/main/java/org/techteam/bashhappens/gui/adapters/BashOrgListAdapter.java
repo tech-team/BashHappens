@@ -137,6 +137,11 @@ public class BashOrgListAdapter
 
                 // TODO: make things on voted
             }
+
+            @Override
+            public void onBayan(BashOrgEntry entry) {
+                // TODO: make things on bayan
+            }
         };
 
         //set handlers
@@ -171,7 +176,7 @@ public class BashOrgListAdapter
             @Override
             public void onClick(View view) {
                 Context context = view.getContext();
-
+                voteCallback.onMakeVote(entry, position, BashOrgEntry.VoteDirection.BAYAN, votedCallback);
                 Toaster.toast(context,
                         "Bayan pressed for entry.id: " + entry.getId());
             }
@@ -220,5 +225,6 @@ public class BashOrgListAdapter
 
     public interface VotedCallback {
         void onVoted(BashOrgEntry entry);
+        void onBayan(BashOrgEntry entry);
     }
 }

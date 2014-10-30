@@ -61,7 +61,8 @@ public class PostsListFragment
     private ServiceManager serviceManager = null;
     private VoteBroadcastReceiver voteBroadcastReceiver;
 
-    private Map<Integer, BashOrgListAdapter.VotedCallback> votedCallbackMap = new HashMap<Integer, BashOrgListAdapter.VotedCallback>();
+    private SparseArray<BashOrgListAdapter.VotedCallback> votedCallbackMap = new SparseArray<BashOrgListAdapter.VotedCallback>();
+    private SparseArray<BashOrgListAdapter.VotedCallback> votedBayanCallbackMap = new SparseArray<BashOrgListAdapter.VotedCallback>();
 
 
     private LoaderManager.LoaderCallbacks<ContentList> contentListLoaderCallbacks = new LoaderManager.LoaderCallbacks<ContentList>() {
@@ -235,10 +236,10 @@ public class PostsListFragment
 
 
     private void registerBroadcastReceivers() {
-        IntentFilter translationIntentFilter = new IntentFilter(VoteServiceConstants.BROADCASTER_NAME);
+        IntentFilter voteIntentFilter = new IntentFilter(VoteServiceConstants.BROADCASTER_NAME);
         voteBroadcastReceiver = new VoteBroadcastReceiver();
         LocalBroadcastManager.getInstance(PostsListFragment.this.getActivity())
-                .registerReceiver(voteBroadcastReceiver, translationIntentFilter);
+                .registerReceiver(voteBroadcastReceiver, voteIntentFilter);
     }
 
     private void unregisterBroadcastReceivers() {
@@ -260,18 +261,26 @@ public class PostsListFragment
         public void onReceive(Context context, Intent intent) {
             String id = intent.getStringExtra(VoteServiceConstants.ID);
             String newRating = intent.getStringExtra(VoteServiceConstants.NEW_RATING);
+            boolean bayanOk = intent.getBooleanExtra(VoteServiceConstants.BAYAN_OK, false);
             int position = intent.getIntExtra(VoteServiceConstants.ENTRY_POSITION, -1);
+            String error = intent.getStringExtra(VoteServiceConstants.ERROR);
 
-            BashOrgEntry entry = adapter.get(position);
-            entry.setRating(newRating);
+            if (error == null) {
 
-            if (newRating != null) {
-                votedCallbackMap.get(position).onVoted(entry);
+                BashOrgEntry entry = adapter.get(position);
+                BashOrgListAdapter.VotedCallback cb = votedCallbackMap.get(position);
 
-                Toaster.toast(context.getApplicationContext(), "Changed rating for entry #" + id);
+                if (newRating != null) {
+                    entry.setRating(newRating);
+                    cb.onVoted(entry);
+                    Toaster.toast(context.getApplicationContext(), "Changed rating for entry #" + id);
+                } else if (bayanOk) {
+                    entry.setBayan(true);
+                    cb.onBayan(entry);
+                    Toaster.toast(context.getApplicationContext(), "Set bayan for entry #" + id);
+                }
             }
             else {
-                String error = intent.getStringExtra(VoteServiceConstants.ERROR);
                 Toaster.toast(context.getApplicationContext(), "Error for #" + id + ". " + error);
             }
         }

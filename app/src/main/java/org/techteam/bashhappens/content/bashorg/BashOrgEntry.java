@@ -18,7 +18,8 @@ public class BashOrgEntry extends ContentEntry {
 
     public enum VoteDirection {
         UP,
-        DOWN;
+        DOWN,
+        BAYAN;
 
         public int toDirection() {
             if (this == UP) {

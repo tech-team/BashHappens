@@ -15,4 +15,12 @@ public final class ServiceIntentBuilder {
         return intent;
     }
 
+    public static Intent voteBayanBashIntent(Context context, int entryPosition, String id) {
+        Intent intent = new Intent(context, BashVoteService.class);
+        intent.putExtra(BashVoteService.IntentKeys.ENTRY_POSITION, entryPosition);
+        intent.putExtra(BashVoteService.IntentKeys.ID, id);
+        intent.putExtra(BashVoteService.IntentKeys.BAYAN, true);
+        return intent;
+    }
+
 }
