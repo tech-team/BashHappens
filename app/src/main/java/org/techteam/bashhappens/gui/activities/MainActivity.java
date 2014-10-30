@@ -3,6 +3,7 @@ package org.techteam.bashhappens.gui.activities;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -33,6 +34,10 @@ public class MainActivity
 
     private SectionsListAdapter sectionsListAdapter;
 
+    private static final class BundleKeys {
+        public static final String SECTION_ID = "SECTION_ID";
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,7 +58,11 @@ public class MainActivity
         sections = SectionsBuilder.getSections();
         sectionsListAdapter = new SectionsListAdapter(this.getBaseContext(), sections);
         mDrawerList.setAdapter(sectionsListAdapter);
-        selectItem(SectionsBuilder.getDefaultSectionId());
+
+        if (savedInstanceState != null)
+            selectItem(savedInstanceState.getInt(BundleKeys.SECTION_ID));
+        else
+            selectItem(SectionsBuilder.getDefaultSectionId());
 
         // Set the list's click listener
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
@@ -86,6 +95,13 @@ public class MainActivity
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeButtonEnabled(true);
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt(BundleKeys.SECTION_ID, sectionsListAdapter.getSelectedItemId());
     }
 
     @Override

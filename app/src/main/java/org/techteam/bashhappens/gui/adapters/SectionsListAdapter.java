@@ -75,6 +75,10 @@ public class SectionsListAdapter
         return 2; //header + section
     }
 
+    public int getSelectedItemId() {
+        return selectedItem;
+    }
+
     private class ViewHolder {
         public TextView text;
     }
