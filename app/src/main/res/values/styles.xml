@@ -21,7 +21,7 @@
     </style>
 
     <style name="HeaderBar">
-        <item name="android:background">#000</item>
+        <item name="android:background">#ff1631a7</item>
     </style>
 
     <style name="ActionBarPopupThemeOverlay" parent="ThemeOverlay.AppCompat.Light" >

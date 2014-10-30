@@ -55,7 +55,7 @@ public class BashOrgNewest extends BashOrg {
     }
 
     @Override
-    public ContentList<BashOrgEntry> retrieveNextList(Context context) throws IOException, FeedOverException, ContentParseException {
+    public ContentList<BashOrgEntry> retrieveNextList(Context context) throws FeedOverException, ContentParseException {
         if (feedOver) {
             throw new FeedOverException("Feed is over");
         }

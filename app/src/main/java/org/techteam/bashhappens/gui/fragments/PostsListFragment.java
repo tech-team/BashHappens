@@ -78,44 +78,51 @@ public class PostsListFragment
         @SuppressWarnings("unchecked")
         @Override
         public void onLoadFinished(Loader<ContentList> contentListLoader, ContentList contentList) {
+            // TODO: add exception information to contentList
+
+
             mSwipeRefreshLayout.setRefreshing(false);
 
-            //TODO: obtain that value from Bundle
-            int intention = LoadIntention.REFRESH;
+            if (contentList != null) {
+                //TODO: obtain that value from Bundle
+                int intention = LoadIntention.REFRESH;
 
-            switch (contentList.getStoredContentType()) {
-                case BASH_ORG:
-                    final ArrayList<BashOrgEntry> entries = contentList.getEntries();
-                    if (intention == LoadIntention.REFRESH) {
-                        adapter.setAll(entries);
-                        if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
-                            adapter.notifyDataSetChanged();
-                        } else {
-                            delayedAdapterNotifications.add(new Runnable() {
-                                @Override
-                                public void run() {
-                                    adapter.notifyDataSetChanged();
-                                }
-                            });
+                switch (contentList.getStoredContentType()) {
+                    case BASH_ORG:
+                        final ArrayList<BashOrgEntry> entries = contentList.getEntries();
+                        if (intention == LoadIntention.REFRESH) {
+                            adapter.setAll(entries);
+                            if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
+                                adapter.notifyDataSetChanged();
+                            } else {
+                                delayedAdapterNotifications.add(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                });
+                            }
+                        } else if (intention == LoadIntention.APPEND) {
+                            final int oldCount = adapter.getItemCount();
+                            adapter.addAll(entries);
+                            if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
+                                adapter.notifyItemRangeInserted(oldCount, entries.size());
+                            } else {
+                                delayedAdapterNotifications.add(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        adapter.notifyItemRangeInserted(oldCount, entries.size());
+                                    }
+                                });
+                            }
                         }
-                    } else if (intention == LoadIntention.APPEND) {
-                        final int oldCount = adapter.getItemCount();
-                        adapter.addAll(entries);
-                        if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
-                            adapter.notifyItemRangeInserted(oldCount, entries.size());
-                        } else {
-                            delayedAdapterNotifications.add(new Runnable() {
-                                @Override
-                                public void run() {
-                                    adapter.notifyItemRangeInserted(oldCount, entries.size());
-                                }
-                            });
-                        }
-                    }
-                    break;
-                case IT_HAPPENS:
-                    // TODO: add ItHappens adapter
-                    break;
+                        break;
+                    case IT_HAPPENS:
+                        // TODO: add ItHappens adapter
+                        break;
+                }
+            } else {
+                Toaster.toast(getActivity().getBaseContext(), "Error while loading");
             }
         }
 
