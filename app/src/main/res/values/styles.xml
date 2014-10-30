@@ -25,8 +25,7 @@
     </style>
 
     <style name="ActionBarPopupThemeOverlay" parent="ThemeOverlay.AppCompat.Light" >
-        <item name="android:background">@android:color/white</item>
-        <item name="android:textColor">#000</item>
+        <!-- Want to style this? Be smart - use selector -->
     </style>
 
 
