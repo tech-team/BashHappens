@@ -8,7 +8,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.Loader;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -40,9 +43,11 @@ import java.util.Queue;
 
 public class PostsListFragment
         extends Fragment
-        implements SwipeRefreshLayout.OnRefreshListener,
+        implements
+        SwipeRefreshLayout.OnRefreshListener,
         OnBashEventCallback,
-        OnListScrolledDownCallback {
+        OnListScrolledDownCallback,
+        SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static final class BundleKeys {
         public static final String FACTORY = "FACTORY";
@@ -185,6 +190,9 @@ public class PostsListFragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+        sharedPref.registerOnSharedPreferenceChangeListener(this);
+
         if (savedInstanceState == null) {
             factory = new ContentFactory(Locale.getDefault().toString());
         } else {
@@ -289,6 +297,46 @@ public class PostsListFragment
             }
             else {
                 Toaster.toast(context.getApplicationContext(), "Error for #" + id + ". " + error);
+            }
+        }
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (isAdded()) {
+            Resources res = getResources();
+
+            int resId = res.getIdentifier(key, "string", getActivity().getPackageName());
+
+            //TODO: move defaults somewhere
+            switch (resId) {
+                case R.string.pref_justify_by_width_key:
+                    Toaster.toast(getActivity().getBaseContext(),
+                            "You have changed "+ key + " to " + sharedPreferences.getBoolean(key, false));
+
+                    break;
+                case R.string.pref_night_mode_key:
+                    Toaster.toast(getActivity().getBaseContext(),
+                            "You have changed "+ key + " to " + sharedPreferences.getBoolean(key, false));
+
+                    break;
+
+                case R.string.pref_shorten_long_posts_key:
+                    Toaster.toast(getActivity().getBaseContext(),
+                            "You have changed "+ key + " to " + sharedPreferences.getBoolean(key, false));
+
+                    break;
+
+                case R.string.pref_text_size_key:
+                    Toaster.toast(getActivity().getBaseContext(),
+                            "You have changed "+ key + " to " + sharedPreferences.getString(key, "small"));
+
+                    break;
+
+                default:
+                    Toaster.toast(getActivity().getBaseContext(),
+                            "You have changed not existing preference, congrats!");
+                    break;
             }
         }
     }
