@@ -8,6 +8,7 @@ import org.techteam.bashhappens.content.ContentType;
 
 public class BashOrgEntry extends ContentEntry {
     private static final String LOG_TAG = BashOrgEntry.class.toString();
+    private String link = "http://bash.im"; //TODO: fixme
 
     public static final class DOM {
         public static final String DOM_CLASS_NAME = "quote";
@@ -76,6 +77,10 @@ public class BashOrgEntry extends ContentEntry {
 
     public String getRating() {
         return rating;
+    }
+
+    public String getLink() {
+        return link;
     }
 
     public BashOrgEntry setRating(String rating) {

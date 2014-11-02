@@ -19,18 +19,34 @@
         <TextView
             android:id="@+id/post_id"
             android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/post_header"
-            android:text="#12345" />
+            style="@style/post_header" />
+
+        <ImageButton
+            android:id="@+id/overflow_button"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="-7dp"
+            android:layout_marginRight="-8dp"
+            android:layout_marginEnd="-8dp"
+            android:layout_height="wrap_content"
+            android:scaleType="centerInside"
+            android:scaleX="0.7"
+            android:scaleY="0.7"
+            android:src="@drawable/ic_action_overflow"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/open_context_menu" />
 
         <TextView
             android:id="@+id/post_date"
-            android:layout_alignParentRight="true"
+            android:layout_toLeftOf="@id/overflow_button"
+            android:layout_toStartOf="@id/overflow_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/post_header"
-            android:text="23.10.14" />
+            style="@style/post_header" />
 
         <TextView
             android:id="@+id/post_text"

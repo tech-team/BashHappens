@@ -11,5 +11,13 @@
     <string name="post_like">Like</string>
     <string name="post_share">Share</string>
     <string name="post_fav">Add to favorites</string>
+    <string name="copy_text">Copy text</string>
+    <string name="copy_link">Copy link</string>
+    <string name="delete">Delete</string>
+    <string name="open_context_menu">Open context menu</string>
+    <string name="clipboard_label_for_post">BashHappens (post text)</string>
+    <string name="clipboard_label_for_link">BashHappens (post link)</string>
+    <string name="post_text_copied">Text copied</string>
+    <string name="post_link_copied">Link copied</string>
 
 </resources>

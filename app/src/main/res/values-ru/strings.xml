@@ -11,5 +11,13 @@
     <string name="post_like">Нравится</string>
     <string name="post_share">Поделиться</string>
     <string name="post_fav">Добавить в избранное</string>
+    <string name="copy_text">Копировать текст</string>
+    <string name="copy_link">Копировать ссылку</string>
+    <string name="delete">Удалить</string>
+    <string name="open_context_menu">Открыть контекстное меню</string>
+    <string name="clipboard_label_for_post">BashHappens (цитата)</string>
+    <string name="clipboard_label_for_link">BashHappens (ссылка)</string>
+    <string name="post_text_copied">Текст скопирован</string>
+    <string name="post_link_copied">Ссылка скопирована</string>
 
 </resources>

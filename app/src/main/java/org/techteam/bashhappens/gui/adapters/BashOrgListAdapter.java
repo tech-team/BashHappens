@@ -1,13 +1,20 @@
 package org.techteam.bashhappens.gui.adapters;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import org.techteam.bashhappens.R;
@@ -15,6 +22,7 @@ import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.gui.fragments.OnBashEventCallback;
 import org.techteam.bashhappens.gui.fragments.OnListScrolledDownCallback;
 import org.techteam.bashhappens.gui.fragments.PostsListFragment;
+import org.techteam.bashhappens.util.Clipboard;
 import org.techteam.bashhappens.util.Toaster;
 
 import java.util.ArrayList;
@@ -47,6 +55,7 @@ public class BashOrgListAdapter
         //header
         public TextView id;
         public TextView date;
+        public ImageButton overflow;
 
         //content
         public TextView text;
@@ -65,6 +74,7 @@ public class BashOrgListAdapter
 
             id = (TextView) v.findViewById(R.id.post_id);
             date = (TextView) v.findViewById(R.id.post_date);
+            overflow = (ImageButton) v.findViewById(R.id.overflow_button);
 
             text = (TextView) v.findViewById(R.id.post_text);
 
@@ -196,6 +206,47 @@ public class BashOrgListAdapter
                         "Dislike pressed for entry.id: " + entry.getId());
             }
         });
+
+        holder.overflow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Context context = v.getContext();
+
+                PopupMenu menu = new PopupMenu(context, v);
+                menu.inflate(R.menu.entry_context_menu);
+
+                menu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+                        switch (item.getItemId()) {
+                            case R.id.copy_text:
+                                Clipboard.copyText(
+                                        context,
+                                        R.string.clipboard_label_for_post,
+                                        entry.getText());
+
+                                Toaster.toast(context, context.getString(R.string.post_text_copied));
+
+                                return true;
+                            case R.id.copy_link:
+                                Clipboard.copyText(
+                                        context,
+                                        R.string.clipboard_label_for_link,
+                                        entry.getLink());
+
+                                Toaster.toast(context, context.getString(R.string.post_link_copied));
+
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                });
+
+                menu.show();
+            }
+        });
     }
 
     private void share(Context context, BashOrgEntry entry) {
@@ -225,9 +276,8 @@ public class BashOrgListAdapter
         sb.append(emptyLine);
         sb.append(entry.getText());
         sb.append(delimiter);
-        //TODO: append real link
         sb.append(delimiter);
-        sb.append("http://bash.im");
+        sb.append(entry.getLink());
         sb.append(delimiter);
         sb.append(hashTag);
 
