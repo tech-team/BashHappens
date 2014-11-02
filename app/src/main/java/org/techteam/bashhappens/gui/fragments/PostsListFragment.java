@@ -127,7 +127,7 @@ public class PostsListFragment
                         break;
                 }
             } else {
-                Toaster.toast(getActivity().getBaseContext(), "Error while loading");
+                Toaster.toast(getActivity().getBaseContext(), getActivity().getString(R.string.loading_error));
             }
         }
 
@@ -297,6 +297,8 @@ public class PostsListFragment
             }
             else {
                 Toaster.toast(context.getApplicationContext(), "Error for #" + id + ". " + error);
+                //TODO: not intuitive for user, i think all we need to do - check for connection
+                //and do nothing in case when connection exists, but like failed
             }
         }
     }
@@ -335,7 +337,7 @@ public class PostsListFragment
 
                 default:
                     Toaster.toast(getActivity().getBaseContext(),
-                            "You have changed not existing preference, congrats!");
+                            getActivity().getString(R.string.preferences_error));
                     break;
             }
         }

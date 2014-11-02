@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">BashHappens</string>
+    <string name="action_settings">Преференции</string>
+    <string name="loading">Загрузка…</string>
+    <string name="drawer_open">Открыть меню разделов</string>
+    <string name="drawer_close">Закрыть меню разделов</string>
+    <string name="settings_activity_title">Преференции</string>
+    <string name="post_dislike">Не нравится</string>
+    <string name="post_like">Нравится</string>
+    <string name="post_share">Поделиться</string>
+    <string name="post_fav">Добавить в избранное</string>
+
+</resources>

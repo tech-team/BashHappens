@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="pref_visual">Интерфейс</string>
+    <string name="pref_shorten_long_posts_title">Сокращать длинные цитаты</string>
+    <string name="pref_shorten_long_posts_summ">Нажмите на цитату, чтобы развернуть</string>
+    <string name="pref_justify_by_width_title">Выравнивание по ширине</string>
+    <string name="pref_justify_by_width_summ">Выравнивание текста цитат по ширине</string>
+    <string name="pref_night_mode_title">Ночной режим</string>
+    <string name="pref_night_mode_summ">Белым по чёерному</string>
+    <string name="pref_text_size_title">Размер шрифта</string>
+
+</resources>

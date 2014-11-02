@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="pref_visual">Visual</string>
+    <string name="pref_visual_key">pref_visual_key</string>
+    <string name="pref_shorten_long_posts_key">pref_shorten_long_posts_key</string>
+    <string name="pref_shorten_long_posts_title">Shorten long posts</string>
+    <string name="pref_shorten_long_posts_summ">Click to post to expand it</string>
+    <string name="pref_justify_by_width_key">pref_justify_by_width_key</string>
+    <string name="pref_justify_by_width_title">Justify by width</string>
+    <string name="pref_justify_by_width_summ">Justify posts by width</string>
+    <string name="pref_night_mode_key">pref_night_mode_key</string>
+    <string name="pref_night_mode_title">Night mode</string>
+    <string name="pref_night_mode_summ">White text on the black background</string>
+    <string name="pref_text_size_key">pref_text_size_key</string>
+    <string name="pref_text_size_title">Font size</string>
+
+</resources>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="bash_org_section">Bash.Org</string>
+    <string name="bash_org_new_section">Новые</string>
+    <string name="bash_org_random_section">Случайные</string>
+    <string name="bash_org_best_section">Лучшие</string>
+    <string name="bash_org_by_rating_section">По рейтингу</string>
+    <string name="bash_org_abyss_section">Бездна</string>
+    <string name="bash_org_abyss_top_section">Топ бездны</string>
+    <string name="bash_org_abyys_top_section">Лучшие бездны</string>
+    <string name="it_happens_section">IT Happens</string>
+    <string name="it_happens_fresh_section">Свежие</string>
+    <string name="it_happens_best_section">Лучшие</string>
+    <string name="it_happens_random_section">Случайные</string>
+
+</resources>

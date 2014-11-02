@@ -1,5 +1,8 @@
 package org.techteam.bashhappens.gui.adapters;
 
+import android.content.Context;
+
+import org.techteam.bashhappens.R;
 import org.techteam.bashhappens.content.ContentFactory;
 
 import java.util.ArrayList;
@@ -73,65 +76,65 @@ public class SectionsBuilder {
     }
 
     //TODO: fix enum values for ContentSection
-    public static List<Section> getSections() {
+    public static List<Section> getSections(Context context) {
         List<Section> sections = new ArrayList<Section>();
 
         //******************BASH.ORG************************
-        GroupSection bashOrg = new GroupSection("Bash.Org");
+        GroupSection bashOrg = new GroupSection(context.getString(R.string.bash_org_section));
 
         sections.add(bashOrg);
         sections.add(new SelectableSection(
-                "Новые",
+                context.getString(R.string.bash_org_new_section),
                 bashOrg,
                 ContentFactory.ContentSection.BASH_ORG_NEWEST));
 
         sections.add(new SelectableSection(
-                "Случайные",
+                context.getString(R.string.bash_org_random_section),
                 bashOrg,
                 ContentFactory.ContentSection.BASH_ORG_NEWEST));
 
         sections.add(new SelectableSection(
-                "Лучшие",
+                context.getString(R.string.bash_org_best_section),
                 bashOrg,
                 ContentFactory.ContentSection.BASH_ORG_NEWEST));
 
         sections.add(new SelectableSection(
-                "По рейтингу",
+                context.getString(R.string.bash_org_by_rating_section),
                 bashOrg,
                 ContentFactory.ContentSection.BASH_ORG_NEWEST));
 
         sections.add(new SelectableSection(
-                "Бездна",
+                context.getString(R.string.bash_org_abyss_section),
                 bashOrg,
                 ContentFactory.ContentSection.BASH_ORG_NEWEST));
 
         sections.add(new SelectableSection(
-                "Топ бездны",
+                context.getString(R.string.bash_org_abyss_top_section),
                 bashOrg,
                 ContentFactory.ContentSection.BASH_ORG_NEWEST));
 
         sections.add(new SelectableSection(
-                "Лучшие бездны",
+                context.getString(R.string.bash_org_abyys_top_section),
                 bashOrg,
                 ContentFactory.ContentSection.BASH_ORG_NEWEST));
 
 
         //*********************IT HAPPENS***********************
-        GroupSection itHappens = new GroupSection("IT Happens");
+        GroupSection itHappens = new GroupSection(context.getString(R.string.it_happens_section));
 
         sections.add(itHappens);
         sections.add(new SelectableSection(
-                "Свежие",
+                context.getString(R.string.it_happens_fresh_section),
                 bashOrg,
                 ContentFactory.ContentSection.IT_HAPPENS_NEWEST));
 
         sections.add(new SelectableSection(
-                "Лучшие",
+                context.getString(R.string.it_happens_best_section),
                 bashOrg,
                 ContentFactory.ContentSection.IT_HAPPENS_NEWEST));
 
         sections.add(new SelectableSection(
-                "Случайные",
+                context.getString(R.string.it_happens_random_section),
                 bashOrg,
                 ContentFactory.ContentSection.IT_HAPPENS_NEWEST));
 

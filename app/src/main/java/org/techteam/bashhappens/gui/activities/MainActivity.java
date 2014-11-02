@@ -58,7 +58,7 @@ public class MainActivity
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
         // Set the adapter for the list view
-        sections = SectionsBuilder.getSections();
+        sections = SectionsBuilder.getSections(this);
         sectionsListAdapter = new SectionsListAdapter(this.getBaseContext(), sections);
         mDrawerList.setAdapter(sectionsListAdapter);
 
@@ -70,11 +70,10 @@ public class MainActivity
         // Set the list's click listener
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 
-        //TODO: change icon, see Toolbar from v7
         mDrawerToggle = new ActionBarDrawerToggle(
                 this,                  /* host Activity */
                 mDrawerLayout,         /* DrawerLayout object */
-                //toolbar,  /* nav drawer icon to replace 'Up' caret */
+                toolbar,  /* nav drawer icon to replace 'Up' caret */
                 R.string.drawer_open,  /* "open drawer" description */
                 R.string.drawer_close  /* "close drawer" description */
         ) {
