@@ -41,6 +41,7 @@ import org.techteam.bashhappens.util.Toaster;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Queue;
@@ -57,6 +58,7 @@ public class PostsListFragment
         public static final String FACTORY = "FACTORY";
     }
 
+    //see comment in onCreateView()
     private Queue<Runnable> delayedAdapterNotifications = new LinkedList<Runnable>();
 
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -94,36 +96,20 @@ public class PostsListFragment
 
             if (contentList != null) {
                 //TODO: obtain that value from Bundle
-                int intention = LoadIntention.REFRESH;
+                int intention = LoadIntention.APPEND;
 
                 switch (contentList.getStoredContentType()) {
                     case BASH_ORG:
                         final ArrayList<BashOrgEntry> entries = contentList.getEntries();
                         if (intention == LoadIntention.REFRESH) {
-                            adapter.setAll(entries);
-                            if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
-                                adapter.notifyDataSetChanged();
-                            } else {
-                                delayedAdapterNotifications.add(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        adapter.notifyDataSetChanged();
-                                    }
-                                });
-                            }
+                            setPosts(entries);
                         } else if (intention == LoadIntention.APPEND) {
-                            final int oldCount = adapter.getItemCount();
-                            adapter.addAll(entries);
-                            if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
-                                adapter.notifyItemRangeInserted(oldCount, entries.size());
-                            } else {
-                                delayedAdapterNotifications.add(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        adapter.notifyItemRangeInserted(oldCount, entries.size());
-                                    }
-                                });
-                            }
+                            int oldCount = adapter.getItemCount() - 1; //minus "Loading..." item
+
+                            if (oldCount == 0) //app just started
+                                setPosts(entries);
+                            else
+                                addPosts(entries);
                         }
                         break;
                     case IT_HAPPENS:
@@ -137,9 +123,45 @@ public class PostsListFragment
 
         @Override
         public void onLoaderReset(Loader<ContentList> contentListLoader) {
+            Toaster.toast(getActivity(), "onLoaderReset");
             // TODO
         }
     };
+
+    private void setPosts(ArrayList<BashOrgEntry> entries) {
+        adapter.setAll(entries);
+        if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
+            adapter.notifyDataSetChanged();
+        } else {
+            delayedAdapterNotifications.add(new Runnable() {
+                @Override
+                public void run() {
+                    adapter.notifyDataSetChanged();
+                }
+            });
+        }
+    }
+
+    private void addPosts(ArrayList<BashOrgEntry> entries) {
+        final int oldCount = adapter.getItemCount() - 1; //minus "Loading..." item
+        final int addedCount = entries.size();
+
+        final String str = Integer.toString(addedCount) + " posts added";
+
+        adapter.addAll(entries);
+        if (recyclerView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE) {
+            adapter.notifyItemRangeInserted(oldCount, addedCount);
+            Toaster.toast(getActivity(), str + " (right away)");
+        } else {
+            delayedAdapterNotifications.add(new Runnable() {
+                @Override
+                public void run() {
+                    adapter.notifyItemRangeInserted(oldCount, addedCount);
+                    Toaster.toast(getActivity(), str + " (after scroll)");
+                }
+            });
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -152,7 +174,9 @@ public class PostsListFragment
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setAdapter(adapter);
 
-        //TODO: write comment on this kostil'
+        //this thing waits for user to stop scrolling and adds new data or refreshes existing data
+        //because it's impossible to notify*() adapter when scrolling
+        // (getting IllegalStateException: Cannot call this method while RecyclerView is computing a layout or scrolling)
         recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -164,13 +188,6 @@ public class PostsListFragment
 
                     delayedAdapterNotifications.clear();
                 }
-            }
-        });
-
-        recyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
             }
         });
 
