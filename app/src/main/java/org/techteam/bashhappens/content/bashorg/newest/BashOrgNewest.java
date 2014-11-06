@@ -64,7 +64,7 @@ public class BashOrgNewest extends BashOrg {
         try {
             list = retrieveList(context, currentPage);
         } catch (Exception e) {
-            throw new ContentParseException("Content couldn't be parsed", e);
+            throw new ContentParseException(e);
         }
 
         if (checkFeedOver()) {

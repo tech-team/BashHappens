@@ -88,8 +88,6 @@ public class BashVoteService extends BashService {
     }
 
     private String changeRating(String id, String currentRating, int direction) throws VoteException, IOException {
-        // TODO: add DB communication
-
         String newRating = currentRating;
         try {
             int ratingInt = Integer.parseInt(currentRating);
@@ -114,7 +112,6 @@ public class BashVoteService extends BashService {
     }
 
     private boolean vote(String id, int direction) throws IOException, VoteException {
-        // TODO: send request
         String url;
         String act;
         if (direction == +1) {

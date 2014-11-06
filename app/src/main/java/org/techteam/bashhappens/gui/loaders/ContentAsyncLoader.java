@@ -7,28 +7,32 @@ import org.techteam.bashhappens.content.exceptions.ContentParseException;
 import org.techteam.bashhappens.content.ContentSource;
 import org.techteam.bashhappens.content.exceptions.FeedOverException;
 
-import java.io.IOException;
+public class ContentAsyncLoader extends MyAsyncLoader<ContentLoaderResult> {
 
-public class ContentAsyncLoader extends MyAsyncLoader<ContentList> {
+    public static class BundleKeys {
+        public static final String LOAD_INTENT = "loadIntent";
+    }
+
     private final ContentSource contentSource;
+    private final int loadIntention;
 
-    public ContentAsyncLoader(Context context, ContentSource contentSource) {
+    public ContentAsyncLoader(Context context, ContentSource contentSource, int loadIntention) {
         super(context);
         this.contentSource = contentSource;
+        this.loadIntention = loadIntention;
     }
 
     @Override
-    public ContentList loadInBackground() {
+    public ContentLoaderResult loadInBackground() {
         ContentList list = null;
+        Throwable exc = null;
         try {
             list = contentSource.retrieveNextList(getContext());
         } catch (FeedOverException e) {
-            // TODO
-            e.printStackTrace();
+            exc = e;
         } catch (ContentParseException e) {
-            // TODO: display a parse error; so nothing cannot be displayed
-            e.printStackTrace();
+            exc = e;
         }
-        return list;
+        return new ContentLoaderResult(list, exc, loadIntention);
     }
 }

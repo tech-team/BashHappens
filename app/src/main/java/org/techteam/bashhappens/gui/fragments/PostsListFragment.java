@@ -16,6 +16,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -32,6 +33,7 @@ import org.techteam.bashhappens.content.ContentSource;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.gui.adapters.BashOrgListAdapter;
 import org.techteam.bashhappens.gui.loaders.ContentAsyncLoader;
+import org.techteam.bashhappens.gui.loaders.ContentLoaderResult;
 import org.techteam.bashhappens.gui.loaders.LoadIntention;
 import org.techteam.bashhappens.gui.loaders.LoaderIds;
 import org.techteam.bashhappens.gui.services.ServiceManager;
@@ -53,6 +55,8 @@ public class PostsListFragment
         OnBashEventCallback,
         OnListScrolledDownCallback,
         SharedPreferences.OnSharedPreferenceChangeListener {
+
+    public static final String TAG = PostsListFragment.class.toString();
 
     private static final class BundleKeys {
         public static final String FACTORY = "FACTORY";
@@ -79,55 +83,62 @@ public class PostsListFragment
     private SparseArray<BashOrgListAdapter.VotedCallback> votedBayanCallbackMap = new SparseArray<BashOrgListAdapter.VotedCallback>();
 
 
-    private LoaderManager.LoaderCallbacks<ContentList> contentListLoaderCallbacks = new LoaderManager.LoaderCallbacks<ContentList>() {
+    private LoaderManager.LoaderCallbacks<ContentLoaderResult> contentListLoaderCallbacks = new LoaderManager.LoaderCallbacks<ContentLoaderResult>() {
 
         @Override
-        public Loader<ContentList> onCreateLoader(int i, Bundle bundle) {
+        public Loader<ContentLoaderResult> onCreateLoader(int i, Bundle bundle) {
             if  (i == LoaderIds.CONTENT_LOADER) {
-                return new ContentAsyncLoader(getActivity(), content);
+                int loadIntention = bundle.getInt(ContentAsyncLoader.BundleKeys.LOAD_INTENT);
+                return new ContentAsyncLoader(getActivity(), content, loadIntention);
             }
             throw new IllegalArgumentException("Loader with given id is not found");
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public void onLoadFinished(Loader<ContentList> contentListLoader, ContentList contentList) {
-            // TODO: add exception information to contentList
-
-
+        public void onLoadFinished(Loader<ContentLoaderResult> contentListLoader, ContentLoaderResult result) {
             mSwipeRefreshLayout.setRefreshing(false);
 
-            if (contentList != null) {
-                //TODO: obtain that value from Bundle
-                int intention = LoadIntention.APPEND;
-
-                switch (contentList.getStoredContentType()) {
-                    case BASH_ORG:
-                        final ArrayList<BashOrgEntry> entries = contentList.getEntries();
-                        if (intention == LoadIntention.REFRESH) {
-                            setPosts(entries);
-                        } else if (intention == LoadIntention.APPEND) {
-                            int oldCount = adapter.getItemCount() - 1; //minus "Loading..." item
-
-                            if (oldCount == 0) //app just started
-                                setPosts(entries);
-                            else
-                                addPosts(entries);
-                        }
-                        break;
-                    case IT_HAPPENS:
-                        // TODO: add ItHappens adapter
-                        break;
-                }
-            } else {
+            if (result == null) {
                 Toaster.toast(getActivity().getBaseContext(), getActivity().getString(R.string.loading_error));
+                return;
+            }
+
+            if (result.hasError()) {
+                Throwable exc = result.getException();
+                Log.w(TAG, exc);
+                Toaster.toast(getActivity().getBaseContext(), "Error: " + exc.getMessage());
+                return;
+            }
+
+
+            ContentList contentList = result.getContentList();
+            int intention = result.getLoadIntention();
+
+            switch (contentList.getStoredContentType()) {
+                case BASH_ORG:
+                    final ArrayList<BashOrgEntry> entries = contentList.getEntries();
+                    if (intention == LoadIntention.REFRESH) {
+                        setPosts(entries);
+                    } else if (intention == LoadIntention.APPEND) {
+                        int oldCount = adapter.getItemCount() - 1; //minus "Loading..." item
+
+                        if (oldCount == 0) //app just started
+                            setPosts(entries);
+                        else
+                            addPosts(entries);
+                    }
+                    break;
+                case IT_HAPPENS:
+                    // TODO: add ItHappens adapter
+                    break;
             }
 
             justStarted = false;
         }
 
         @Override
-        public void onLoaderReset(Loader<ContentList> contentListLoader) {
+        public void onLoaderReset(Loader<ContentLoaderResult> contentListLoader) {
             Toaster.toast(getActivity(), "onLoaderReset");
             // TODO
         }
@@ -227,7 +238,9 @@ public class PostsListFragment
         }
         content = factory.buildContent(ContentFactory.ContentSection.BASH_ORG_NEWEST);
 
-        getLoaderManager().initLoader(LoaderIds.CONTENT_LOADER, null, contentListLoaderCallbacks);
+        Bundle bundle = new Bundle();
+        bundle.putInt(ContentAsyncLoader.BundleKeys.LOAD_INTENT, LoadIntention.REFRESH);
+        getLoaderManager().initLoader(LoaderIds.CONTENT_LOADER, bundle, contentListLoaderCallbacks);
     }
 
     @Override
@@ -242,18 +255,21 @@ public class PostsListFragment
         mSwipeRefreshLayout.setRefreshing(true);
 
         Toaster.toast(getActivity().getBaseContext(), R.string.loading);
-        // TODO: смотри TODO в onLoadFinished() ниже
         content = factory.buildContent(ContentFactory.ContentSection.BASH_ORG_NEWEST, true);
-        getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, null, contentListLoaderCallbacks);
+
+        Bundle bundle = new Bundle();
+        bundle.putInt(ContentAsyncLoader.BundleKeys.LOAD_INTENT, LoadIntention.REFRESH);
+        getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, bundle, contentListLoaderCallbacks);
     }
 
     @Override
     public void onScrolledDown() {
         if (!justStarted) {
             Toaster.toast(getActivity().getBaseContext(), "onScrolledDown");
-            //TODO: add flag into Bundle to mark intention: "refresh" or "append"
-            //TODO: see LoadIntention
-            getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, null, contentListLoaderCallbacks);
+
+            Bundle bundle = new Bundle();
+            bundle.putInt(ContentAsyncLoader.BundleKeys.LOAD_INTENT, LoadIntention.APPEND);
+            getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, bundle, contentListLoaderCallbacks);
         }
     }
 
