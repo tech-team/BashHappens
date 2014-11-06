@@ -60,10 +60,7 @@ public class PostsListFragment
 
     private static final class BundleKeys {
         public static final String FACTORY = "FACTORY";
-        public static final String JUST_STARTED = "JUST_STARTED";
     }
-
-    private boolean justStarted = true;
 
     //see comment in onCreateView()
     private Queue<Runnable> delayedAdapterNotifications = new LinkedList<Runnable>();
@@ -121,9 +118,7 @@ public class PostsListFragment
                     if (intention == LoadIntention.REFRESH) {
                         setPosts(entries);
                     } else if (intention == LoadIntention.APPEND) {
-                        int oldCount = adapter.getItemCount() - 1; //minus "Loading..." item
-
-                        if (oldCount == 0) //app just started
+                        if (adapter.isEmpty()) //app just started
                             setPosts(entries);
                         else
                             addPosts(entries);
@@ -133,8 +128,6 @@ public class PostsListFragment
                     // TODO: add ItHappens adapter
                     break;
             }
-
-            justStarted = false;
         }
 
         @Override
@@ -234,20 +227,16 @@ public class PostsListFragment
             factory = new ContentFactory(Locale.getDefault().toString());
         } else {
             factory = savedInstanceState.getParcelable(BundleKeys.FACTORY);
-            justStarted = savedInstanceState.getBoolean(BundleKeys.JUST_STARTED);
         }
-        content = factory.buildContent(ContentFactory.ContentSection.BASH_ORG_NEWEST);
 
-        Bundle bundle = new Bundle();
-        bundle.putInt(ContentAsyncLoader.BundleKeys.LOAD_INTENT, LoadIntention.REFRESH);
-        getLoaderManager().initLoader(LoaderIds.CONTENT_LOADER, bundle, contentListLoaderCallbacks);
+        //TODO: should be saved in prefs i think
+        content = factory.buildContent(ContentFactory.ContentSection.BASH_ORG_NEWEST);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(BundleKeys.FACTORY, factory);
-        outState.putBoolean(BundleKeys.JUST_STARTED, justStarted);
     }
 
     @Override
@@ -264,13 +253,11 @@ public class PostsListFragment
 
     @Override
     public void onScrolledDown() {
-        if (!justStarted) {
-            Toaster.toast(getActivity().getBaseContext(), "onScrolledDown");
+        Toaster.toast(getActivity().getBaseContext(), "Dniwe reached");
 
-            Bundle bundle = new Bundle();
-            bundle.putInt(ContentAsyncLoader.BundleKeys.LOAD_INTENT, LoadIntention.APPEND);
-            getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, bundle, contentListLoaderCallbacks);
-        }
+        Bundle bundle = new Bundle();
+        bundle.putInt(ContentAsyncLoader.BundleKeys.LOAD_INTENT, LoadIntention.APPEND);
+        getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, bundle, contentListLoaderCallbacks);
     }
 
 
