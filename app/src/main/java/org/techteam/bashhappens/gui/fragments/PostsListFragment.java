@@ -56,7 +56,10 @@ public class PostsListFragment
 
     private static final class BundleKeys {
         public static final String FACTORY = "FACTORY";
+        public static final String JUST_STARTED = "JUST_STARTED";
     }
+
+    private boolean justStarted = true;
 
     //see comment in onCreateView()
     private Queue<Runnable> delayedAdapterNotifications = new LinkedList<Runnable>();
@@ -119,6 +122,8 @@ public class PostsListFragment
             } else {
                 Toaster.toast(getActivity().getBaseContext(), getActivity().getString(R.string.loading_error));
             }
+
+            justStarted = false;
         }
 
         @Override
@@ -218,6 +223,7 @@ public class PostsListFragment
             factory = new ContentFactory(Locale.getDefault().toString());
         } else {
             factory = savedInstanceState.getParcelable(BundleKeys.FACTORY);
+            justStarted = savedInstanceState.getBoolean(BundleKeys.JUST_STARTED);
         }
         content = factory.buildContent(ContentFactory.ContentSection.BASH_ORG_NEWEST);
 
@@ -228,6 +234,7 @@ public class PostsListFragment
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(BundleKeys.FACTORY, factory);
+        outState.putBoolean(BundleKeys.JUST_STARTED, justStarted);
     }
 
     @Override
@@ -242,10 +249,12 @@ public class PostsListFragment
 
     @Override
     public void onScrolledDown() {
-        Toaster.toast(getActivity().getBaseContext(), "onScrolledDown");
-        //TODO: add flag into Bundle to mark intention: "refresh" or "append"
-        //TODO: see LoadIntention
-        getLoaderManager().initLoader(LoaderIds.CONTENT_LOADER, null, contentListLoaderCallbacks);
+        if (!justStarted) {
+            Toaster.toast(getActivity().getBaseContext(), "onScrolledDown");
+            //TODO: add flag into Bundle to mark intention: "refresh" or "append"
+            //TODO: see LoadIntention
+            getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, null, contentListLoaderCallbacks);
+        }
     }
 
 
