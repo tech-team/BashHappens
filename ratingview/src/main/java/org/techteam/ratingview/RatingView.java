@@ -1,4 +1,4 @@
-package org.techteam.bashhappens.gui.views;
+package org.techteam.ratingview;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.View;
 
-import org.techteam.bashhappens.R;
 
 
 public class RatingView extends View {
@@ -45,15 +44,13 @@ public class RatingView extends View {
 
     private void init() {
         //setup paints
-//        textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-//        textPaint.setColor(mTextColor);
+        textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        textPaint.setColor(0xff000000);
 //        if (mTextHeight == 0) {
 //            mTextHeight = textPaint.getTextSize();
 //        } else {
 //            textPaint.setTextSize(mTextHeight);
 //        }
-
-
     }
 
     @Override
@@ -61,13 +58,23 @@ public class RatingView extends View {
         super.onDraw(canvas);
 
         //draw contour
-        canvas.drawOval(0, 0, 20, 30, textPaint);
+        canvas.drawRect(0, 0, 20, 30, textPaint);
 
         //draw dislike
 
         //draw text
 
         //draw like
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        Context context = getContext();
+
+        float w = UnitConverter.toPx(48*2, context);
+        float h = UnitConverter.toPx(48, context);
+
+        setMeasuredDimension((int)w, (int)h);
     }
 
     public int getValue() {
