@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="RatingView">
+        <attr name="value" format="integer" />
+        <attr name="state" format="enum">
+            <enum name="idle" value="0"/>
+            <enum name="liked" value="1"/>
+            <enum name="disliked" value="2"/>
+        </attr>
+    </declare-styleable>
+</resources>
