@@ -2,6 +2,7 @@ package org.techteam.bashhappens.gui.services;
 
 import android.app.IntentService;
 
+@Deprecated
 public abstract class BashService extends IntentService {
 
     public static final class Urls {

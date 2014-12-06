@@ -1,7 +1,6 @@
-package org.techteam.bashhappens.gui.services;
+package org.techteam.bashhappens.rest.processors;
 
-import android.content.Intent;
-import android.support.v4.content.LocalBroadcastManager;
+import android.content.Context;
 import android.util.Log;
 
 import org.techteam.bashhappens.content.Constants;
@@ -10,49 +9,43 @@ import org.techteam.bashhappens.content.exceptions.VoteException;
 import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
 import org.techteam.bashhappens.content.resolvers.BashBayanResolver;
 import org.techteam.bashhappens.content.resolvers.BashLikesResolver;
+import org.techteam.bashhappens.gui.services.BashService;
 import org.techteam.bashhappens.net.HttpDownloader;
 import org.techteam.bashhappens.net.UrlParams;
 
 import java.io.IOException;
 
-@Deprecated
-public class BashVoteService extends BashService {
+public class BashVoteProcessor extends Processor {
+    private static final String NAME = BashVoteProcessor.class.getName();
 
-    private static final String NAME = BashVoteService.class.getName();
+    private final int entryPosition;
+    private final String entryId;
+    private final String rating;
+    private final int direction;
+    private final boolean bayaning;
 
-    public static final class IntentKeys {
-        public static final String ID = "id";
-        public static final String RATING = "rating";
-        public static final String DIRECTION = "direction";
-        public static final String ENTRY_POSITION = "entryPosition";
-        public static final String BAYAN = "bayan";
-    }
-
-    public BashVoteService() {
-        super(NAME);
+    public BashVoteProcessor(Context context, int entryPosition, String entryId, String rating, int direction, boolean bayaning) {
+        super(context);
+        this.entryPosition = entryPosition;
+        this.entryId = entryId;
+        this.rating = rating;
+        this.direction = direction;
+        this.bayaning = bayaning;
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-        int entryPosition = intent.getIntExtra(IntentKeys.ENTRY_POSITION, -1);
-
-        String id = intent.getStringExtra(IntentKeys.ID);
-        String rating = intent.getStringExtra(IntentKeys.RATING);
-        int direction = intent.getIntExtra(IntentKeys.DIRECTION, 0);
-        boolean bayaning = intent.getBooleanExtra(IntentKeys.BAYAN, false);
-
-        Intent localIntent;
+    public void start(ProcessorCallback cb) {
         try {
             if (bayaning) {
                 // Bayan
 
-                makeBayan(id);
+                makeBayan(entryId);
 
                 AbstractContentResolver resolver = new BashBayanResolver();
-                resolver.insertEntry(this, new BashOrgEntry().setId(id)
-                        .setBayan(true));
+                resolver.insertEntry(getContext(), new BashOrgEntry().setId(entryId)
+                                                                     .setBayan(true));
 
-                localIntent = BroadcasterIntentBuilder.buildBayanSuccessIntent(entryPosition, id);
+                cb.onSuccess();
 
             } else {
                 // Normal rating
@@ -61,24 +54,23 @@ public class BashVoteService extends BashService {
                     throw new VoteException("Invalid vote direction");
                 }
 
-                String newRating = changeRating(id, rating, direction);
+                String newRating = changeRating(entryId, rating, direction);
 
                 AbstractContentResolver resolver = new BashLikesResolver();
-                resolver.insertEntry(this, new BashOrgEntry().setId(id)
+                resolver.insertEntry(getContext(), new BashOrgEntry().setId(entryId)
+                        .setRating(newRating)
                         .setDirection(direction));
 
-                localIntent = BroadcasterIntentBuilder.buildVoteSuccessIntent(entryPosition, id, newRating);
+                cb.onSuccess();
             }
         }
         catch (IOException e) {
             Log.w(NAME, e);
-            localIntent = BroadcasterIntentBuilder.buildVoteErrorIntent(entryPosition, id, e.getMessage());
+            cb.onError(e.getMessage());
         } catch (VoteException e) {
             Log.w(NAME, e);
-            localIntent = BroadcasterIntentBuilder.buildVoteErrorIntent(entryPosition, id, e.getMessage());
+            cb.onError(e.getMessage());
         }
-
-        LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }
 
     private void makeBayan(String id) throws IOException, VoteException {
@@ -117,23 +109,23 @@ public class BashVoteService extends BashService {
         String act;
         if (direction == +1) {
             // UP
-            url = Urls.getVoteUp(id);
-            act = Urls.ACT_UP;
+            url = BashService.Urls.getVoteUp(id);
+            act = BashService.Urls.ACT_UP;
         } else if (direction == -1) {
             // DOWN
-            url = Urls.getVoteDown(id);
-            act = Urls.ACT_DOWN;
+            url = BashService.Urls.getVoteDown(id);
+            act = BashService.Urls.ACT_DOWN;
         } else if (direction == 0) {
             // BAYAN
-            url = Urls.getVoteBayan(id);
-            act = Urls.ACT_BAYAN;
+            url = BashService.Urls.getVoteBayan(id);
+            act = BashService.Urls.ACT_BAYAN;
         } else {
             throw new VoteException("Invalid direction o vote");
         }
 
 
         UrlParams data = new UrlParams().add("quote", id)
-                                        .add("act", act);
+                .add("act", act);
         String resp = HttpDownloader.httpPost(new HttpDownloader.Request(url, data, null, Constants.ENCODING));
         return resp.equals("OK");
     }

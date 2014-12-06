@@ -8,6 +8,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.techteam.bashhappens.content.Constants;
 import org.techteam.bashhappens.content.ContentList;
+import org.techteam.bashhappens.content.ContentSection;
 import org.techteam.bashhappens.content.exceptions.ContentParseException;
 import org.techteam.bashhappens.content.exceptions.FeedOverException;
 import org.techteam.bashhappens.content.bashorg.BashOrg;
@@ -29,8 +30,8 @@ public class BashOrgNewest extends BashOrg {
     private int currentPage = NO_PAGE;
     private boolean feedOver = false;
 
-    public BashOrgNewest(String locale) {
-        super(locale);
+    public BashOrgNewest(String locale, ContentSection section) {
+        super(locale, section);
     }
 
     private BashOrgList retrieveList(Context context, int pageNum) throws IOException {
@@ -76,15 +77,30 @@ public class BashOrgNewest extends BashOrg {
         return list;
     }
 
+    @Override
+    public String getFootprint() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(Integer.toString(minPage));
+        sb.append("-");
+        sb.append(Integer.toString(currentPage));
+        sb.append("-");
+        sb.append(Integer.toString(maxPage));
+        return sb.toString();
+    }
+
     private boolean checkFeedOver() {
-        return currentPage <= minPage && currentPage >= maxPage;
+        if (currentPage == minPage && minPage == maxPage && maxPage == NO_PAGE) {
+            return feedOver;
+        } else {
+            return currentPage <= minPage && currentPage >= maxPage;
+        }
     }
 
 
 
 
     public BashOrgNewest(Parcel in) {
-        super(in.readString());
+        super(in.readString(), Enum.valueOf(ContentSection.class, in.readString())); // TODO: review the order
 
         int[] vals = new int[3];
         in.readIntArray(vals);
@@ -102,6 +118,7 @@ public class BashOrgNewest extends BashOrg {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(locale);
+        parcel.writeString(getSection().toString());
         parcel.writeIntArray(new int[]{
                 minPage,
                 maxPage,

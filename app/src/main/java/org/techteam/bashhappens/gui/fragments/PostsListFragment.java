@@ -18,17 +18,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.SparseArray;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 
 import org.techteam.bashhappens.R;
 import org.techteam.bashhappens.content.ContentFactory;
 import org.techteam.bashhappens.content.ContentList;
+import org.techteam.bashhappens.content.ContentSection;
 import org.techteam.bashhappens.content.ContentSource;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.gui.adapters.BashOrgListAdapter;
@@ -41,12 +38,12 @@ import org.techteam.bashhappens.gui.services.VoteServiceConstants;
 import org.techteam.bashhappens.util.Toaster;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Queue;
+
+import org.techteam.bashhappens.rest.ServiceCallback;
+import org.techteam.bashhappens.rest.ServiceHelper;
 
 public class PostsListFragment
         extends Fragment
@@ -76,9 +73,9 @@ public class PostsListFragment
     private ServiceManager serviceManager = null;
     private VoteBroadcastReceiver voteBroadcastReceiver;
 
-    private SparseArray<BashOrgListAdapter.VotedCallback> votedCallbackMap = new SparseArray<BashOrgListAdapter.VotedCallback>();
-    private SparseArray<BashOrgListAdapter.VotedCallback> votedBayanCallbackMap = new SparseArray<BashOrgListAdapter.VotedCallback>();
+    @Deprecated private SparseArray<BashOrgListAdapter.VotedCallback> votedCallbackMap = new SparseArray<BashOrgListAdapter.VotedCallback>();
 
+    private ServiceHelper serviceHelper;
 
     private LoaderManager.LoaderCallbacks<ContentLoaderResult> contentListLoaderCallbacks = new LoaderManager.LoaderCallbacks<ContentLoaderResult>() {
 
@@ -214,6 +211,7 @@ public class PostsListFragment
         super.onAttach(activity);
 
         serviceManager = new ServiceManager(activity);
+        serviceHelper = new ServiceHelper(activity);
     }
 
     @Override
@@ -230,7 +228,7 @@ public class PostsListFragment
         }
 
         //TODO: should be saved in prefs i think
-        content = factory.buildContent(ContentFactory.ContentSection.BASH_ORG_NEWEST);
+        content = factory.buildContent(ContentSection.BASH_ORG_NEWEST);
     }
 
     @Override
@@ -244,7 +242,7 @@ public class PostsListFragment
         mSwipeRefreshLayout.setRefreshing(true);
 
         Toaster.toast(getActivity().getBaseContext(), R.string.loading);
-        content = factory.buildContent(ContentFactory.ContentSection.BASH_ORG_NEWEST, true);
+        content = factory.buildContent(ContentSection.BASH_ORG_NEWEST, true);
 
         Bundle bundle = new Bundle();
         bundle.putInt(ContentAsyncLoader.BundleKeys.LOAD_INTENT, LoadIntention.REFRESH);
@@ -255,30 +253,63 @@ public class PostsListFragment
     public void onScrolledDown() {
         Toaster.toast(getActivity().getBaseContext(), "Dniwe reached");
 
-        Bundle bundle = new Bundle();
-        bundle.putInt(ContentAsyncLoader.BundleKeys.LOAD_INTENT, LoadIntention.APPEND);
-        getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, bundle, contentListLoaderCallbacks);
+        System.out.println("Load has begun");
+        serviceHelper.getPosts(content, LoadIntention.APPEND, new ServiceCallback() {
+            @Override
+            public void onSuccess() {
+                String msg = "ServiceCallback call #1";
+                Toaster.toast(getActivity().getApplicationContext(), msg);
+                System.out.println(msg);
+            }
+
+            @Override
+            public void onError() {
+                String msg = "ServiceCallback call #1. ERROR";
+                Toaster.toast(getActivity().getApplicationContext(), msg);
+                System.out.println(msg);
+            }
+        });
+//        Bundle bundle = new Bundle();
+//        bundle.putInt(ContentAsyncLoader.BundleKeys.LOAD_INTENT, LoadIntention.APPEND);
+//        getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, bundle, contentListLoaderCallbacks);
     }
 
 
 
 
     @Override
-    public void onMakeVote(BashOrgEntry entry, int entryPosition, BashOrgEntry.VoteDirection direction, BashOrgListAdapter.VotedCallback votedCallback) {
-        votedCallbackMap.put(entryPosition, votedCallback);
-        serviceManager.startBashVoteService(entry, entryPosition, direction);
+    public void onMakeVote(final BashOrgEntry entry, int entryPosition, BashOrgEntry.VoteDirection direction, BashOrgListAdapter.VotedCallback votedCallback) {
+        serviceHelper.bashVote(entry, entryPosition, direction, new ServiceCallback() {
+            @Override
+            public void onSuccess() {
+                String msg = "voted for entry: " + entry.getId();
+                Toaster.toast(getActivity().getApplicationContext(), msg);
+                System.out.println(msg);
+            }
+
+            @Override
+            public void onError() {
+                String msg = "vote failed for entry: " + entry.getId();
+                Toaster.toast(getActivity().getApplicationContext(), msg);
+                System.out.println(msg);
+            }
+        });
+//        votedCallbackMap.put(entryPosition, votedCallback);
+//        serviceManager.startBashVoteService(entry, entryPosition, direction);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        registerBroadcastReceivers();
+        serviceHelper.init();
+//        registerBroadcastReceivers();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        unregisterBroadcastReceivers();
+        serviceHelper.release();
+//        unregisterBroadcastReceivers();
     }
 
 
@@ -303,7 +334,7 @@ public class PostsListFragment
 
 
 
-
+    @Deprecated
     public final class VoteBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -320,11 +351,13 @@ public class PostsListFragment
 
                 if (newRating != null) {
                     entry.setRating(newRating);
-                    cb.onVoted(entry);
+                    if (cb != null)
+                        cb.onVoted(entry);
                     Toaster.toast(context.getApplicationContext(), "Changed rating for entry #" + id);
                 } else if (bayanOk) {
                     entry.setBayan(true);
-                    cb.onBayan(entry);
+                    if (cb != null)
+                        cb.onBayan(entry);
                     Toaster.toast(context.getApplicationContext(), "Set bayan for entry #" + id);
                 }
             }

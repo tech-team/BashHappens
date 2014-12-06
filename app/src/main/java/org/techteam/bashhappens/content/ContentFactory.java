@@ -35,11 +35,6 @@ public class ContentFactory implements Parcelable {
         currentSource = in.readParcelable(ContentSource.class.getClassLoader());
     }
 
-    public enum ContentSection {
-        BASH_ORG_NEWEST,
-        IT_HAPPENS_NEWEST
-    }
-
     private String locale;
     private ContentSection currentSection = null;
     private ContentSource currentSource = null;
@@ -62,7 +57,7 @@ public class ContentFactory implements Parcelable {
 
             switch (currentSection) {
                 case BASH_ORG_NEWEST:
-                    currentSource = new BashOrgNewest(locale);
+                    currentSource = new BashOrgNewest(locale, currentSection);
                 case IT_HAPPENS_NEWEST:
                     break;
             }

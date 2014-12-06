@@ -144,19 +144,20 @@ public class BashOrgListAdapter
         //TODO: set buttons state according to DB
 
 
-        final VotedCallback votedCallback = new VotedCallback() {
-            @Override
-            public void onVoted(BashOrgEntry entry) {
-                holder.rating.setText(entry.getRating());
-
-                // TODO: make things on voted
-            }
-
-            @Override
-            public void onBayan(BashOrgEntry entry) {
-                // TODO: make things on bayan
-            }
-        };
+        final VotedCallback votedCallback = null;
+//        final VotedCallback votedCallback = new VotedCallback() {
+//            @Override
+//            public void onVoted(BashOrgEntry entry) {
+//                holder.rating.setText(entry.getRating());
+//
+//                // TODO: make things on voted
+//            }
+//
+//            @Override
+//            public void onBayan(BashOrgEntry entry) {
+//                // TODO: make things on bayan
+//            }
+//        };
 
         //set handlers
         holder.share.setOnClickListener(new View.OnClickListener() {
@@ -299,6 +300,7 @@ public class BashOrgListAdapter
         return position < dataset.size() ? VIEW_TYPE_ENTRY : VIEW_TYPE_FOOTER;
     }
 
+    @Deprecated
     public interface VotedCallback {
         void onVoted(BashOrgEntry entry);
         void onBayan(BashOrgEntry entry);

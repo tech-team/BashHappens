@@ -3,7 +3,7 @@ package org.techteam.bashhappens.gui.adapters;
 import android.content.Context;
 
 import org.techteam.bashhappens.R;
-import org.techteam.bashhappens.content.ContentFactory;
+import org.techteam.bashhappens.content.ContentSection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ public class SectionsBuilder {
     public static interface Section {
         String getSideMenuText();
         String getActionBarText();
-        ContentFactory.ContentSection getContentSection();
+        ContentSection getContentSection();
         boolean isDisabled();
     }
 
@@ -31,7 +31,7 @@ public class SectionsBuilder {
         }
 
         @Override
-        public ContentFactory.ContentSection getContentSection() {
+        public ContentSection getContentSection() {
             return null;
         }
 
@@ -44,7 +44,7 @@ public class SectionsBuilder {
     }
 
     public static class SelectableSection implements Section {
-        public SelectableSection(String label, GroupSection group, ContentFactory.ContentSection contentSection) {
+        public SelectableSection(String label, GroupSection group, ContentSection contentSection) {
             this.sideMenuText = label;
             this.actionBarText = group.getSideMenuText() + ": " + sideMenuText;
             this.contentSection = contentSection;
@@ -61,7 +61,7 @@ public class SectionsBuilder {
         }
 
         @Override
-        public ContentFactory.ContentSection getContentSection() {
+        public ContentSection getContentSection() {
             return contentSection;
         }
 
@@ -72,7 +72,7 @@ public class SectionsBuilder {
 
         private String sideMenuText;
         private String actionBarText;
-        private ContentFactory.ContentSection contentSection;
+        private ContentSection contentSection;
     }
 
     //TODO: fix enum values for ContentSection
@@ -86,37 +86,37 @@ public class SectionsBuilder {
         sections.add(new SelectableSection(
                 context.getString(R.string.bash_org_new_section),
                 bashOrg,
-                ContentFactory.ContentSection.BASH_ORG_NEWEST));
+                ContentSection.BASH_ORG_NEWEST));
 
         sections.add(new SelectableSection(
                 context.getString(R.string.bash_org_random_section),
                 bashOrg,
-                ContentFactory.ContentSection.BASH_ORG_NEWEST));
+                ContentSection.BASH_ORG_NEWEST));
 
         sections.add(new SelectableSection(
                 context.getString(R.string.bash_org_best_section),
                 bashOrg,
-                ContentFactory.ContentSection.BASH_ORG_NEWEST));
+                ContentSection.BASH_ORG_NEWEST));
 
         sections.add(new SelectableSection(
                 context.getString(R.string.bash_org_by_rating_section),
                 bashOrg,
-                ContentFactory.ContentSection.BASH_ORG_NEWEST));
+                ContentSection.BASH_ORG_NEWEST));
 
         sections.add(new SelectableSection(
                 context.getString(R.string.bash_org_abyss_section),
                 bashOrg,
-                ContentFactory.ContentSection.BASH_ORG_NEWEST));
+                ContentSection.BASH_ORG_NEWEST));
 
         sections.add(new SelectableSection(
                 context.getString(R.string.bash_org_abyss_top_section),
                 bashOrg,
-                ContentFactory.ContentSection.BASH_ORG_NEWEST));
+                ContentSection.BASH_ORG_NEWEST));
 
         sections.add(new SelectableSection(
                 context.getString(R.string.bash_org_abyys_top_section),
                 bashOrg,
-                ContentFactory.ContentSection.BASH_ORG_NEWEST));
+                ContentSection.BASH_ORG_NEWEST));
 
 
         //*********************IT HAPPENS***********************
@@ -126,17 +126,17 @@ public class SectionsBuilder {
         sections.add(new SelectableSection(
                 context.getString(R.string.it_happens_fresh_section),
                 bashOrg,
-                ContentFactory.ContentSection.IT_HAPPENS_NEWEST));
+                ContentSection.IT_HAPPENS_NEWEST));
 
         sections.add(new SelectableSection(
                 context.getString(R.string.it_happens_best_section),
                 bashOrg,
-                ContentFactory.ContentSection.IT_HAPPENS_NEWEST));
+                ContentSection.IT_HAPPENS_NEWEST));
 
         sections.add(new SelectableSection(
                 context.getString(R.string.it_happens_random_section),
                 bashOrg,
-                ContentFactory.ContentSection.IT_HAPPENS_NEWEST));
+                ContentSection.IT_HAPPENS_NEWEST));
 
         return sections;
     }

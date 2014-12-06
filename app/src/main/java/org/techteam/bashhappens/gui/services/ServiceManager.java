@@ -5,6 +5,7 @@ import android.content.Intent;
 
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 
+@Deprecated
 public final class ServiceManager {
     private final Context context;
 

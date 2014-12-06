@@ -2,6 +2,7 @@ package org.techteam.bashhappens.gui.services;
 
 import android.content.Intent;
 
+@Deprecated
 public final class BroadcasterIntentBuilder {
 
 

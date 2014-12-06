@@ -2,6 +2,7 @@ package org.techteam.bashhappens.gui.services;
 
 import org.techteam.bashhappens.gui.fragments.PostsListFragment;
 
+@Deprecated
 public final class VoteServiceConstants {
     public static final String BROADCASTER_NAME = PostsListFragment.VoteBroadcastReceiver.class.getName();
     public static final String ENTRY_POSITION = "ENTRY_POSITION";
