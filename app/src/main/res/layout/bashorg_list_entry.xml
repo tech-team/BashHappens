@@ -99,11 +99,7 @@
                     style="?android:attr/buttonBarButtonStyle"
                     android:src="@drawable/ic_action_good"
                     android:contentDescription="@string/post_like" />
-            </LinearLayout>
-            
-            <org.techteam.ratingview.RatingView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                </LinearLayout>
 
             <Button
                 android:id="@+id/post_bayan"
@@ -111,7 +107,6 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 style="?android:attr/buttonBarButtonStyle"
-                android:singleLine="true"
                 android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
                 android:text="[:||||:]" />
 
