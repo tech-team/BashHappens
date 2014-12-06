@@ -22,6 +22,7 @@ import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.gui.fragments.OnBashEventCallback;
 import org.techteam.bashhappens.gui.fragments.OnListScrolledDownCallback;
 import org.techteam.bashhappens.gui.fragments.PostsListFragment;
+import org.techteam.bashhappens.gui.views.RatingView;
 import org.techteam.bashhappens.util.Clipboard;
 import org.techteam.bashhappens.util.Toaster;
 
@@ -68,9 +69,7 @@ public class BashOrgListAdapter
         public ImageButton share;
         public ImageButton fav;
         public Button bayan;
-        public ImageButton like;
-        public TextView rating;
-        public ImageButton dislike;
+        public RatingView ratingView;
 
 
         public ViewHolder(View v) {
@@ -85,9 +84,7 @@ public class BashOrgListAdapter
             share = (ImageButton) v.findViewById(R.id.post_share);
             fav = (ImageButton) v.findViewById(R.id.post_fav);
             bayan = (Button) v.findViewById(R.id.post_bayan);
-            like = (ImageButton) v.findViewById(R.id.post_like);
-            rating = (TextView) v.findViewById(R.id.post_rating);
-            dislike = (ImageButton) v.findViewById(R.id.post_dislike);
+            ratingView = (RatingView) v.findViewById(R.id.rating_view);
         }
     }
 
@@ -139,7 +136,7 @@ public class BashOrgListAdapter
         holder.date.setText(entry.getCreationDate());
         holder.text.setText(entry.getText());
 
-        holder.rating.setText(entry.getRating());
+        holder.ratingView.setValue(entry.getRating());
 
         //TODO: set buttons state according to DB
 
@@ -147,7 +144,7 @@ public class BashOrgListAdapter
         final VotedCallback votedCallback = new VotedCallback() {
             @Override
             public void onVoted(BashOrgEntry entry) {
-                holder.rating.setText(entry.getRating());
+                holder.ratingView.setValue(entry.getRating());
 
                 // TODO: make things on voted
             }
@@ -191,23 +188,20 @@ public class BashOrgListAdapter
             }
         });
 
-        holder.like.setOnClickListener(new View.OnClickListener() {
+        holder.ratingView.setStateChangedListener(new RatingView.OnStateChanged() {
             @Override
-            public void onClick(View view) {
-                Context context = view.getContext();
-                voteCallback.onMakeVote(entry, position, BashOrgEntry.VoteDirection.UP, votedCallback);
-                Toaster.toast(context,
-                        "Like pressed for entry.id: " + entry.getId());
-            }
-        });
+            public void ratingViewStateChanged(RatingView ratingView, RatingView.State oldState, RatingView.State newState) {
+                Context context = ratingView.getContext();
 
-        holder.dislike.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Context context = view.getContext();
-                voteCallback.onMakeVote(entry, position, BashOrgEntry.VoteDirection.DOWN, votedCallback);
-                Toaster.toast(context,
-                        "Dislike pressed for entry.id: " + entry.getId());
+                if (newState == RatingView.State.LIKED) {
+                    voteCallback.onMakeVote(entry, position, BashOrgEntry.VoteDirection.UP, votedCallback);
+                    Toaster.toast(context,
+                            "Like pressed for entry.id: " + entry.getId());
+                } else if (newState == RatingView.State.DISLIKED) {
+                    voteCallback.onMakeVote(entry, position, BashOrgEntry.VoteDirection.DOWN, votedCallback);
+                    Toaster.toast(context,
+                            "Dislike pressed for entry.id: " + entry.getId());
+                }
             }
         });
 

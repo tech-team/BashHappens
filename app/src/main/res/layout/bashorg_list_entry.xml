@@ -2,6 +2,7 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_view"
     android:layout_gravity="center"
     android:layout_width="match_parent"
@@ -70,36 +71,14 @@
             android:orientation="horizontal"
             style="@android:style/Theme.Holo.Light.Panel" >
 
-            <LinearLayout
+            <org.techteam.bashhappens.gui.views.RatingView
+                android:id="@+id/rating_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center_vertical" >
+                app:value="100"
+                >
 
-                <ImageButton
-                    android:id="@+id/post_dislike"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:src="@drawable/ic_action_bad"
-                    android:contentDescription="@string/post_dislike" />
-
-                <TextView
-                    android:id="@+id/post_rating"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    style="@style/post_header"
-                    android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small" />
-
-                <ImageButton
-                    android:id="@+id/post_like"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="?android:attr/buttonBarButtonStyle"
-                    android:src="@drawable/ic_action_good"
-                    android:contentDescription="@string/post_like" />
-                </LinearLayout>
+            </org.techteam.bashhappens.gui.views.RatingView>
 
             <Button
                 android:id="@+id/post_bayan"
