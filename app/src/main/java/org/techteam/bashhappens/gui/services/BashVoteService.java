@@ -8,8 +8,6 @@ import org.techteam.bashhappens.content.Constants;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.content.exceptions.VoteException;
 import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
-import org.techteam.bashhappens.content.resolvers.BashBayanResolver;
-import org.techteam.bashhappens.content.resolvers.BashLikesResolver;
 import org.techteam.bashhappens.net.HttpDownloader;
 import org.techteam.bashhappens.net.UrlParams;
 
@@ -48,9 +46,11 @@ public class BashVoteService extends BashService {
 
                 makeBayan(id);
 
+                /*
                 AbstractContentResolver resolver = new BashBayanResolver();
                 resolver.insertEntry(this, new BashOrgEntry().setId(id)
                         .setBayan(true));
+                */
 
                 localIntent = BroadcasterIntentBuilder.buildBayanSuccessIntent(entryPosition, id);
 
@@ -63,9 +63,11 @@ public class BashVoteService extends BashService {
 
                 String newRating = changeRating(id, rating, direction);
 
+                /*
                 AbstractContentResolver resolver = new BashLikesResolver();
                 resolver.insertEntry(this, new BashOrgEntry().setId(id)
                         .setDirection(direction));
+                */
 
                 localIntent = BroadcasterIntentBuilder.buildVoteSuccessIntent(entryPosition, id, newRating);
             }

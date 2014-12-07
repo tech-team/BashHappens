@@ -7,8 +7,6 @@ import org.techteam.bashhappens.content.Constants;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.content.exceptions.VoteException;
 import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
-import org.techteam.bashhappens.content.resolvers.BashBayanResolver;
-import org.techteam.bashhappens.content.resolvers.BashLikesResolver;
 import org.techteam.bashhappens.gui.services.BashService;
 import org.techteam.bashhappens.net.HttpDownloader;
 import org.techteam.bashhappens.net.UrlParams;
@@ -41,9 +39,10 @@ public class BashVoteProcessor extends Processor {
 
                 makeBayan(entryId);
 
-                AbstractContentResolver resolver = new BashBayanResolver();
+                //TODO: decide about bayan/likes system and implement
+                /*AbstractContentResolver resolver = new BashBayanResolver();
                 resolver.insertEntry(getContext(), new BashOrgEntry().setId(entryId)
-                                                                     .setBayan(true));
+                                                                     .setBayan(true));*/
 
                 cb.onSuccess();
 
@@ -56,10 +55,11 @@ public class BashVoteProcessor extends Processor {
 
                 String newRating = changeRating(entryId, rating, direction);
 
-                AbstractContentResolver resolver = new BashLikesResolver();
+                //TODO: decide about bayan/likes system and implement
+                /*AbstractContentResolver resolver = new BashLikesResolver();
                 resolver.insertEntry(getContext(), new BashOrgEntry().setId(entryId)
                         .setRating(newRating)
-                        .setDirection(direction));
+                        .setDirection(direction));*/
 
                 cb.onSuccess();
             }

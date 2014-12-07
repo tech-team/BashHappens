@@ -3,18 +3,12 @@ package org.techteam.bashhappens.db;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
-
-import org.techteam.bashhappens.db.tables.BashCache;
-import org.techteam.bashhappens.db.tables.BashLikes;
-import org.techteam.bashhappens.db.tables.ItCache;
-import org.techteam.bashhappens.db.tables.ItLikes;
 
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String LOG = "DatabaseHelper";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 5;
     private static final String DATABASE_NAME = "bashhappens";
 
     public static final String AUTHORITY = "org.techteam.bashhappens.db.DatabaseHelper";

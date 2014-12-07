@@ -13,7 +13,7 @@ import static org.techteam.bashhappens.db.DataTypes.SEPARATOR;
 import static org.techteam.bashhappens.db.DataTypes.TYPE_SERIAL;
 import static org.techteam.bashhappens.db.DataTypes.TYPE_TEXT;
 
-public class BashFavs extends BashTable implements ITable {
+public class BashFavs extends AbstractTable implements ITable {
 
     public static final String TABLE_NAME = "bash_favs";
 

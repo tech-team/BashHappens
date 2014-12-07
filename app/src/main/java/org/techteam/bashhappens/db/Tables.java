@@ -4,11 +4,11 @@ import org.techteam.bashhappens.db.tables.*;
 
 public abstract class Tables {
     public static final ITable[] TABLES = new ITable[] {
-                                       new BashCache(),
+                                       new BashNewest(),
                                        new BashLikes(),
                                        new BashBayan(),
                                        new BashFavs(),
-                                       new ItCache(),
+                                       new ItNewest(),
                                        new ItLikes()
                                     };
 }

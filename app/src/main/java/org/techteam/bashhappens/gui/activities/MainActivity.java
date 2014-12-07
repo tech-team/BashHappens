@@ -2,8 +2,8 @@ package org.techteam.bashhappens.gui.activities;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -17,6 +17,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import org.techteam.bashhappens.R;
+import org.techteam.bashhappens.content.ContentSection;
+import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
+import org.techteam.bashhappens.content.bashorg.BashOrgList;
+import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
 import org.techteam.bashhappens.gui.adapters.SectionsBuilder;
 import org.techteam.bashhappens.gui.adapters.SectionsListAdapter;
 import org.techteam.bashhappens.gui.fragments.PostsListFragment;

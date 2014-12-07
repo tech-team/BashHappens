@@ -7,7 +7,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.techteam.bashhappens.content.ContentList;
 import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
-import org.techteam.bashhappens.content.resolvers.BashLikesResolver;
 import org.techteam.bashhappens.db.tables.BashLikes;
 
 import java.util.ArrayList;
@@ -29,6 +28,8 @@ public class BashOrgList extends ContentList<BashOrgEntry> {
         for (Element item : items) {
             BashOrgEntry entry = BashOrgEntry.fromHtml(item);
 
+            //TODO: likes are temporary unavailable. Availabilate them
+            /*
             if (entry != null) {
                 AbstractContentResolver resolver = new BashLikesResolver();
                 ContentList tempList
@@ -45,6 +46,7 @@ public class BashOrgList extends ContentList<BashOrgEntry> {
 
                 entries.add(entry);
             }
+            */
         }
 
         return entries;
