@@ -17,10 +17,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import org.techteam.bashhappens.R;
-import org.techteam.bashhappens.content.ContentSection;
-import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
-import org.techteam.bashhappens.content.bashorg.BashOrgList;
-import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
 import org.techteam.bashhappens.gui.adapters.SectionsBuilder;
 import org.techteam.bashhappens.gui.adapters.SectionsListAdapter;
 import org.techteam.bashhappens.gui.fragments.PostsListFragment;

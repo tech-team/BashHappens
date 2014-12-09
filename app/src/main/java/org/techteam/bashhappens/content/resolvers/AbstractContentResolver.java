@@ -8,10 +8,8 @@ import android.net.Uri;
 import org.techteam.bashhappens.content.ContentEntry;
 import org.techteam.bashhappens.content.ContentList;
 import org.techteam.bashhappens.content.ContentSection;
-import org.techteam.bashhappens.db.tables.BashBayan;
 import org.techteam.bashhappens.db.tables.BashNewest;
-import org.techteam.bashhappens.db.tables.BashFavs;
-import org.techteam.bashhappens.db.tables.BashLikes;
+import org.techteam.bashhappens.db.tables.BashTransactions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +20,7 @@ public abstract class AbstractContentResolver {
 
     protected abstract Uri _getUri();
     protected abstract ContentValues convertToContentValues(ContentEntry contentEntry);
+    protected abstract QueryField getUpdateField(ContentEntry contentEntry);
     protected abstract QueryField getDeletionField(ContentEntry contentEntry);
     protected abstract String[] getProjection();
 
@@ -37,6 +36,10 @@ public abstract class AbstractContentResolver {
         switch (section) {
             case BASH_ORG_NEWEST:
                 return new BashNewestResolver();
+            case BASH_ORG_FAVS:
+                return new BashFavsResolver();
+            case BASH_ORG_TRANSACTIONS:
+                return new BashTransactionsResolver();
             case IT_HAPPENS_NEWEST:
                 //TODO: ItHappensNewest resolver, BashLikes prbbly
                 return null;
@@ -52,6 +55,7 @@ public abstract class AbstractContentResolver {
                                      String selection, String[] selectionArgs,
                                      String sortOrder) {
         if (selection != null) {
+            //TODO: multiple fields selection?
             selection += " = ?";
         }
         if (projection == null) {
@@ -91,8 +95,25 @@ public abstract class AbstractContentResolver {
 
     public <T extends ContentEntry> int deleteEntry(Context context, T entry) {
         QueryField field = getDeletionField(entry);
-        return context.getContentResolver()
-                       .delete(_getUri(), field.where , field.whereArgs);
+        return (field == null)
+                ? (-1)
+                : context.getContentResolver()
+                      .delete(_getUri(), field.where , field.whereArgs);
+    }
+
+    public <T extends ContentEntry> int updateEntry(Context context, T entry) {
+        QueryField field = getUpdateField(entry);
+        return (field == null)
+                ? (-1)
+                : context.getContentResolver()
+                    .update(_getUri(), this.convertToContentValues(entry), field.where, field.whereArgs);
+    }
+
+    public static Map<String, Integer> truncateAll(Context context) {
+        Map<String, Integer> deletions = new HashMap<String, Integer>();
+        deletions.put(BashNewest.TABLE_NAME, new BashNewestResolver().deleteAllEntries(context));
+        deletions.put(BashTransactions.TABLE_NAME, new BashTransactionsResolver().deleteAllEntries(context));
+        return deletions;
     }
 
     protected class QueryField {
@@ -103,12 +124,6 @@ public abstract class AbstractContentResolver {
             this.where = where + " = ?";
             this.whereArgs = whereArgs;
         }
-    }
-
-    public static Map<String, Integer> truncateAll(Context context) {
-        Map<String, Integer> deletions = new HashMap<String, Integer>();
-        deletions.put(BashNewest.TABLE_NAME, new BashNewestResolver().deleteAllEntries(context));
-        return deletions;
     }
 
     //////////////////// Usage example //////////////////////
@@ -126,5 +141,10 @@ public abstract class AbstractContentResolver {
         cur.moveToNext();
     }
     cur.close();
+
+    BashTransactionsResolver resolver = (BashTransactionsResolver) AbstractContentResolver.getResolver(ContentSection.BASH_ORG_TRANSACTIONS);
+    resolver.insertEntry(this, new BashTransactionsEntry().setId("see").setStatus(TransactionStatus.PROCESSING));
+    List<String> lst = resolver.getEntriesListByField(this, TransactionStatus.PROCESSING);
+
     AbstractContentResolver.truncateAll(this);*/
 }

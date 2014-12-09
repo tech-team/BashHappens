@@ -8,6 +8,7 @@ public abstract class Tables {
                                        new BashLikes(),
                                        new BashBayan(),
                                        new BashFavs(),
+                                       new BashTransactions(),
                                        new ItNewest(),
                                        new ItLikes()
                                     };

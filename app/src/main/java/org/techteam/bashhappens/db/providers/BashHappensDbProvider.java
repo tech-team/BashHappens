@@ -10,6 +10,7 @@ import org.techteam.bashhappens.db.tables.BashBayan;
 import org.techteam.bashhappens.db.tables.BashFavs;
 import org.techteam.bashhappens.db.tables.BashLikes;
 import org.techteam.bashhappens.db.tables.BashNewest;
+import org.techteam.bashhappens.db.tables.BashTransactions;
 
 import static org.techteam.bashhappens.db.DatabaseHelper.AUTHORITY;
 
@@ -19,6 +20,7 @@ public class BashHappensDbProvider extends DbProvider {
     private static final int BASH_LIKES = 2;
     private static final int BASH_BAYAN = 3;
     private static final int BASH_FAVS = 4;
+    private static final int BASH_TRANSACTIONS = 5;
 
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 
@@ -29,6 +31,7 @@ public class BashHappensDbProvider extends DbProvider {
         mUriMatcher.addURI(AUTHORITY, BashLikes.TABLE_NAME, BASH_LIKES);
         mUriMatcher.addURI(AUTHORITY, BashBayan.TABLE_NAME, BASH_BAYAN);
         mUriMatcher.addURI(AUTHORITY, BashFavs.TABLE_NAME, BASH_FAVS);
+        mUriMatcher.addURI(AUTHORITY, BashTransactions.TABLE_NAME, BASH_TRANSACTIONS);
 
         for (String item : new String[] {BashNewest._ID, BashNewest.ID, BashNewest.TEXT, BashNewest.RATING, BashNewest.DATE}) {
             mProjectionMap.put(item, item);
@@ -37,7 +40,7 @@ public class BashHappensDbProvider extends DbProvider {
             mProjectionMap.put(item, item);
         }
         mProjectionMap.put(BashBayan.IS_BAYAN, BashBayan.IS_BAYAN);
-
+        mProjectionMap.put(BashTransactions.STATUS, BashTransactions.STATUS);
     }
 
     @Override
@@ -55,6 +58,9 @@ public class BashHappensDbProvider extends DbProvider {
                 return;
             case BASH_BAYAN:
                 qb.setTables(BashBayan.TABLE_NAME);
+                return;
+            case BASH_TRANSACTIONS:
+                qb.setTables(BashTransactions.TABLE_NAME);
                 return;
             default:
                 throw new IllegalArgumentException("Unknown URI" + uri);
@@ -76,6 +82,8 @@ public class BashHappensDbProvider extends DbProvider {
                 return BashBayan.CONTENT_TYPE;
             case BASH_FAVS:
                 return BashFavs.CONTENT_TYPE;
+            case BASH_TRANSACTIONS:
+                return BashTransactions.CONTENT_TYPE;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -92,6 +100,8 @@ public class BashHappensDbProvider extends DbProvider {
                 return _insert(db, BashBayan.TABLE_NAME, BashBayan.CONTENT_ID_URI_BASE, contentValues);
             case BASH_FAVS:
                 return _insert(db, BashFavs.TABLE_NAME, BashFavs.CONTENT_ID_URI_BASE, contentValues);
+            case BASH_TRANSACTIONS:
+                return _insert(db, BashTransactions.TABLE_NAME, BashTransactions.CONTENT_ID_URI_BASE, contentValues);
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -109,13 +119,26 @@ public class BashHappensDbProvider extends DbProvider {
                 return db.delete(BashBayan.TABLE_NAME, where, whereArgs);
             case BASH_FAVS:
                 return db.delete(BashFavs.TABLE_NAME, where, whereArgs);
+            case BASH_TRANSACTIONS:
+                return db.delete(BashTransactions.TABLE_NAME, where, whereArgs);
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
     }
 
     @Override
-    public synchronized int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
-        return 0;
+    public synchronized int performUpdate(Uri uri, SQLiteDatabase db, ContentValues values,
+                                          String where, String[] whereArgs) {
+        switch (mUriMatcher.match(uri)) {
+            case BASH_NEWEST:
+            case BASH_LIKES:
+            case BASH_BAYAN:
+            case BASH_FAVS:
+                throw new IllegalArgumentException("What is it I can't even");
+            case BASH_TRANSACTIONS:
+                return db.update(BashFavs.TABLE_NAME, values, where, whereArgs);
+            default:
+                throw new IllegalArgumentException("Unknown URI " + uri);
+        }
     }
 }
