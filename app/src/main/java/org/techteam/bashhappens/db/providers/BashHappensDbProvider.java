@@ -40,7 +40,9 @@ public class BashHappensDbProvider extends DbProvider {
             mProjectionMap.put(item, item);
         }
         mProjectionMap.put(BashBayan.IS_BAYAN, BashBayan.IS_BAYAN);
-        mProjectionMap.put(BashTransactions.STATUS, BashTransactions.STATUS);
+        for (String item : new String[] {BashTransactions.STATUS, BashTransactions.TYPE}) {
+            mProjectionMap.put(item, item);
+        }
     }
 
     @Override

@@ -17,9 +17,15 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import org.techteam.bashhappens.R;
+import org.techteam.bashhappens.content.ContentSection;
+import org.techteam.bashhappens.content.bashorg.BashTransactionsEntry;
+import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
+import org.techteam.bashhappens.content.resolvers.BashTransactionsResolver;
+import org.techteam.bashhappens.db.TransactionStatus;
 import org.techteam.bashhappens.gui.adapters.SectionsBuilder;
 import org.techteam.bashhappens.gui.adapters.SectionsListAdapter;
 import org.techteam.bashhappens.gui.fragments.PostsListFragment;
+import org.techteam.bashhappens.rest.OperationType;
 import org.techteam.bashhappens.util.Toaster;
 
 import java.util.List;

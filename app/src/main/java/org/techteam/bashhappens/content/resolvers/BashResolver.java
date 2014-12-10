@@ -24,6 +24,10 @@ public abstract class BashResolver extends AbstractContentResolver {
     }
 
     @Override
+    protected QueryField getQueryField(ContentEntry contentEntry) {
+        return null;
+    }
+    @Override
     protected QueryField getUpdateField(ContentEntry contentEntry) {
         return null;
     }

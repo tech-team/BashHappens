@@ -21,6 +21,7 @@ public abstract class AbstractContentResolver {
     protected abstract Uri _getUri();
     protected abstract ContentValues convertToContentValues(ContentEntry contentEntry);
     protected abstract QueryField getUpdateField(ContentEntry contentEntry);
+    protected abstract QueryField getQueryField(ContentEntry contentEntry);
     protected abstract QueryField getDeletionField(ContentEntry contentEntry);
     protected abstract String[] getProjection();
 
@@ -54,10 +55,10 @@ public abstract class AbstractContentResolver {
     public Cursor getCursor(Context context, String[] projection,
                                      String selection, String[] selectionArgs,
                                      String sortOrder) {
-        if (selection != null) {
+        /*if (selection != null) {
             //TODO: multiple fields selection?
             selection += " = ?";
-        }
+        }*/
         if (projection == null) {
             projection = getProjection();
         }
@@ -87,14 +88,27 @@ public abstract class AbstractContentResolver {
         return context.getContentResolver().delete(_getUri(), null, null);
     }
 
-    public <T extends ContentEntry> int insertEntry(Context context, T entry) {
+    public int insert(Context context, ContentEntry entry) {
+        QueryField field = getQueryField(entry);
+        Cursor cur = getCursor(context, null, field.where, field.whereArgs, null);
+        int rows = cur.getCount();
+        cur.close();
+        if (rows != 0) {
+            return updateEntry(context, entry);
+        }
+        else {
+            return insertEntry(context, entry);
+        }
+    }
+
+    public  int insertEntry(Context context, ContentEntry entry) {
         return Integer.valueOf(context
                                .getContentResolver()
                                .insert(_getUri(), convertToContentValues(entry))
                                .getLastPathSegment());
     }
 
-    public <T extends ContentEntry> int deleteEntry(Context context, T entry) {
+    public int deleteEntry(Context context, ContentEntry entry) {
         QueryField field = getDeletionField(entry);
         return (field == null)
                 ? (-1)
@@ -102,7 +116,7 @@ public abstract class AbstractContentResolver {
                       .delete(_getUri(), field.where , field.whereArgs);
     }
 
-    public <T extends ContentEntry> int updateEntry(Context context, T entry) {
+    public int updateEntry(Context context, ContentEntry entry) {
         QueryField field = getUpdateField(entry);
         return (field == null)
                 ? (-1)
@@ -143,9 +157,12 @@ public abstract class AbstractContentResolver {
     }
     cur.close();
 
-    BashTransactionsResolver resolver = (BashTransactionsResolver) AbstractContentResolver.getResolver(ContentSection.BASH_ORG_TRANSACTIONS);
-    resolver.insertEntry(this, new BashTransactionsEntry().setId("see").setStatus(TransactionStatus.ERROR));
-    List<String> lst = resolver.getEntriesListByField(this, TransactionStatus.ERROR);
 
-    AbstractContentResolver.truncateAll(this);*/
+    BashTransactionsResolver resolver = (BashTransactionsResolver) AbstractContentResolver.getResolver(ContentSection.BASH_ORG_TRANSACTIONS);
+    resolver.insert(this, new BashTransactionsEntry().setId("unsee").setStatus(TransactionStatus.ERROR).setOperationType(OperationType.IT_VOTE));
+    resolver.insert(this, new BashTransactionsEntry().setId("see").setStatus(TransactionStatus.ERROR));
+    List<String> lst1 = resolver.getEntriesByStatusAndType(this, TransactionStatus.ERROR, OperationType.IT_VOTE);
+    List<String> lst2 = resolver.getEntriesByStatus(this, TransactionStatus.ERROR);
+    AbstractContentResolver.truncateAll(this);
+    */
 }
