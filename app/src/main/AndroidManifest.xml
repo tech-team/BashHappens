@@ -24,7 +24,7 @@
 
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="org.techteam.bashhappens.activities.MainActivity" />
+                android:value="org.techteam.bashhappens.gui.activities.MainActivity" />
         </activity>
 
         <provider

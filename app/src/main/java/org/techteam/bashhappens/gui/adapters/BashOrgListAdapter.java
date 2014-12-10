@@ -1,13 +1,9 @@
 package org.techteam.bashhappens.gui.adapters;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +17,7 @@ import org.techteam.bashhappens.R;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.gui.fragments.OnBashEventCallback;
 import org.techteam.bashhappens.gui.fragments.OnListScrolledDownCallback;
-import org.techteam.bashhappens.gui.fragments.PostsListFragment;
+import org.techteam.bashhappens.gui.views.PostToolbarView;
 import org.techteam.bashhappens.gui.views.RatingView;
 import org.techteam.bashhappens.util.Clipboard;
 import org.techteam.bashhappens.util.Toaster;
@@ -66,10 +62,7 @@ public class BashOrgListAdapter
         public TextView text;
 
         //bottom buttons panel
-        public ImageButton share;
-        public ImageButton fav;
-        public Button bayan;
-        public RatingView ratingView;
+        public PostToolbarView toolbarView;
 
 
         public ViewHolder(View v) {
@@ -81,10 +74,7 @@ public class BashOrgListAdapter
 
             text = (TextView) v.findViewById(R.id.post_text);
 
-            share = (ImageButton) v.findViewById(R.id.post_share);
-            fav = (ImageButton) v.findViewById(R.id.post_fav);
-            bayan = (Button) v.findViewById(R.id.post_bayan);
-            ratingView = (RatingView) v.findViewById(R.id.rating_view);
+            toolbarView = (PostToolbarView) v.findViewById(R.id.post_toolbar_view);
         }
     }
 
@@ -136,7 +126,7 @@ public class BashOrgListAdapter
         holder.date.setText(entry.getCreationDate());
         holder.text.setText(entry.getText());
 
-        holder.ratingView.setValue(entry.getRating());
+        holder.toolbarView.setRating(entry.getRating());
 
         //TODO: set buttons state according to DB
 
@@ -144,7 +134,7 @@ public class BashOrgListAdapter
         final VotedCallback votedCallback = new VotedCallback() {
             @Override
             public void onVoted(BashOrgEntry entry) {
-                holder.ratingView.setValue(entry.getRating());
+                holder.toolbarView.setRating(entry.getRating());
 
                 // TODO: make things on voted
             }
@@ -156,9 +146,35 @@ public class BashOrgListAdapter
         };
 
         //set handlers
-        holder.share.setOnClickListener(new View.OnClickListener() {
+        holder.toolbarView.setListener(new PostToolbarView.Listener() {
             @Override
-            public void onClick(View view) {
+            public void likePressed(PostToolbarView view) {
+                Context context = view.getContext();
+
+                voteCallback.onMakeVote(entry, position, BashOrgEntry.VoteDirection.UP, votedCallback);
+                Toaster.toast(context,
+                        "Like pressed for entry.id: " + entry.getId());
+            }
+
+            @Override
+            public void dislikePressed(PostToolbarView view) {
+                Context context = view.getContext();
+
+                voteCallback.onMakeVote(entry, position, BashOrgEntry.VoteDirection.DOWN, votedCallback);
+                Toaster.toast(context,
+                        "Dislike pressed for entry.id: " + entry.getId());
+            }
+
+            @Override
+            public void bayanPressed(PostToolbarView view) {
+                Context context = view.getContext();
+                voteCallback.onMakeVote(entry, position, BashOrgEntry.VoteDirection.BAYAN, votedCallback);
+                Toaster.toast(context,
+                        "Bayan pressed for entry.id: " + entry.getId());
+            }
+
+            @Override
+            public void sharePressed(PostToolbarView view) {
                 Context context = view.getContext();
 
                 Toaster.toast(context,
@@ -166,42 +182,13 @@ public class BashOrgListAdapter
 
                 share(context, entry);
             }
-        });
 
-        holder.fav.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void favPressed(PostToolbarView view) {
                 Context context = view.getContext();
 
                 Toaster.toast(context,
                         "Fav pressed for entry.id: " + entry.getId());
-            }
-        });
-
-        holder.bayan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Context context = view.getContext();
-                voteCallback.onMakeVote(entry, position, BashOrgEntry.VoteDirection.BAYAN, votedCallback);
-                Toaster.toast(context,
-                        "Bayan pressed for entry.id: " + entry.getId());
-            }
-        });
-
-        holder.ratingView.setStateChangedListener(new RatingView.OnStateChanged() {
-            @Override
-            public void ratingViewStateChanged(RatingView ratingView, RatingView.State oldState, RatingView.State newState) {
-                Context context = ratingView.getContext();
-
-                if (newState == RatingView.State.LIKED) {
-                    voteCallback.onMakeVote(entry, position, BashOrgEntry.VoteDirection.UP, votedCallback);
-                    Toaster.toast(context,
-                            "Like pressed for entry.id: " + entry.getId());
-                } else if (newState == RatingView.State.DISLIKED) {
-                    voteCallback.onMakeVote(entry, position, BashOrgEntry.VoteDirection.DOWN, votedCallback);
-                    Toaster.toast(context,
-                            "Dislike pressed for entry.id: " + entry.getId());
-                }
             }
         });
 

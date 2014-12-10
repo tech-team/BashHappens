@@ -3,9 +3,10 @@ package org.techteam.bashhappens.gui.views;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Paint;
+import android.media.Rating;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -13,13 +14,13 @@ import android.widget.TextView;
 import org.techteam.bashhappens.R;
 
 
-public class RatingView extends LinearLayout {
+public class RatingView extends FrameLayout {
 
-    public interface OnStateChanged {
+    public interface Listener {
         void ratingViewStateChanged(RatingView ratingView, State oldState, State newState);
     }
 
-    private OnStateChanged stateChangedListener;
+    private Listener listener;
 
     public enum State {IDLE, LIKED, DISLIKED}
 
@@ -61,16 +62,24 @@ public class RatingView extends LinearLayout {
         likeButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (state == State.IDLE)
+                if (state == State.IDLE) {
                     setState(State.LIKED);
+
+                    if (listener != null)
+                        listener.ratingViewStateChanged(RatingView.this, State.IDLE, state);
+                }
             }
         });
 
         dislikeButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (state == State.IDLE)
+                if (state == State.IDLE) {
                     setState(State.DISLIKED);
+
+                    if (listener != null)
+                        listener.ratingViewStateChanged(RatingView.this, State.IDLE, state);
+                }
             }
         });
     }
@@ -79,6 +88,7 @@ public class RatingView extends LinearLayout {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
     }
+
 
     public String getValue() {
         return value;
@@ -98,17 +108,17 @@ public class RatingView extends LinearLayout {
     }
 
     /**
-     * Changes current control state with calling stateChangedListener
+     * Changes current control state with calling listener
      * @param state new state
      */
     public void setState(State state) {
         State oldState = this.state;
         _setState(state);
-        stateChangedListener.ratingViewStateChanged(this, oldState, state);
+        listener.ratingViewStateChanged(this, oldState, state);
     }
 
     /**
-     * Changes current control state without calling stateChangedListener
+     * Changes current control state without calling listener
      * @param state new state
      */
     public void _setState(State state) {
@@ -118,18 +128,18 @@ public class RatingView extends LinearLayout {
         requestLayout();
     }
 
-    public OnStateChanged getStateChangedListener() {
-        return stateChangedListener;
+    public Listener getListener() {
+        return listener;
     }
 
-    public void setStateChangedListener(OnStateChanged stateChangedListener) {
-        this.stateChangedListener = stateChangedListener;
+    public void setListener(Listener listener) {
+        this.listener = listener;
     }
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
         for(int i = 0 ; i < getChildCount() ; i++){
-            getChildAt(i).layout(l, t, r, b);
+            getChildAt(i).layout(0, 0, r - l, b - t);
         }
     }
 }

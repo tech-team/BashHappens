@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:layout_gravity="center"
+    style="@android:style/Theme.Holo.Light.Panel">
+
+    <org.techteam.bashhappens.gui.views.RatingView
+        android:id="@+id/rating_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:value="100" />
+
+    <Button
+        android:id="@+id/post_bayan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:attr/buttonBarButtonStyle"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
+        android:text="[:||||:]" />
+
+    <ImageButton
+        android:id="@+id/post_share"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        style="?android:attr/buttonBarButtonStyle"
+        android:src="@drawable/ic_action_share"
+        android:contentDescription="@string/post_share" />
+
+    <ImageButton
+        android:id="@+id/post_fav"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:attr/buttonBarButtonStyle"
+        android:src="@drawable/ic_action_not_important"
+        android:contentDescription="@string/post_fav" />
+
+</LinearLayout>
