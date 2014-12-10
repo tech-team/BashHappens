@@ -1,4 +1,4 @@
-package org.techteam.bashhappens.rest;
+package org.techteam.bashhappens.util;
 
 import java.util.HashMap;
 import java.util.LinkedList;

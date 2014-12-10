@@ -4,14 +4,8 @@ import android.content.Context;
 import android.util.Log;
 
 import org.techteam.bashhappens.content.Constants;
-import org.techteam.bashhappens.content.ContentSection;
-import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
-import org.techteam.bashhappens.content.bashorg.BashTransactionsEntry;
+import org.techteam.bashhappens.content.bashorg.BashOrgUrls;
 import org.techteam.bashhappens.content.exceptions.VoteException;
-import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
-import org.techteam.bashhappens.content.resolvers.BashTransactionsResolver;
-import org.techteam.bashhappens.db.TransactionStatus;
-import org.techteam.bashhappens.gui.services.BashService;
 import org.techteam.bashhappens.net.HttpDownloader;
 import org.techteam.bashhappens.net.UrlParams;
 import org.techteam.bashhappens.rest.OperationType;
@@ -110,16 +104,16 @@ public class BashVoteProcessor extends Processor {
         String act;
         if (direction == +1) {
             // UP
-            url = BashService.Urls.getVoteUp(id);
-            act = BashService.Urls.ACT_UP;
+            url = BashOrgUrls.getVoteUp(id);
+            act = BashOrgUrls.ACT_UP;
         } else if (direction == -1) {
             // DOWN
-            url = BashService.Urls.getVoteDown(id);
-            act = BashService.Urls.ACT_DOWN;
+            url = BashOrgUrls.getVoteDown(id);
+            act = BashOrgUrls.ACT_DOWN;
         } else if (direction == 0) {
             // BAYAN
-            url = BashService.Urls.getVoteBayan(id);
-            act = BashService.Urls.ACT_BAYAN;
+            url = BashOrgUrls.getVoteBayan(id);
+            act = BashOrgUrls.ACT_BAYAN;
         } else {
             throw new VoteException("Invalid direction o vote");
         }

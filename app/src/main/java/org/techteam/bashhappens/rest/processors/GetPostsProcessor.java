@@ -6,20 +6,13 @@ import android.os.Bundle;
 import org.techteam.bashhappens.content.ContentList;
 import org.techteam.bashhappens.content.ContentSection;
 import org.techteam.bashhappens.content.ContentSource;
-import org.techteam.bashhappens.content.bashorg.BashTransactionsEntry;
 import org.techteam.bashhappens.content.exceptions.ContentParseException;
 import org.techteam.bashhappens.content.exceptions.FeedOverException;
 import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
 import org.techteam.bashhappens.content.resolvers.BashResolver;
-import org.techteam.bashhappens.content.resolvers.BashTransactionsResolver;
-import org.techteam.bashhappens.db.TransactionStatus;
 import org.techteam.bashhappens.gui.loaders.LoadIntention;
-import org.techteam.bashhappens.rest.BHService;
-import org.techteam.bashhappens.rest.GetPostsCallback;
 import org.techteam.bashhappens.rest.OperationType;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.techteam.bashhappens.rest.service_helper.ServiceCallback;
 
 public class GetPostsProcessor extends Processor {
     private final ContentSource contentSource;
@@ -54,6 +47,7 @@ public class GetPostsProcessor extends Processor {
             transactionError(operationType, requestId);
 
             System.out.println("DONE! list is null");
+            return;
         }
 
         ContentSection section = contentSource.getSection();
@@ -70,7 +64,7 @@ public class GetPostsProcessor extends Processor {
         transactionFinished(operationType, requestId);
 
         Bundle data = new Bundle();
-        data.putParcelable(GetPostsCallback.Extras.NEW_CONTENT_SOURCE, contentSource);
+        data.putParcelable(ServiceCallback.GetPostsExtras.NEW_CONTENT_SOURCE, contentSource);
         cb.onSuccess(data);
     }
 }

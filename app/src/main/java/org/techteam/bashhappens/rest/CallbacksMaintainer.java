@@ -1,5 +1,7 @@
 package org.techteam.bashhappens.rest;
 
+import org.techteam.bashhappens.rest.service_helper.ServiceCallback;
+
 import java.util.HashMap;
 import java.util.Map;
 

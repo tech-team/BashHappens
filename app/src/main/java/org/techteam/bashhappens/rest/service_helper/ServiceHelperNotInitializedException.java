@@ -1,4 +1,4 @@
-package org.techteam.bashhappens.rest;
+package org.techteam.bashhappens.rest.service_helper;
 
 public class ServiceHelperNotInitializedException extends RuntimeException {
     public ServiceHelperNotInitializedException() {

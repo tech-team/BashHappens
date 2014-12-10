@@ -1,4 +1,4 @@
-package org.techteam.bashhappens.rest;
+package org.techteam.bashhappens.rest.service;
 
 import android.app.IntentService;
 import android.content.Intent;
@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.techteam.bashhappens.content.ContentSource;
+import org.techteam.bashhappens.rest.OperationType;
+import org.techteam.bashhappens.rest.service_helper.ServiceHelper;
 import org.techteam.bashhappens.rest.processors.GetPostsProcessor;
 import org.techteam.bashhappens.rest.processors.BashVoteProcessor;
 

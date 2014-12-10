@@ -1,4 +1,4 @@
-package org.techteam.bashhappens.rest;
+package org.techteam.bashhappens.rest.service_helper;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,8 +8,11 @@ import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 
 import org.techteam.bashhappens.content.ContentSource;
-import org.techteam.bashhappens.content.ContentType;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
+import org.techteam.bashhappens.rest.OperationType;
+import org.techteam.bashhappens.rest.service.BHService;
+import org.techteam.bashhappens.rest.service.ServiceIntentBuilder;
+import org.techteam.bashhappens.util.CallbackHelper;
 
 import java.util.List;
 

@@ -1,9 +1,10 @@
-package org.techteam.bashhappens.rest;
+package org.techteam.bashhappens.rest.service;
 
 import android.content.Context;
 import android.content.Intent;
 
 import org.techteam.bashhappens.content.ContentSource;
+import org.techteam.bashhappens.rest.OperationType;
 
 public final class ServiceIntentBuilder {
 

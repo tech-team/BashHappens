@@ -39,12 +39,7 @@
         </provider>
 
         <service
-            android:name="org.techteam.bashhappens.gui.services.BashVoteService"
-            android:exported="false" >
-        </service>
-
-        <service
-            android:name="org.techteam.bashhappens.rest.BHService"
+            android:name=".rest.service.BHService"
             android:exported="false" >
         </service>
     </application>
