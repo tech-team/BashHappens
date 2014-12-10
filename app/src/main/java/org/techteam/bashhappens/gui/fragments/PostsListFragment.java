@@ -66,7 +66,7 @@ public class PostsListFragment
 
     private ContentFactory factory = null;
     private ContentSource content = null;
-    private BashOrgListAdapter adapter = new BashOrgListAdapter(null, PostsListFragment.this);
+    private BashOrgListAdapter adapter = new BashOrgListAdapter(null, PostsListFragment.this, PostsListFragment.this);
 
     private CallbacksMaintainer callbacksMaintainer = new CallbacksMaintainer();
     private ServiceHelper serviceHelper;
@@ -208,6 +208,9 @@ public class PostsListFragment
                 String msg = "voted for entry: "; // + entry.getId();
                 Toaster.toast(getActivity().getApplicationContext(), msg);
                 System.out.println(msg);
+
+                pendingOperations.remove(operationId);
+                getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, null, contentDataLoaderCallbacks);
             }
 
             @Override
@@ -215,6 +218,8 @@ public class PostsListFragment
                 String msg = "vote failed for entry: "; // + entry.getId();
                 Toaster.toast(getActivity().getApplicationContext(), msg);
                 System.out.println(msg);
+
+                pendingOperations.remove(operationId);
             }
         });
     }
@@ -258,7 +263,7 @@ public class PostsListFragment
         mSwipeRefreshLayout.setRefreshing(true);
 
         Toaster.toast(getActivity().getBaseContext(), R.string.loading);
-        content = factory.buildContent(ContentSection.BASH_ORG_NEWEST, true);
+        content = factory.buildContent(activity.getSection().getContentSection(), true);
 
         String opId = serviceHelper.getPosts(content, LoadIntention.REFRESH, callbacksMaintainer.getCallback(OperationType.GET_POSTS));
         pendingOperations.put(opId, new PendingOperation(OperationType.GET_POSTS, opId));
@@ -277,9 +282,14 @@ public class PostsListFragment
 
 
     @Override
-    public void onMakeVote(final BashOrgEntry entry, int entryPosition, BashOrgEntry.VoteDirection direction, BashOrgListAdapter.VotedCallback votedCallback) {
+    public void onMakeVote(final BashOrgEntry entry, int entryPosition, BashOrgEntry.VoteDirection direction) {
         String opId = serviceHelper.bashVote(entry, entryPosition, direction, callbacksMaintainer.getCallback(OperationType.BASH_VOTE));
         pendingOperations.put(opId, new PendingOperation(OperationType.BASH_VOTE, opId));
+    }
+
+    @Override
+    public void onFavorite(BashOrgEntry entry) {
+
     }
 
     @Override
