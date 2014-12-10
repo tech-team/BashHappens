@@ -120,7 +120,7 @@ public class BashOrgListAdapter
         holder.toolbarView.setRating(entry.getRating());
 
         // TODO: set buttons state according to DB
-        // TODO: Actually, according to entry properties. No access to db from here
+        // TODO: Actually, according to entry properties (BashOrgEntry.getDirection and getIsBayan). No access to db from here
 
         //set handlers
         holder.toolbarView.setListener(new PostToolbarView.Listener() {

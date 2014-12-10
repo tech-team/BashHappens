@@ -19,5 +19,6 @@
     <string name="clipboard_label_for_link">BashHappens (post link)</string>
     <string name="post_text_copied">Text copied</string>
     <string name="post_link_copied">Link copied</string>
+    <string name="feed_finished">Feed is finished. Whoa!</string>
 
 </resources>

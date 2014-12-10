@@ -27,18 +27,14 @@ import org.techteam.bashhappens.gui.loaders.LoadIntention;
 import org.techteam.bashhappens.gui.loaders.LoaderIds;
 import org.techteam.bashhappens.rest.CallbacksKeeper;
 import org.techteam.bashhappens.rest.OperationType;
-import org.techteam.bashhappens.rest.PendingOperation;
+import org.techteam.bashhappens.rest.service_helper.ServiceCallback;
+import org.techteam.bashhappens.rest.service_helper.ServiceHelper;
 import org.techteam.bashhappens.util.Toaster;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Queue;
-
-import org.techteam.bashhappens.rest.service_helper.ServiceCallback;
-import org.techteam.bashhappens.rest.service_helper.ServiceHelper;
 
 public class PostsListFragment
         extends Fragment
@@ -68,10 +64,6 @@ public class PostsListFragment
 
     private CallbacksKeeper callbacksKeeper = new CallbacksKeeper();
     private ServiceHelper serviceHelper;
-//    private ServiceManager serviceManager = null;
-//    private VoteBroadcastReceiver voteBroadcastReceiver;
-
-//    @Deprecated private SparseArray<BashOrgListAdapter.VotedCallback> votedCallbackMap = new SparseArray<BashOrgListAdapter.VotedCallback>();
 
     private MainActivity activity;
 
@@ -180,17 +172,24 @@ public class PostsListFragment
             public void onSuccess(String operationId, Bundle data) {
                 mSwipeRefreshLayout.setRefreshing(false);
                 content = data.getParcelable(GetPostsExtras.NEW_CONTENT_SOURCE);
-                String msg = "ServiceCallback call #1";
+                boolean isFeedFinished = data.getBoolean(GetPostsExtras.FEED_FINISHED, false);
+
+                String msg;
+                if (isFeedFinished) {
+                    msg = getActivity().getString(R.string.feed_finished);
+                } else {
+                    msg = "Successfully fetched posts";
+                    getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, null, contentDataLoaderCallbacks);
+                }
+
                 Toaster.toast(getActivity().getApplicationContext(), msg);
                 System.out.println(msg);
-
-                getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, null, contentDataLoaderCallbacks);
             }
 
             @Override
             public void onError(String operationId, Bundle data, String message) {
                 mSwipeRefreshLayout.setRefreshing(false);
-                String msg = "ServiceCallback call #1. ERROR";
+                String msg = "Error. " + message;
                 Toaster.toast(getActivity().getApplicationContext(), msg);
                 System.out.println(msg);
             }
@@ -201,7 +200,7 @@ public class PostsListFragment
             public void onSuccess(String operationId, Bundle data) {
                 String entryId = data.getString(ServiceCallback.BashVoteExtras.ENTRY_ID);
 
-                String msg = "voted for entry: " + entryId;
+                String msg = "Voted for entry: " + entryId;
                 Toaster.toast(getActivity().getApplicationContext(), msg);
                 System.out.println(msg);
 
@@ -212,7 +211,7 @@ public class PostsListFragment
             public void onError(String operationId, Bundle data, String message) {
                 String entryId = data.getString(ServiceCallback.BashVoteExtras.ENTRY_ID);
 
-                String msg = "vote failed for entry: " + entryId;
+                String msg = "Vote failed for entry: " + entryId + ". " + message;
                 Toaster.toast(getActivity().getApplicationContext(), msg);
                 System.out.println(msg);
             }

@@ -33,38 +33,47 @@ public class GetPostsProcessor extends Processor {
         Throwable exc = null;
         try {
             list = contentSource.retrieveNextList(getContext());
-        } catch (FeedOverException | ContentParseException e) {
+        } catch (FeedOverException ignored) {
+
+        } catch (ContentParseException e) {
             exc = e;
         }
-        if (list != null) {
-            System.out.println("DONE! + " + list.getEntries().size());
-        } else {
+
+        if (list == null) {
             if (exc != null) {
+                transactionError(operationType, requestId);
                 cb.onError(exc.getMessage(), null);
             } else {
-                cb.onError("Unexpected error", null);
+                transactionFinished(operationType, requestId);
+                Bundle data = getInitialBundle();
+                data.putBoolean(ServiceCallback.GetPostsExtras.FEED_FINISHED, true);
+                cb.onSuccess(data);
             }
-            transactionError(operationType, requestId);
 
             System.out.println("DONE! list is null");
-            return;
+        } else {
+            System.out.println("DONE! + " + list.getEntries().size());
+
+            ContentSection section = contentSource.getSection();
+            BashResolver resolver = (BashResolver) AbstractContentResolver.getResolver(section);
+
+            if (loadIntention == LoadIntention.REFRESH) {
+                resolver.deleteAllEntries(getContext());
+            }
+
+            // writing to db
+            resolver.insertEntries(getContext(), list);
+
+            // finishing up a transaction
+            transactionFinished(operationType, requestId);
+
+            cb.onSuccess(getInitialBundle());
         }
+    }
 
-        ContentSection section = contentSource.getSection();
-        BashResolver resolver = (BashResolver) AbstractContentResolver.getResolver(section);
-
-        if (loadIntention == LoadIntention.REFRESH) {
-            resolver.deleteAllEntries(getContext());
-        }
-
-        // writing to db
-        resolver.insertEntries(getContext(), list);
-
-        // finishing up a transaction
-        transactionFinished(operationType, requestId);
-
+    private Bundle getInitialBundle() {
         Bundle data = new Bundle();
         data.putParcelable(ServiceCallback.GetPostsExtras.NEW_CONTENT_SOURCE, contentSource);
-        cb.onSuccess(data);
+        return data;
     }
 }

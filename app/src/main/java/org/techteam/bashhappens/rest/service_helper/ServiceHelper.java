@@ -33,9 +33,7 @@ public class ServiceHelper {
     }
 
     public void getPosts(ContentSource contentSource, int loadIntention, ServiceCallback cb) {
-        if (!isInit) {
-            init();
-        }
+        init();
 
         String requestId = OperationType.GET_POSTS + "_" + contentSource.getFootprint();
         CallbackHelper.AddStatus s = callbackHelper.addCallback(requestId, cb);
@@ -49,9 +47,7 @@ public class ServiceHelper {
     }
 
     public void bashVote(BashOrgEntry entry, int entryPosition, BashOrgEntry.VoteDirection voteDirection, ServiceCallback cb) {
-        if (!isInit) {
-            init();
-        }
+       init();
 
         String requestId = OperationType.BASH_VOTE + "_"
                             + entry.getId() + "_"
