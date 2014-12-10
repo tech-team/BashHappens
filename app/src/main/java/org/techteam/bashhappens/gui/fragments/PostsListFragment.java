@@ -31,7 +31,9 @@ import org.techteam.bashhappens.content.ContentFactory;
 import org.techteam.bashhappens.content.ContentList;
 import org.techteam.bashhappens.content.ContentSource;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
+import org.techteam.bashhappens.gui.activities.MainActivity;
 import org.techteam.bashhappens.gui.adapters.BashOrgListAdapter;
+import org.techteam.bashhappens.gui.adapters.SectionsBuilder;
 import org.techteam.bashhappens.gui.loaders.ContentAsyncLoader;
 import org.techteam.bashhappens.gui.loaders.ContentLoaderResult;
 import org.techteam.bashhappens.gui.loaders.LoadIntention;
@@ -79,6 +81,7 @@ public class PostsListFragment
     private SparseArray<BashOrgListAdapter.VotedCallback> votedCallbackMap = new SparseArray<BashOrgListAdapter.VotedCallback>();
     private SparseArray<BashOrgListAdapter.VotedCallback> votedBayanCallbackMap = new SparseArray<BashOrgListAdapter.VotedCallback>();
 
+    private MainActivity activity;
 
     private LoaderManager.LoaderCallbacks<ContentLoaderResult> contentListLoaderCallbacks = new LoaderManager.LoaderCallbacks<ContentLoaderResult>() {
 
@@ -213,6 +216,8 @@ public class PostsListFragment
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
+        this.activity = (MainActivity) activity;
+
         serviceManager = new ServiceManager(activity);
     }
 
@@ -229,8 +234,7 @@ public class PostsListFragment
             factory = savedInstanceState.getParcelable(BundleKeys.FACTORY);
         }
 
-        //TODO: should be saved in prefs i think
-        content = factory.buildContent(ContentFactory.ContentSection.BASH_ORG_NEWEST);
+        content = factory.buildContent(activity.getSection().getContentSection());
     }
 
     @Override
@@ -370,7 +374,7 @@ public class PostsListFragment
 
                 default:
                     Toaster.toast(getActivity().getBaseContext(),
-                            getActivity().getString(R.string.preferences_error));
+                            "Some settings changed programmatically");
                     break;
             }
         }

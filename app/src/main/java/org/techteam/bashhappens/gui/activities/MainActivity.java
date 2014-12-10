@@ -1,6 +1,7 @@
 package org.techteam.bashhappens.gui.activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -29,6 +30,8 @@ public class MainActivity
         extends ActionBarActivity {
 
     private List<SectionsBuilder.Section> sections;
+    private SectionsBuilder.Section section;
+
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
     private ListView mDrawerList;
@@ -39,12 +42,17 @@ public class MainActivity
         public static final String SECTION_ID = "SECTION_ID";
     }
 
+    private static final class PrefKeys {
+        public static final String SECTION_ID = "SECTION_ID";
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_actionbar);
         setSupportActionBar(toolbar);
@@ -64,8 +72,10 @@ public class MainActivity
 
         if (savedInstanceState != null)
             selectItem(savedInstanceState.getInt(BundleKeys.SECTION_ID));
-        else
-            selectItem(SectionsBuilder.getDefaultSectionId());
+        else {
+            int sectionId = sharedPrefs.getInt(PrefKeys.SECTION_ID, SectionsBuilder.getDefaultSectionId());
+            selectItem(sectionId);
+        }
 
         // Set the list's click listener
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
@@ -114,6 +124,18 @@ public class MainActivity
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+
+        SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        editor.putInt(PrefKeys.SECTION_ID, sectionsListAdapter.getSelectedItemId());
+
+        editor.apply();
+    }
+
+    @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         mDrawerToggle.onConfigurationChanged(newConfig);
@@ -127,7 +149,7 @@ public class MainActivity
     }
 
     private void selectItem(int position) {
-        SectionsBuilder.Section section = sections.get(position);
+        section = sections.get(position);
         Toaster.toast(getBaseContext(), section.getActionBarText());
 
         //TODO: change data source here via section.getContentSection()
@@ -180,4 +202,7 @@ public class MainActivity
         startActivity(settingsIntent);
     }
 
+    public SectionsBuilder.Section getSection() {
+        return section;
+    }
 }

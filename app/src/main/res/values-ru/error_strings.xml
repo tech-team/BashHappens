@@ -2,6 +2,5 @@
 <resources>
 
     <string name="loading_error">Ошибка при загрузке</string>
-    <string name="preferences_error">Вы изменили несуществующую настройку, поздравляем!</string>
 
 </resources>

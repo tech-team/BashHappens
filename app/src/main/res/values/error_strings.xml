@@ -2,6 +2,5 @@
 <resources>
 
     <string name="loading_error">Error while loading</string>
-    <string name="preferences_error">You have changed not existing preference, congrats!</string>
 
 </resources>
