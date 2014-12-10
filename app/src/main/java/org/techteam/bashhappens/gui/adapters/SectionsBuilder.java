@@ -14,6 +14,7 @@ public class SectionsBuilder {
         String getActionBarText();
         ContentFactory.ContentSection getContentSection();
         boolean isDisabled();
+        boolean isHeader();
     }
 
     public static class GroupSection implements Section {
@@ -37,6 +38,11 @@ public class SectionsBuilder {
 
         @Override
         public boolean isDisabled() {
+            return true;
+        }
+
+        @Override
+        public boolean isHeader() {
             return true;
         }
 
@@ -67,6 +73,11 @@ public class SectionsBuilder {
 
         @Override
         public boolean isDisabled() {
+            return false;
+        }
+
+        @Override
+        public boolean isHeader() {
             return false;
         }
 

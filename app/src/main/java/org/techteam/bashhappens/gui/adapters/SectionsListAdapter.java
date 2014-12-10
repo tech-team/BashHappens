@@ -32,7 +32,7 @@ public class SectionsListAdapter
 
         ViewHolder viewHolder;
         if (convertView == null) {
-            if (section.isDisabled())
+            if (section.isHeader())
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.sections_list_header, parent, false);
             else
                 convertView = LayoutInflater.from(getContext()).inflate(R.layout.sections_list_entry, parent, false);
@@ -67,7 +67,7 @@ public class SectionsListAdapter
 
     @Override
     public int getItemViewType(int position) {
-        return getItem(position).isDisabled() ? 0 : 1;
+        return getItem(position).isHeader() ? 0 : 1;
     }
 
     @Override
