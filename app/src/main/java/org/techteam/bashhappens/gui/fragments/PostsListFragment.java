@@ -301,6 +301,7 @@ public class PostsListFragment
     @Override
     public void onResume() {
         super.onResume();
+        System.out.println("onResume");
         serviceHelper.init();
 //        registerBroadcastReceivers();
     }
@@ -308,6 +309,7 @@ public class PostsListFragment
     @Override
     public void onPause() {
         super.onPause();
+        System.out.println("onPause");
         serviceHelper.release();
 //        unregisterBroadcastReceivers();
     }

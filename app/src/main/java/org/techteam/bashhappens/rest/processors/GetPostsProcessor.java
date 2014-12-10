@@ -5,8 +5,14 @@ import android.content.Context;
 import org.techteam.bashhappens.content.ContentList;
 import org.techteam.bashhappens.content.ContentSection;
 import org.techteam.bashhappens.content.ContentSource;
+import org.techteam.bashhappens.content.bashorg.BashTransactionsEntry;
 import org.techteam.bashhappens.content.exceptions.ContentParseException;
 import org.techteam.bashhappens.content.exceptions.FeedOverException;
+import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
+import org.techteam.bashhappens.content.resolvers.BashResolver;
+import org.techteam.bashhappens.content.resolvers.BashTransactionsResolver;
+import org.techteam.bashhappens.db.TransactionStatus;
+import org.techteam.bashhappens.rest.OperationType;
 
 public class GetPostsProcessor extends Processor {
     private final ContentSource contentSource;
@@ -19,7 +25,10 @@ public class GetPostsProcessor extends Processor {
     }
 
     @Override
-    public void start(ProcessorCallback cb) {
+    public void start(OperationType operationType, String requestId, ProcessorCallback cb) {
+
+        transactionStarted(operationType, requestId);
+
         ContentList list = null;
         Throwable exc = null;
         try {
@@ -37,21 +46,18 @@ public class GetPostsProcessor extends Processor {
             } else {
                 cb.onError("Unexpected error");
             }
+            transactionError(operationType, requestId);
 
             System.out.println("DONE! list is null");
         }
 
-        // TODO: basing on loadIntention decide how to operate with data
-        // TODO: write to db
-
-        // TODO: make a table for each ContentSection
+        // writing to db
         ContentSection section = contentSource.getSection();
-        switch (section) {
-            case BASH_ORG_NEWEST:
-                break;
-            case IT_HAPPENS_NEWEST:
-                break;
-        }
+        BashResolver resolver = (BashResolver) AbstractContentResolver.getResolver(section);
+        resolver.insertEntries(getContext(), list);
+
+        // finishing up a transaction
+        transactionFinished(operationType, requestId);
 
         cb.onSuccess();
     }

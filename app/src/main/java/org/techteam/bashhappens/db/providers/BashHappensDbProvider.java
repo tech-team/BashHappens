@@ -136,7 +136,7 @@ public class BashHappensDbProvider extends DbProvider {
             case BASH_FAVS:
                 throw new IllegalArgumentException("What is it I can't even");
             case BASH_TRANSACTIONS:
-                return db.update(BashFavs.TABLE_NAME, values, where, whereArgs);
+                return db.update(BashTransactions.TABLE_NAME, values, where, whereArgs);
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }

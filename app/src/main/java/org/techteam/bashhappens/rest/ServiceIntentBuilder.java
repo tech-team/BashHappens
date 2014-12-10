@@ -10,7 +10,7 @@ public final class ServiceIntentBuilder {
     public static Intent getPostsIntent(Context context, String requestId, ContentSource contentSource, int loadIntention) {
         Intent intent = new Intent(context, BHService.class);
         intent.putExtra(BHService.IntentExtras.REQUEST_ID, requestId);
-        intent.putExtra(BHService.IntentExtras.OPERATION, BHService.IntentExtras.GetPostsOperation.TAG);
+        intent.putExtra(BHService.IntentExtras.OPERATION, OperationType.GET_POSTS.toString());
 
         intent.putExtra(BHService.IntentExtras.GetPostsOperation.CONTENT_SOURCE, contentSource);
         intent.putExtra(BHService.IntentExtras.GetPostsOperation.LOAD_INTENTION, loadIntention);
@@ -20,7 +20,7 @@ public final class ServiceIntentBuilder {
     public static Intent voteBashIntent(Context context, String requestId, int entryPosition, String entryId, String rating, int direction) {
         Intent intent = new Intent(context, BHService.class);
         intent.putExtra(BHService.IntentExtras.REQUEST_ID, requestId);
-        intent.putExtra(BHService.IntentExtras.OPERATION, BHService.IntentExtras.BashVoteOperation.TAG);
+        intent.putExtra(BHService.IntentExtras.OPERATION, OperationType.BASH_VOTE.toString());
 
         intent.putExtra(BHService.IntentExtras.BashVoteOperation.ENTRY_POSITION, entryPosition);
         intent.putExtra(BHService.IntentExtras.BashVoteOperation.ENTRY_ID, entryId);
@@ -32,7 +32,7 @@ public final class ServiceIntentBuilder {
     public static Intent voteBayanBashIntent(Context context, String requestId, int entryPosition, String entryId) {
         Intent intent = new Intent(context, BHService.class);
         intent.putExtra(BHService.IntentExtras.REQUEST_ID, requestId);
-        intent.putExtra(BHService.IntentExtras.OPERATION, BHService.IntentExtras.BashVoteOperation.TAG);
+        intent.putExtra(BHService.IntentExtras.OPERATION, OperationType.BASH_VOTE.toString());
 
         intent.putExtra(BHService.IntentExtras.BashVoteOperation.ENTRY_POSITION, entryPosition);
         intent.putExtra(BHService.IntentExtras.BashVoteOperation.ENTRY_ID, entryId);

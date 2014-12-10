@@ -143,8 +143,8 @@ public abstract class AbstractContentResolver {
     cur.close();
 
     BashTransactionsResolver resolver = (BashTransactionsResolver) AbstractContentResolver.getResolver(ContentSection.BASH_ORG_TRANSACTIONS);
-    resolver.insertEntry(this, new BashTransactionsEntry().setId("see").setStatus(TransactionStatus.PROCESSING));
-    List<String> lst = resolver.getEntriesListByField(this, TransactionStatus.PROCESSING);
+    resolver.insertEntry(this, new BashTransactionsEntry().setId("see").setStatus(TransactionStatus.ERROR));
+    List<String> lst = resolver.getEntriesListByField(this, TransactionStatus.ERROR);
 
     AbstractContentResolver.truncateAll(this);*/
 }

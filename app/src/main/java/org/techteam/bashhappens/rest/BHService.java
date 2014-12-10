@@ -28,13 +28,11 @@ public class BHService extends IntentService {
         public static final String OPERATION = "OPERATION";
 
         public class GetPostsOperation {
-            public static final String TAG = "GET_POSTS";
             public static final String CONTENT_SOURCE = "CONTENT_SOURCE";
             public static final String LOAD_INTENTION = "LOAD_INTENTION";
         }
 
         public class BashVoteOperation {
-            public static final String TAG = "BASH_VOTE";
             public static final String ENTRY_ID = "ENTRY_ID";
             public static final String RATING = "rating";
             public static final String DIRECTION = "direction";
@@ -43,7 +41,6 @@ public class BHService extends IntentService {
         }
 
         public class ItHappensVoteOperation {
-            public static final String TAG = "IT_VOTE";
         }
     }
 
@@ -64,7 +61,11 @@ public class BHService extends IntentService {
         System.out.println("=== Started BHService ===");
         Bundle extras = intent.getExtras();
         String requestId = extras.getString(IntentExtras.REQUEST_ID);
-        String operation = extras.getString(IntentExtras.OPERATION);
+        OperationType operation = null;
+        try {
+            operation = Enum.valueOf(OperationType.class, extras.getString(IntentExtras.OPERATION));
+        } catch (IllegalArgumentException ignored) {
+        }
 
         if (requestId == null || operation == null) {
             throw new RuntimeException("No REQUEST_ID or operation specified");
@@ -72,14 +73,15 @@ public class BHService extends IntentService {
 
         Processor processor = null;
 
-        if (operation.equalsIgnoreCase(IntentExtras.GetPostsOperation.TAG)) {
+
+        if (operation == OperationType.GET_POSTS) {
 
             ContentSource contentSource = extras.getParcelable(IntentExtras.GetPostsOperation.CONTENT_SOURCE);
             int loadIntention = extras.getInt(IntentExtras.GetPostsOperation.LOAD_INTENTION);
 
             processor = new GetPostsProcessor(getBaseContext(), contentSource, loadIntention);
 
-        } else if (operation.equalsIgnoreCase(IntentExtras.BashVoteOperation.TAG)) {
+        } else if (operation == OperationType.BASH_VOTE) {
 
             int entryPosition = intent.getIntExtra(IntentExtras.BashVoteOperation.ENTRY_POSITION, -1);
             String entryId = extras.getString(IntentExtras.BashVoteOperation.ENTRY_ID);
@@ -88,7 +90,7 @@ public class BHService extends IntentService {
             boolean bayaning = extras.getBoolean(IntentExtras.BashVoteOperation.BAYAN, false);
 
             processor = new BashVoteProcessor(getBaseContext(), entryPosition, entryId, rating, direction, bayaning);
-        } else if (operation.equalsIgnoreCase(IntentExtras.ItHappensVoteOperation.TAG)) {
+        } else if (operation == OperationType.IT_VOTE) {
             // TODO
 
             processor = null;
@@ -96,10 +98,10 @@ public class BHService extends IntentService {
 
         final Intent cbIntent = new Intent(ServiceHelper.ServiceBroadcastReceiverHelper.NAME);
         cbIntent.putExtra(CallbackIntentExtras.REQUEST_ID, requestId);
-        cbIntent.putExtra(CallbackIntentExtras.OPERATION, operation);
+        cbIntent.putExtra(CallbackIntentExtras.OPERATION, operation.toString());
 
         if (processor != null) {
-            processor.start(new ProcessorCallback() {
+            processor.start(operation, requestId, new ProcessorCallback() {
                 @Override
                 public void onSuccess() {
                     cbIntent.putExtra(CallbackIntentExtras.STATUS, CallbackIntentExtras.Status.OK);

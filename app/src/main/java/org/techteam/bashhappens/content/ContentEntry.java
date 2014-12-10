@@ -1,6 +1,5 @@
 package org.techteam.bashhappens.content;
 
-import android.os.Parcelable;
 
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 

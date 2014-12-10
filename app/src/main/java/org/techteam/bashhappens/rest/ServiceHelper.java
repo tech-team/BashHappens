@@ -19,11 +19,6 @@ public class ServiceHelper {
     private boolean isInit = false;
     private ServiceBroadcastReceiver receiver;
 
-    public class IdPrefix {
-        public static final String GET_POSTS = "GET_POSTS_";
-        public static final String VOTE = "VOTE_";
-    }
-
     public ServiceHelper(Context context) {
         this.context = context;
     }
@@ -33,7 +28,7 @@ public class ServiceHelper {
             throw new ServiceHelperNotInitializedException();
         }
 
-        String requestId = IdPrefix.GET_POSTS + contentSource.getFootprint();
+        String requestId = OperationType.GET_POSTS + "_" + contentSource.getFootprint();
         CallbackHelper.AddStatus s = callbackHelper.addCallback(requestId, cb);
 
         if (s == CallbackHelper.AddStatus.NEW_CB) {
@@ -47,8 +42,7 @@ public class ServiceHelper {
             throw new ServiceHelperNotInitializedException();
         }
 
-        String requestId = IdPrefix.VOTE + "_"
-                            + ContentType.BASH_ORG.toString() + "_"
+        String requestId = OperationType.BASH_VOTE + "_"
                             + entry.getId() + "_"
                             + entryPosition + "_"
                             + voteDirection.toString();
@@ -93,7 +87,7 @@ public class ServiceHelper {
         public void onReceive(Context context, Intent intent) {
             Bundle extras = intent.getExtras();
             String id = extras.getString(BHService.CallbackIntentExtras.REQUEST_ID);
-            String operation = extras.getString(BHService.CallbackIntentExtras.OPERATION);
+            OperationType operation = Enum.valueOf(OperationType.class, extras.getString(BHService.CallbackIntentExtras.OPERATION));
 
             // TODO: extract all the statuses and push to the callbacks
             int status = extras.getInt(BHService.CallbackIntentExtras.STATUS);
