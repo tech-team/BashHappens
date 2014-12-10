@@ -9,19 +9,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import org.techteam.bashhappens.R;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
-import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
 import org.techteam.bashhappens.content.resolvers.BashResolver;
 import org.techteam.bashhappens.gui.fragments.OnBashEventCallback;
 import org.techteam.bashhappens.gui.fragments.OnListScrolledDownCallback;
 import org.techteam.bashhappens.gui.views.PostToolbarView;
-import org.techteam.bashhappens.gui.views.RatingView;
 import org.techteam.bashhappens.util.Clipboard;
 import org.techteam.bashhappens.util.Toaster;
 

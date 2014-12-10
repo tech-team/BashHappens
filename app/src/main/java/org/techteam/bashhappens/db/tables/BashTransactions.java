@@ -2,13 +2,16 @@ package org.techteam.bashhappens.db.tables;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
-import android.provider.BaseColumns;
 import android.util.Log;
 
 import org.techteam.bashhappens.db.DatabaseHelper;
 import org.techteam.bashhappens.db.ITable;
 
-import static org.techteam.bashhappens.db.DataTypes.*;
+import static org.techteam.bashhappens.db.DataTypes.COLUMN_ID;
+import static org.techteam.bashhappens.db.DataTypes.SEPARATOR;
+import static org.techteam.bashhappens.db.DataTypes.TYPE_INTEGER;
+import static org.techteam.bashhappens.db.DataTypes.TYPE_SERIAL;
+import static org.techteam.bashhappens.db.DataTypes.TYPE_TEXT;
 
 public class BashTransactions implements ITable {
 
