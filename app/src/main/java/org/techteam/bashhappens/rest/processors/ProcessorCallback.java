@@ -4,5 +4,5 @@ import android.os.Bundle;
 
 public interface ProcessorCallback {
     void onSuccess(Bundle data);
-    void onError(String message);
+    void onError(String message, Bundle data);
 }

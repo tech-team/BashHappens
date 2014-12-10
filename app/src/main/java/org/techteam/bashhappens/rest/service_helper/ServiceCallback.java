@@ -9,4 +9,8 @@ public interface ServiceCallback {
     class GetPostsExtras {
         public static final String NEW_CONTENT_SOURCE = "NEW_CONTENT_SOURCE";
     }
+
+    class BashVoteExtras {
+        public static final String ENTRY_ID = "ENTRY_ID";
+    }
 }

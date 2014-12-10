@@ -30,15 +30,4 @@ public final class ServiceIntentBuilder {
         return intent;
     }
 
-    public static Intent voteBayanBashIntent(Context context, String requestId, int entryPosition, String entryId) {
-        Intent intent = new Intent(context, BHService.class);
-        intent.putExtra(BHService.IntentExtras.REQUEST_ID, requestId);
-        intent.putExtra(BHService.IntentExtras.OPERATION, OperationType.BASH_VOTE.toString());
-
-        intent.putExtra(BHService.IntentExtras.BashVoteOperation.ENTRY_POSITION, entryPosition);
-        intent.putExtra(BHService.IntentExtras.BashVoteOperation.ENTRY_ID, entryId);
-        intent.putExtra(BHService.IntentExtras.BashVoteOperation.BAYAN, true);
-        return intent;
-    }
-
 }

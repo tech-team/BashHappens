@@ -40,9 +40,9 @@ public class GetPostsProcessor extends Processor {
             System.out.println("DONE! + " + list.getEntries().size());
         } else {
             if (exc != null) {
-                cb.onError(exc.getMessage());
+                cb.onError(exc.getMessage(), null);
             } else {
-                cb.onError("Unexpected error");
+                cb.onError("Unexpected error", null);
             }
             transactionError(operationType, requestId);
 

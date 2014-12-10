@@ -199,7 +199,9 @@ public class PostsListFragment
         callbacksKeeper.addCallback(OperationType.BASH_VOTE, new ServiceCallback() {
             @Override
             public void onSuccess(String operationId, Bundle data) {
-                String msg = "voted for entry: "; // + entry.getId();
+                String entryId = data.getString(ServiceCallback.BashVoteExtras.ENTRY_ID);
+
+                String msg = "voted for entry: " + entryId;
                 Toaster.toast(getActivity().getApplicationContext(), msg);
                 System.out.println(msg);
 
@@ -208,7 +210,9 @@ public class PostsListFragment
 
             @Override
             public void onError(String operationId, Bundle data, String message) {
-                String msg = "vote failed for entry: "; // + entry.getId();
+                String entryId = data.getString(ServiceCallback.BashVoteExtras.ENTRY_ID);
+
+                String msg = "vote failed for entry: " + entryId;
                 Toaster.toast(getActivity().getApplicationContext(), msg);
                 System.out.println(msg);
             }
@@ -226,7 +230,11 @@ public class PostsListFragment
             factory = new ContentFactory(Locale.getDefault().toString());
         } else {
             factory = savedInstanceState.getParcelable(BundleKeys.FACTORY);
-            serviceHelper.restoreOperationsState(savedInstanceState, BundleKeys.PENDING_OPERATIONS, callbacksKeeper);
+            boolean isRefreshing = serviceHelper.restoreOperationsState(savedInstanceState, BundleKeys.PENDING_OPERATIONS, callbacksKeeper);
+            if (isRefreshing) {
+                // TODO: it is not working
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
         }
 
         content = factory.buildContent(activity.getSection().getContentSection());
@@ -274,6 +282,7 @@ public class PostsListFragment
         super.onResume();
         System.out.println("onResume");
         serviceHelper.init();
+
     }
 
     @Override
@@ -282,15 +291,6 @@ public class PostsListFragment
         System.out.println("onPause");
         serviceHelper.release();
     }
-
-
-
-    private void registerBroadcastReceivers() {
-    }
-
-    private void unregisterBroadcastReceivers() {
-    }
-
 
 
 

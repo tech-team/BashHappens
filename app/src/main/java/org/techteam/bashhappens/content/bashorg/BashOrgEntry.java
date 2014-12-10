@@ -8,7 +8,6 @@ import org.techteam.bashhappens.content.ContentType;
 
 public class BashOrgEntry extends ContentEntry {
     private static final String LOG_TAG = BashOrgEntry.class.toString();
-    private String link = "http://bash.im/quote/"; //TODO: fixme
 
     public static final class DOM {
         public static final String DOM_CLASS_NAME = "quote";
@@ -27,9 +26,10 @@ public class BashOrgEntry extends ContentEntry {
                 return +1;
             } else if (this == DOWN) {
                 return -1;
-            } else {
+            } else if (this == BAYAN) {
                 return 0;
             }
+            throw new IllegalArgumentException("Unexpected value");
         }
     }
 
@@ -80,7 +80,7 @@ public class BashOrgEntry extends ContentEntry {
     }
 
     public String getLink() {
-        return link + getId();
+        return BashOrgUrls.getQuoteLink(getId());
     }
 
     public BashOrgEntry setRating(String rating) {
@@ -139,41 +139,4 @@ public class BashOrgEntry extends ContentEntry {
 
         return new BashOrgEntry(id, creationDate, text, rating);
     }
-
-
-//    public BashOrgEntry(Parcel in) {
-//        super(CONTENT_TYPE);
-//
-//        String[] vals = new String[3];
-//        in.readStringArray(vals);
-//
-//        id = vals[0];
-//        creationDate = vals[1];
-//        text = vals[2];
-//    }
-//
-//    @Override
-//    public int describeContents() {
-//        return 0;
-//    }
-//
-//    @Override
-//    public void writeToParcel(Parcel parcel, int i) {
-//        parcel.writeStringArray(new String[] {
-//                id,
-//                creationDate,
-//                text
-//        });
-//    }
-//
-//    public static final Parcelable.Creator<BashOrgEntry> CREATOR
-//            = new Parcelable.Creator<BashOrgEntry>() {
-//        public BashOrgEntry createFromParcel(Parcel in) {
-//            return new BashOrgEntry(in);
-//        }
-//
-//        public BashOrgEntry[] newArray(int size) {
-//            return new BashOrgEntry[size];
-//        }
-//    };
 }

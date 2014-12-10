@@ -1,6 +1,7 @@
 package org.techteam.bashhappens.rest.processors;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 
 import org.techteam.bashhappens.content.Constants;
@@ -9,6 +10,7 @@ import org.techteam.bashhappens.content.exceptions.VoteException;
 import org.techteam.bashhappens.net.HttpDownloader;
 import org.techteam.bashhappens.net.UrlParams;
 import org.techteam.bashhappens.rest.OperationType;
+import org.techteam.bashhappens.rest.service_helper.ServiceCallback;
 
 import java.io.IOException;
 
@@ -19,22 +21,23 @@ public class BashVoteProcessor extends Processor {
     private final String entryId;
     private final String rating;
     private final int direction;
-    private final boolean bayaning;
 
-    public BashVoteProcessor(Context context, int entryPosition, String entryId, String rating, int direction, boolean bayaning) {
+    public BashVoteProcessor(Context context, int entryPosition, String entryId, String rating, int direction) {
         super(context);
         this.entryPosition = entryPosition;
         this.entryId = entryId;
         this.rating = rating;
         this.direction = direction;
-        this.bayaning = bayaning;
     }
 
     @Override
     public void start(OperationType operationType, String requestId, ProcessorCallback cb) {
         transactionStarted(operationType, requestId);
+
+        Bundle data = new Bundle();
+        data.putString(ServiceCallback.BashVoteExtras.ENTRY_ID, entryId);
         try {
-            if (bayaning) {
+            if (direction == 0) {
                 // Bayan
 
                 makeBayan(entryId);
@@ -46,10 +49,6 @@ public class BashVoteProcessor extends Processor {
             } else {
                 // Normal rating
 
-                if (direction == 0) {
-                    throw new VoteException("Invalid vote direction");
-                }
-
                 String newRating = changeRating(entryId, rating, direction);
 
                 //TODO: decide about bayan/likes system and implement
@@ -59,12 +58,13 @@ public class BashVoteProcessor extends Processor {
                         .setDirection(direction));*/
             }
             transactionFinished(operationType, requestId);
-            cb.onSuccess(null);
+
+            cb.onSuccess(data);
         }
         catch (IOException | VoteException e) {
             Log.w(NAME, e);
             transactionError(operationType, requestId);
-            cb.onError(e.getMessage());
+            cb.onError(e.getMessage(), data);
         }
     }
 

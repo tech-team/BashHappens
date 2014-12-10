@@ -17,6 +17,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import org.techteam.bashhappens.R;
+import org.techteam.bashhappens.content.ContentFactory;
 import org.techteam.bashhappens.gui.adapters.SectionsBuilder;
 import org.techteam.bashhappens.gui.adapters.SectionsListAdapter;
 import org.techteam.bashhappens.gui.fragments.PostsListFragment;
@@ -43,6 +44,7 @@ public class MainActivity
 
     private static final class PrefKeys {
         public static final String SECTION_ID = "SECTION_ID";
+        public static final String CONTENT_FACTORY = "CONTENT_FACTORY";
     }
 
     @Override
@@ -133,6 +135,7 @@ public class MainActivity
 
         editor.apply();
     }
+
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {

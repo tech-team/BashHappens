@@ -119,22 +119,8 @@ public class BashOrgListAdapter
 
         holder.toolbarView.setRating(entry.getRating());
 
-        //TODO: set buttons state according to DB
-
-
-//        final VotedCallback votedCallback = new VotedCallback() {
-//            @Override
-//            public void onVoted(BashOrgEntry entry) {
-//                holder.toolbarView.setRating(entry.getRating());
-//
-//                // TODO: make things on voted
-//            }
-//
-//            @Override
-//            public void onBayan(BashOrgEntry entry) {
-//                // TODO: make things on bayan
-//            }
-//        };
+        // TODO: set buttons state according to DB
+        // TODO: Actually, according to entry properties. No access to db from here
 
         //set handlers
         holder.toolbarView.setListener(new PostToolbarView.Listener() {

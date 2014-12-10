@@ -59,14 +59,7 @@ public class ServiceHelper {
                             + voteDirection.toString();
         CallbackHelper.AddStatus s = callbackHelper.addCallback(requestId, cb);
         if (s == CallbackHelper.AddStatus.NEW_CB) {
-            Intent intent;
-
-            if (voteDirection == BashOrgEntry.VoteDirection.BAYAN) {
-                intent = ServiceIntentBuilder.voteBayanBashIntent(context, requestId, entryPosition, entry.getId());
-            } else {
-                intent = ServiceIntentBuilder.voteBashIntent(context, requestId, entryPosition, entry.getId(), entry.getRating(), voteDirection.toDirection());
-            }
-
+            Intent intent = ServiceIntentBuilder.voteBashIntent(context, requestId, entryPosition, entry.getId(), entry.getRating(), voteDirection.toDirection());
             context.startService(intent);
         }
 
@@ -77,17 +70,26 @@ public class ServiceHelper {
         outState.putParcelableArrayList(key, new ArrayList<>(pendingOperations.values()));
     }
 
-    public void restoreOperationsState(Bundle savedInstanceState, String key, CallbacksKeeper callbacksKeeper) {
+    /**
+     * @return true if app should be refreshing right now, false otherwise
+     **/
+    public boolean restoreOperationsState(Bundle savedInstanceState, String key, CallbacksKeeper callbacksKeeper) {
         ArrayList<PendingOperation> operations = savedInstanceState.getParcelableArrayList(key);
         for (PendingOperation op : operations) {
             pendingOperations.put(op.getOperationId(), op);
         }
 
+        boolean isRefreshing = false;
+
         // callbacks are subscribed again to restored pending operations
         for (String opId : pendingOperations.keySet()) {
             PendingOperation op = pendingOperations.get(opId);
+            if (op.getOperationType() == OperationType.GET_POSTS)
+                isRefreshing = true;
+
             addCallback(op.getOperationId(), callbacksKeeper.getCallback(op.getOperationType()));
         }
+        return isRefreshing;
     }
 
     public void init() {
@@ -129,11 +131,11 @@ public class ServiceHelper {
             List<ServiceCallback> callbacks = callbackHelper.getCallbacks(id);
             if (callbacks != null) {
                 for (ServiceCallback cb : callbacks) {
+                    Bundle data = extras.getBundle(BHService.CallbackIntentExtras.EXTRA_DATA);
+
                     if (status == BHService.CallbackIntentExtras.Status.OK) {
-                        Bundle data = extras.getBundle(BHService.CallbackIntentExtras.EXTRA_DATA);
-                        cb.onSuccess(id, data); // TODO: provide some params
+                        cb.onSuccess(id, data);
                     } else {
-                        Bundle data = new Bundle();
                         cb.onError(id, data, errorMsg);
                     }
                     pendingOperations.remove(id);

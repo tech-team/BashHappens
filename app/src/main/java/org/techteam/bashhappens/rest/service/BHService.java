@@ -89,10 +89,10 @@ public class BHService extends IntentService {
             int entryPosition = intent.getIntExtra(IntentExtras.BashVoteOperation.ENTRY_POSITION, -1);
             String entryId = extras.getString(IntentExtras.BashVoteOperation.ENTRY_ID);
             String rating = extras.getString(IntentExtras.BashVoteOperation.RATING);
-            int direction = extras.getInt(IntentExtras.BashVoteOperation.DIRECTION, 0);
-            boolean bayaning = extras.getBoolean(IntentExtras.BashVoteOperation.BAYAN, false);
+            int direction = extras.getInt(IntentExtras.BashVoteOperation.DIRECTION, 100); // 100 is a value to break
+//            boolean bayaning = extras.getBoolean(IntentExtras.BashVoteOperation.BAYAN, false);
 
-            processor = new BashVoteProcessor(getBaseContext(), entryPosition, entryId, rating, direction, bayaning);
+            processor = new BashVoteProcessor(getBaseContext(), entryPosition, entryId, rating, direction);
         } else if (operation == OperationType.IT_VOTE) {
             // TODO
 
@@ -113,9 +113,10 @@ public class BHService extends IntentService {
                 }
 
                 @Override
-                public void onError(String message) {
+                public void onError(String message, Bundle data) {
                     cbIntent.putExtra(CallbackIntentExtras.STATUS, CallbackIntentExtras.Status.ERROR);
                     cbIntent.putExtra(CallbackIntentExtras.ERROR_MSG, message);
+                    cbIntent.putExtra(CallbackIntentExtras.EXTRA_DATA, data);
                     LocalBroadcastManager.getInstance(BHService.this).sendBroadcast(cbIntent);
                 }
             });
