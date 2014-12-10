@@ -18,16 +18,14 @@ import android.view.ViewGroup;
 
 import org.techteam.bashhappens.R;
 import org.techteam.bashhappens.content.ContentFactory;
-import org.techteam.bashhappens.content.ContentSection;
 import org.techteam.bashhappens.content.ContentSource;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.gui.activities.MainActivity;
 import org.techteam.bashhappens.gui.adapters.BashOrgListAdapter;
 import org.techteam.bashhappens.gui.loaders.ContentLoader;
-import org.techteam.bashhappens.gui.adapters.SectionsBuilder;
 import org.techteam.bashhappens.gui.loaders.LoadIntention;
 import org.techteam.bashhappens.gui.loaders.LoaderIds;
-import org.techteam.bashhappens.rest.CallbacksMaintainer;
+import org.techteam.bashhappens.rest.CallbacksKeeper;
 import org.techteam.bashhappens.rest.OperationType;
 import org.techteam.bashhappens.rest.PendingOperation;
 import org.techteam.bashhappens.util.Toaster;
@@ -68,9 +66,8 @@ public class PostsListFragment
     private ContentSource content = null;
     private BashOrgListAdapter adapter = new BashOrgListAdapter(null, PostsListFragment.this, PostsListFragment.this);
 
-    private CallbacksMaintainer callbacksMaintainer = new CallbacksMaintainer();
+    private CallbacksKeeper callbacksKeeper = new CallbacksKeeper();
     private ServiceHelper serviceHelper;
-    private Map<String, PendingOperation> pendingOperations = new HashMap<>();
 //    private ServiceManager serviceManager = null;
 //    private VoteBroadcastReceiver voteBroadcastReceiver;
 
@@ -178,7 +175,7 @@ public class PostsListFragment
         
         this.activity = (MainActivity) activity;
         serviceHelper = new ServiceHelper(activity);
-        callbacksMaintainer.addCallback(OperationType.GET_POSTS, new ServiceCallback() {
+        callbacksKeeper.addCallback(OperationType.GET_POSTS, new ServiceCallback() {
             @Override
             public void onSuccess(String operationId, Bundle data) {
                 mSwipeRefreshLayout.setRefreshing(false);
@@ -187,7 +184,6 @@ public class PostsListFragment
                 Toaster.toast(getActivity().getApplicationContext(), msg);
                 System.out.println(msg);
 
-                pendingOperations.remove(operationId);
                 getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, null, contentDataLoaderCallbacks);
             }
 
@@ -197,19 +193,16 @@ public class PostsListFragment
                 String msg = "ServiceCallback call #1. ERROR";
                 Toaster.toast(getActivity().getApplicationContext(), msg);
                 System.out.println(msg);
-
-                pendingOperations.remove(operationId);
             }
         });
 
-        callbacksMaintainer.addCallback(OperationType.BASH_VOTE, new ServiceCallback() {
+        callbacksKeeper.addCallback(OperationType.BASH_VOTE, new ServiceCallback() {
             @Override
             public void onSuccess(String operationId, Bundle data) {
                 String msg = "voted for entry: "; // + entry.getId();
                 Toaster.toast(getActivity().getApplicationContext(), msg);
                 System.out.println(msg);
 
-                pendingOperations.remove(operationId);
                 getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, null, contentDataLoaderCallbacks);
             }
 
@@ -218,8 +211,6 @@ public class PostsListFragment
                 String msg = "vote failed for entry: "; // + entry.getId();
                 Toaster.toast(getActivity().getApplicationContext(), msg);
                 System.out.println(msg);
-
-                pendingOperations.remove(operationId);
             }
         });
     }
@@ -235,16 +226,7 @@ public class PostsListFragment
             factory = new ContentFactory(Locale.getDefault().toString());
         } else {
             factory = savedInstanceState.getParcelable(BundleKeys.FACTORY);
-            ArrayList<PendingOperation> operations = savedInstanceState.getParcelableArrayList(BundleKeys.PENDING_OPERATIONS);
-            for (PendingOperation op : operations) {
-                pendingOperations.put(op.getOperationId(), op);
-            }
-        }
-
-        // callbacks are subscribed again to restored pending operations
-        for (String opId : pendingOperations.keySet()) {
-            PendingOperation op = pendingOperations.get(opId);
-            serviceHelper.addCallback(op.getOperationId(), callbacksMaintainer.getCallback(op.getOperationType()));
+            serviceHelper.restoreOperationsState(savedInstanceState, BundleKeys.PENDING_OPERATIONS, callbacksKeeper);
         }
 
         content = factory.buildContent(activity.getSection().getContentSection());
@@ -255,7 +237,7 @@ public class PostsListFragment
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(BundleKeys.FACTORY, factory);
-        outState.putParcelableArrayList(BundleKeys.PENDING_OPERATIONS, new ArrayList<>(pendingOperations.values()));
+        serviceHelper.saveOperationsState(outState, BundleKeys.PENDING_OPERATIONS);
     }
 
     @Override
@@ -265,8 +247,7 @@ public class PostsListFragment
         Toaster.toast(getActivity().getBaseContext(), R.string.loading);
         content = factory.buildContent(activity.getSection().getContentSection(), true);
 
-        String opId = serviceHelper.getPosts(content, LoadIntention.REFRESH, callbacksMaintainer.getCallback(OperationType.GET_POSTS));
-        pendingOperations.put(opId, new PendingOperation(OperationType.GET_POSTS, opId));
+        serviceHelper.getPosts(content, LoadIntention.REFRESH, callbacksKeeper.getCallback(OperationType.GET_POSTS));
     }
 
     @Override
@@ -274,17 +255,13 @@ public class PostsListFragment
         Toaster.toast(getActivity().getBaseContext(), "Bottom reached");
 
         System.out.println("Load has begun");
-        String opId = serviceHelper.getPosts(content, LoadIntention.APPEND, callbacksMaintainer.getCallback(OperationType.GET_POSTS));
-        pendingOperations.put(opId, new PendingOperation(OperationType.GET_POSTS, opId));
+        serviceHelper.getPosts(content, LoadIntention.APPEND, callbacksKeeper.getCallback(OperationType.GET_POSTS));
     }
-
-
 
 
     @Override
     public void onMakeVote(final BashOrgEntry entry, int entryPosition, BashOrgEntry.VoteDirection direction) {
-        String opId = serviceHelper.bashVote(entry, entryPosition, direction, callbacksMaintainer.getCallback(OperationType.BASH_VOTE));
-        pendingOperations.put(opId, new PendingOperation(OperationType.BASH_VOTE, opId));
+        serviceHelper.bashVote(entry, entryPosition, direction, callbacksKeeper.getCallback(OperationType.BASH_VOTE));
     }
 
     @Override

@@ -9,16 +9,22 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import org.techteam.bashhappens.content.ContentSource;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
+import org.techteam.bashhappens.rest.CallbacksKeeper;
 import org.techteam.bashhappens.rest.OperationType;
+import org.techteam.bashhappens.rest.PendingOperation;
 import org.techteam.bashhappens.rest.service.BHService;
 import org.techteam.bashhappens.rest.service.ServiceIntentBuilder;
 import org.techteam.bashhappens.util.CallbackHelper;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ServiceHelper {
     private final Context context;
     private CallbackHelper<String, ServiceCallback> callbackHelper = new CallbackHelper<String, ServiceCallback>();
+    private Map<String, PendingOperation> pendingOperations = new HashMap<>();
     private boolean isInit = false;
     private ServiceBroadcastReceiver receiver;
 
@@ -26,9 +32,9 @@ public class ServiceHelper {
         this.context = context;
     }
 
-    public String getPosts(ContentSource contentSource, int loadIntention, ServiceCallback cb) {
+    public void getPosts(ContentSource contentSource, int loadIntention, ServiceCallback cb) {
         if (!isInit) {
-            throw new ServiceHelperNotInitializedException();
+            init();
         }
 
         String requestId = OperationType.GET_POSTS + "_" + contentSource.getFootprint();
@@ -38,12 +44,13 @@ public class ServiceHelper {
             Intent intent = ServiceIntentBuilder.getPostsIntent(context, requestId, contentSource, loadIntention);
             context.startService(intent);
         }
-        return requestId;
+
+        pendingOperations.put(requestId, new PendingOperation(OperationType.GET_POSTS, requestId));
     }
 
-    public String bashVote(BashOrgEntry entry, int entryPosition, BashOrgEntry.VoteDirection voteDirection, ServiceCallback cb) {
+    public void bashVote(BashOrgEntry entry, int entryPosition, BashOrgEntry.VoteDirection voteDirection, ServiceCallback cb) {
         if (!isInit) {
-            throw new ServiceHelperNotInitializedException();
+            init();
         }
 
         String requestId = OperationType.BASH_VOTE + "_"
@@ -62,7 +69,25 @@ public class ServiceHelper {
 
             context.startService(intent);
         }
-        return requestId;
+
+        pendingOperations.put(requestId, new PendingOperation(OperationType.BASH_VOTE, requestId));
+    }
+
+    public void saveOperationsState(Bundle outState, String key) {
+        outState.putParcelableArrayList(key, new ArrayList<>(pendingOperations.values()));
+    }
+
+    public void restoreOperationsState(Bundle savedInstanceState, String key, CallbacksKeeper callbacksKeeper) {
+        ArrayList<PendingOperation> operations = savedInstanceState.getParcelableArrayList(key);
+        for (PendingOperation op : operations) {
+            pendingOperations.put(op.getOperationId(), op);
+        }
+
+        // callbacks are subscribed again to restored pending operations
+        for (String opId : pendingOperations.keySet()) {
+            PendingOperation op = pendingOperations.get(opId);
+            addCallback(op.getOperationId(), callbacksKeeper.getCallback(op.getOperationType()));
+        }
     }
 
     public void init() {
@@ -111,6 +136,7 @@ public class ServiceHelper {
                         Bundle data = new Bundle();
                         cb.onError(id, data, errorMsg);
                     }
+                    pendingOperations.remove(id);
                 }
             }
 

@@ -5,13 +5,13 @@ import org.techteam.bashhappens.rest.service_helper.ServiceCallback;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CallbacksMaintainer {
+public class CallbacksKeeper {
     private Map<OperationType, ServiceCallback> callbacks = new HashMap<>();
 
-    public CallbacksMaintainer() {
+    public CallbacksKeeper() {
     }
 
-    public CallbacksMaintainer addCallback(OperationType operationType, ServiceCallback cb) {
+    public CallbacksKeeper addCallback(OperationType operationType, ServiceCallback cb) {
         callbacks.put(operationType, cb);
         return this;
     }
