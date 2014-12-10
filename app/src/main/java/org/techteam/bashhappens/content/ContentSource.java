@@ -10,9 +10,15 @@ import java.io.IOException;
 
 public abstract class ContentSource<T extends ContentEntry> implements Parcelable {
     protected String locale;
+    private ContentSection section;
 
-    protected ContentSource(String locale) {
+    protected ContentSource(String locale, ContentSection section) {
         this.locale = locale;
+        this.section = section;
+    }
+
+    public ContentSection getSection() {
+        return section;
     }
 
     public String getLocale() {
@@ -24,4 +30,6 @@ public abstract class ContentSource<T extends ContentEntry> implements Parcelabl
     }
 
     public abstract ContentList<T> retrieveNextList(Context context) throws FeedOverException, ContentParseException;
+
+    public abstract String getFootprint();
 }

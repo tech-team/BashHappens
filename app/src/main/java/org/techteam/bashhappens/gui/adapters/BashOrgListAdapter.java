@@ -2,6 +2,7 @@ package org.techteam.bashhappens.gui.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -15,6 +16,8 @@ import android.widget.TextView;
 
 import org.techteam.bashhappens.R;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
+import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
+import org.techteam.bashhappens.content.resolvers.BashResolver;
 import org.techteam.bashhappens.gui.fragments.OnBashEventCallback;
 import org.techteam.bashhappens.gui.fragments.OnListScrolledDownCallback;
 import org.techteam.bashhappens.gui.views.PostToolbarView;
@@ -26,8 +29,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BashOrgListAdapter
-        extends RecyclerView.Adapter<BashOrgListAdapter.ViewHolder> {
-    private final OnBashEventCallback voteCallback;
+        extends CursorRecyclerViewAdapter<BashOrgListAdapter.ViewHolder> {
+//    private final OnBashEventCallback voteCallback;
     private final OnListScrolledDownCallback scrolledDownCallback;
     private List<BashOrgEntry> dataset;
 
@@ -82,7 +85,8 @@ public class BashOrgListAdapter
     public BashOrgListAdapter(OnBashEventCallback voteCallback,
                               OnListScrolledDownCallback scrolledDownCallback,
                               List<BashOrgEntry> dataset) {
-        this.voteCallback = voteCallback;
+        super(null); // TODO
+//        this.voteCallback = voteCallback;
         this.scrolledDownCallback = scrolledDownCallback;
 
         if (dataset != null)
@@ -91,35 +95,43 @@ public class BashOrgListAdapter
             this.dataset = new ArrayList<BashOrgEntry>();
     }
 
+    public BashOrgListAdapter(Cursor contentCursor,
+                              OnListScrolledDownCallback scrolledDownCallback) {
+        super(contentCursor); // TODO
+//        this.voteCallback = voteCallback;
+        this.scrolledDownCallback = scrolledDownCallback;
+
+//        if (dataset != null)
+//            this.dataset = dataset;
+//        else
+//            this.dataset = new ArrayList<BashOrgEntry>();
+    }
+
     // Create new views (invoked by the layout manager)
     @Override
     public BashOrgListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                             int viewType) {
+        View v;
         if (viewType == VIEW_TYPE_ENTRY) {
-            View v = LayoutInflater.from(parent.getContext())
+            v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.bashorg_list_entry, parent, false);
-
-            BashOrgListAdapter.ViewHolder vh = new ViewHolder(v);
-            return vh;
         } else {
-            View v = LayoutInflater.from(parent.getContext())
+            v = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.list_loading_entry, parent, false);
-
-            BashOrgListAdapter.ViewHolder vh = new ViewHolder(v);
-            return vh;
         }
+        return new ViewHolder(v);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, Cursor cursor, final int position) {
         //footer visible
-        if (position == dataset.size()) {
+        if (position == cursor.getCount()) {
             scrolledDownCallback.onScrolledDown();
             return;
         }
 
-        final BashOrgEntry entry = dataset.get(position);
+
+        final BashOrgEntry entry = BashResolver.getCurrentEntry(cursor);
 
         //set data
         holder.id.setText(entry.getId());
@@ -151,7 +163,7 @@ public class BashOrgListAdapter
             public void likePressed(PostToolbarView view) {
                 Context context = view.getContext();
 
-                voteCallback.onMakeVote(entry, position, BashOrgEntry.VoteDirection.UP, votedCallback);
+//                votedCallback.onMakeVote(entry, position, BashOrgEntry.VoteDirection.UP, votedCallback);
                 Toaster.toast(context,
                         "Like pressed for entry.id: " + entry.getId());
             }
@@ -160,7 +172,7 @@ public class BashOrgListAdapter
             public void dislikePressed(PostToolbarView view) {
                 Context context = view.getContext();
 
-                voteCallback.onMakeVote(entry, position, BashOrgEntry.VoteDirection.DOWN, votedCallback);
+//                votedCallback.onMakeVote(entry, position, BashOrgEntry.VoteDirection.DOWN, votedCallback);
                 Toaster.toast(context,
                         "Dislike pressed for entry.id: " + entry.getId());
             }
@@ -168,7 +180,7 @@ public class BashOrgListAdapter
             @Override
             public void bayanPressed(PostToolbarView view) {
                 Context context = view.getContext();
-                voteCallback.onMakeVote(entry, position, BashOrgEntry.VoteDirection.BAYAN, votedCallback);
+//                voteCallback.onMakeVote(entry, position, BashOrgEntry.VoteDirection.BAYAN, votedCallback);
                 Toaster.toast(context,
                         "Bayan pressed for entry.id: " + entry.getId());
             }
@@ -272,14 +284,19 @@ public class BashOrgListAdapter
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
-        return dataset.size() + 1; //+footer
+        Cursor cursor = getCursor();
+        if (cursor == null)
+            return 1;
+        return cursor.getCount() + 1;
+//        return dataset.size() + 1; //+footer
     }
 
     @Override
     public int getItemViewType(int position) {
-        return position < dataset.size() ? VIEW_TYPE_ENTRY : VIEW_TYPE_FOOTER;
+        return position < BashOrgListAdapter.this.getItemCount()-1 ? VIEW_TYPE_ENTRY : VIEW_TYPE_FOOTER;
     }
 
+    @Deprecated
     public interface VotedCallback {
         void onVoted(BashOrgEntry entry);
         void onBayan(BashOrgEntry entry);

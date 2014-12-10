@@ -2,7 +2,9 @@ package org.techteam.bashhappens.db.tables;
 
 import android.provider.BaseColumns;
 
-public abstract class BashTable implements BaseColumns {
+import org.techteam.bashhappens.db.ITable;
+
+public abstract class AbstractTable implements BaseColumns, ITable {
     public static final String ID = "id";
     public static final String TEXT = "text";
     public static final String RATING = "rating";

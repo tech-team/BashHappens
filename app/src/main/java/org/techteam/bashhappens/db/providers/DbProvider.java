@@ -98,8 +98,20 @@ public abstract class DbProvider extends ContentProvider {
         return count;
     }
 
+    protected abstract int performUpdate(Uri uri, SQLiteDatabase db, ContentValues values,
+                                         String where, String[] whereArgs);
+
     @Override
-    public abstract int update(Uri uri, ContentValues values, String s, String[] strings);
+    public int update(Uri uri, ContentValues values, String where, String[] whereArgs) {
+        database = databaseHelper.getWritableDatabase();
+        int count;
+
+        count = performUpdate(uri, database, values, where, whereArgs);
+
+        getContext().getContentResolver().notifyChange(uri, null);
+
+        return count;
+    }
 
     protected class StringWrapper {
         public String data = null;

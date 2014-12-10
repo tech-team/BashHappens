@@ -7,10 +7,9 @@ import android.net.Uri;
 
 import org.techteam.bashhappens.content.ContentEntry;
 import org.techteam.bashhappens.content.ContentList;
-import org.techteam.bashhappens.db.tables.BashBayan;
-import org.techteam.bashhappens.db.tables.BashCache;
-import org.techteam.bashhappens.db.tables.BashFavs;
-import org.techteam.bashhappens.db.tables.BashLikes;
+import org.techteam.bashhappens.content.ContentSection;
+import org.techteam.bashhappens.db.tables.BashNewest;
+import org.techteam.bashhappens.db.tables.BashTransactions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,8 +19,8 @@ import java.util.Map;
 public abstract class AbstractContentResolver {
 
     protected abstract Uri _getUri();
-    protected abstract ContentList<?> getEntriesList(Cursor cur);
     protected abstract ContentValues convertToContentValues(ContentEntry contentEntry);
+    protected abstract QueryField getUpdateField(ContentEntry contentEntry);
     protected abstract QueryField getDeletionField(ContentEntry contentEntry);
     protected abstract String[] getProjection();
 
@@ -33,28 +32,44 @@ public abstract class AbstractContentResolver {
         return contentValues;
     }
 
-    public ContentList<?> getAllEntries(Context context) {
-        return getEntries(context, null, null, null, null);
+    public static AbstractContentResolver getResolver(ContentSection section) {
+        switch (section) {
+            case BASH_ORG_NEWEST:
+                return new BashNewestResolver();
+            case BASH_ORG_FAVS:
+                return new BashFavsResolver();
+            case BASH_ORG_TRANSACTIONS:
+                return new BashTransactionsResolver();
+            case IT_HAPPENS_NEWEST:
+                //TODO: ItHappensNewest resolver, BashLikes prbbly
+                return null;
+            default:
+                return null;
+        }
     }
-    public ContentList<?> getNotSortedEntries(Context context) {
-        return getEntries(context, null, null, null, "");
+
+    public Cursor getCursor(Context context) {
+        return getCursor(context, null, null, null, null);
     }
-    public ContentList<?> getEntries(Context context, String[] projection,
+    public Cursor getCursor(Context context, String[] projection,
                                      String selection, String[] selectionArgs,
                                      String sortOrder) {
         if (selection != null) {
+            //TODO: multiple fields selection?
             selection += " = ?";
         }
         if (projection == null) {
             projection = getProjection();
         }
-        Cursor cur = context.getContentResolver().query(_getUri(),
-                                                         projection,
-                                                         selection,
-                                                         selectionArgs,
-                                                         sortOrder);
-        return getEntriesList(cur);
+        return context.getContentResolver().query(_getUri(),
+                projection,
+                selection,
+                selectionArgs,
+                sortOrder);
     }
+
+    // Because it is needed in static context
+//    public abstract ContentEntry getCurrentEntry(Cursor cur);
 
     public List<Integer> insertEntries(Context context, ContentList<?> list) {
         List<Integer> insertedIds = new ArrayList<Integer>();
@@ -81,8 +96,25 @@ public abstract class AbstractContentResolver {
 
     public <T extends ContentEntry> int deleteEntry(Context context, T entry) {
         QueryField field = getDeletionField(entry);
-        return context.getContentResolver()
-                       .delete(_getUri(), field.where , field.whereArgs);
+        return (field == null)
+                ? (-1)
+                : context.getContentResolver()
+                      .delete(_getUri(), field.where , field.whereArgs);
+    }
+
+    public <T extends ContentEntry> int updateEntry(Context context, T entry) {
+        QueryField field = getUpdateField(entry);
+        return (field == null)
+                ? (-1)
+                : context.getContentResolver()
+                    .update(_getUri(), this.convertToContentValues(entry), field.where, field.whereArgs);
+    }
+
+    public static Map<String, Integer> truncateAll(Context context) {
+        Map<String, Integer> deletions = new HashMap<String, Integer>();
+        deletions.put(BashNewest.TABLE_NAME, new BashNewestResolver().deleteAllEntries(context));
+        deletions.put(BashTransactions.TABLE_NAME, new BashTransactionsResolver().deleteAllEntries(context));
+        return deletions;
     }
 
     protected class QueryField {
@@ -95,12 +127,25 @@ public abstract class AbstractContentResolver {
         }
     }
 
-    public static Map<String, Integer> truncateAll(Context context) {
-        Map<String, Integer> deletions = new HashMap<String, Integer>();
-        deletions.put(BashCache.TABLE_NAME, new BashCacheResolver().deleteAllEntries(context));
-        deletions.put(BashLikes.TABLE_NAME, new BashLikesResolver().deleteAllEntries(context));
-        deletions.put(BashBayan.TABLE_NAME, new BashBayanResolver().deleteAllEntries(context));
-        deletions.put(BashFavs.TABLE_NAME, new BashFavsResolver().deleteAllEntries(context));
-        return deletions;
+    //////////////////// Usage example //////////////////////
+    /*BashOrgEntry entry = new BashOrgEntry().setId("1").setText("see?");
+    BashOrgList list = new BashOrgList();
+    list.add(entry);
+    AbstractContentResolver resolver = AbstractContentResolver.getResolver(ContentSection.BASH_ORG_NEWEST);
+    resolver.insertEntries(this, list);
+    Cursor cur = resolver.getCursor(this);
+
+    BashOrgList bashOrgEntryList = new BashOrgList();
+    cur.moveToFirst();
+    while (!cur.isAfterLast()) {
+        bashOrgEntryList.add((BashOrgEntry)resolver.getCurrentEntry(cur));
+        cur.moveToNext();
     }
+    cur.close();
+
+    BashTransactionsResolver resolver = (BashTransactionsResolver) AbstractContentResolver.getResolver(ContentSection.BASH_ORG_TRANSACTIONS);
+    resolver.insertEntry(this, new BashTransactionsEntry().setId("see").setStatus(TransactionStatus.ERROR));
+    List<String> lst = resolver.getEntriesListByField(this, TransactionStatus.ERROR);
+
+    AbstractContentResolver.truncateAll(this);*/
 }
