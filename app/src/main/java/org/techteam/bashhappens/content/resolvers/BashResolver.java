@@ -19,7 +19,7 @@ public abstract class BashResolver extends AbstractContentResolver {
 
     @Override
     protected String[] getProjection() {
-        return new String[] {AbstractTable.ID, AbstractTable.TEXT, AbstractTable.DATE, AbstractTable.RATING};
+        return new String[] {AbstractTable._ID, AbstractTable.ID, AbstractTable.TEXT, AbstractTable.DATE, AbstractTable.RATING};
                 //BashLikes.DIRECTION, BashBayan.IS_BAYAN};
     }
 
@@ -38,9 +38,9 @@ public abstract class BashResolver extends AbstractContentResolver {
         return getCursor(context, getProjection(), null, null, null);
     }
 
-    @Override
+    // Because it is needed in static context
     @SuppressWarnings("unchecked")
-    public BashOrgEntry getCurrentEntry(Cursor cur) {
+    public static BashOrgEntry getCurrentEntry(Cursor cur) {
         return new BashOrgEntry()
                     .setId(cur.getString(cur.getColumnIndex(AbstractTable.ID)))
                     .setCreationDate(cur.getString(cur.getColumnIndex(AbstractTable.DATE)))

@@ -29,8 +29,9 @@ public class BashOrgList extends ContentList<BashOrgEntry> {
             BashOrgEntry entry = BashOrgEntry.fromHtml(item);
 
             //TODO: likes are temporary unavailable. Availabilate them
-            /*
+
             if (entry != null) {
+                /*
                 AbstractContentResolver resolver = new BashLikesResolver();
                 ContentList tempList
                         = resolver.getEntries(context,
@@ -43,10 +44,10 @@ public class BashOrgList extends ContentList<BashOrgEntry> {
                     BashOrgEntry tempEntry = (BashOrgEntry) tempList.getEntries().get(0);
                     entry.setDirection(tempEntry.getDirection());
                 }
-
+                */
                 entries.add(entry);
             }
-            */
+
         }
 
         return entries;

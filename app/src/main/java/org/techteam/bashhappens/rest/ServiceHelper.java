@@ -23,7 +23,7 @@ public class ServiceHelper {
         this.context = context;
     }
 
-    public void getPosts(ContentSource contentSource, int loadIntention, ServiceCallback cb) {
+    public String getPosts(ContentSource contentSource, int loadIntention, ServiceCallback cb) {
         if (!isInit) {
             throw new ServiceHelperNotInitializedException();
         }
@@ -35,9 +35,10 @@ public class ServiceHelper {
             Intent intent = ServiceIntentBuilder.getPostsIntent(context, requestId, contentSource, loadIntention);
             context.startService(intent);
         }
+        return requestId;
     }
 
-    public void bashVote(BashOrgEntry entry, int entryPosition, BashOrgEntry.VoteDirection voteDirection, ServiceCallback cb) {
+    public String bashVote(BashOrgEntry entry, int entryPosition, BashOrgEntry.VoteDirection voteDirection, ServiceCallback cb) {
         if (!isInit) {
             throw new ServiceHelperNotInitializedException();
         }
@@ -58,6 +59,7 @@ public class ServiceHelper {
 
             context.startService(intent);
         }
+        return requestId;
     }
 
     public void init() {
@@ -78,6 +80,9 @@ public class ServiceHelper {
         }
     }
 
+    public void addCallback(String operationId, ServiceCallback cb) {
+        callbackHelper.addCallback(operationId, cb);
+    }
 
 
 
@@ -94,11 +99,16 @@ public class ServiceHelper {
             String errorMsg = extras.getString(BHService.CallbackIntentExtras.ERROR_MSG);
 
             List<ServiceCallback> callbacks = callbackHelper.getCallbacks(id);
-            for (ServiceCallback cb : callbacks) {
-                if (status == BHService.CallbackIntentExtras.Status.OK)
-                    cb.onSuccess(); // TODO: provide some params
-                else
-                    cb.onError();
+            if (callbacks != null) {
+                for (ServiceCallback cb : callbacks) {
+                    if (status == BHService.CallbackIntentExtras.Status.OK) {
+                        Bundle data = extras.getBundle(BHService.CallbackIntentExtras.EXTRA_DATA);
+                        cb.onSuccess(id, data); // TODO: provide some params
+                    } else {
+                        Bundle data = new Bundle();
+                        cb.onError(id, data, errorMsg);
+                    }
+                }
             }
 
             callbackHelper.removeCallbacks(id);

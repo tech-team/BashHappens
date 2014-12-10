@@ -36,13 +36,13 @@ public abstract class Processor {
         BashTransactionsEntry trx = new BashTransactionsEntry().setId(requestId)
                                                                .setOperationType(operationType)
                                                                .setStatus(TransactionStatus.FINISHED);
-        transactioner.updateEntry(getContext(), trx); // TODO: should be update
+        transactioner.updateEntry(getContext(), trx);
     }
 
     protected void transactionError(OperationType operationType, String requestId) {
         BashTransactionsEntry trx = new BashTransactionsEntry().setId(requestId)
                                                                .setOperationType(operationType)
                                                                .setStatus(TransactionStatus.ERROR);
-        transactioner.updateEntry(getContext(), trx); // TODO: should be update
+        transactioner.updateEntry(getContext(), trx);
     }
 }

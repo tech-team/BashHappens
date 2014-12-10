@@ -65,7 +65,7 @@ public class BashVoteProcessor extends Processor {
                         .setDirection(direction));*/
             }
             transactionFinished(operationType, requestId);
-            cb.onSuccess();
+            cb.onSuccess(null);
         }
         catch (IOException | VoteException e) {
             Log.w(NAME, e);

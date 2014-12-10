@@ -1,6 +1,7 @@
 package org.techteam.bashhappens.rest.processors;
 
 import android.content.Context;
+import android.os.Bundle;
 
 import org.techteam.bashhappens.content.ContentList;
 import org.techteam.bashhappens.content.ContentSection;
@@ -12,7 +13,13 @@ import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
 import org.techteam.bashhappens.content.resolvers.BashResolver;
 import org.techteam.bashhappens.content.resolvers.BashTransactionsResolver;
 import org.techteam.bashhappens.db.TransactionStatus;
+import org.techteam.bashhappens.gui.loaders.LoadIntention;
+import org.techteam.bashhappens.rest.BHService;
+import org.techteam.bashhappens.rest.GetPostsCallback;
 import org.techteam.bashhappens.rest.OperationType;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GetPostsProcessor extends Processor {
     private final ContentSource contentSource;
@@ -33,9 +40,7 @@ public class GetPostsProcessor extends Processor {
         Throwable exc = null;
         try {
             list = contentSource.retrieveNextList(getContext());
-        } catch (FeedOverException e) {
-            exc = e;
-        } catch (ContentParseException e) {
+        } catch (FeedOverException | ContentParseException e) {
             exc = e;
         }
         if (list != null) {
@@ -51,14 +56,21 @@ public class GetPostsProcessor extends Processor {
             System.out.println("DONE! list is null");
         }
 
-        // writing to db
         ContentSection section = contentSource.getSection();
         BashResolver resolver = (BashResolver) AbstractContentResolver.getResolver(section);
+
+        if (loadIntention == LoadIntention.REFRESH) {
+            resolver.deleteAllEntries(getContext());
+        }
+
+        // writing to db
         resolver.insertEntries(getContext(), list);
 
         // finishing up a transaction
         transactionFinished(operationType, requestId);
 
-        cb.onSuccess();
+        Bundle data = new Bundle();
+        data.putParcelable(GetPostsCallback.Extras.NEW_CONTENT_SOURCE, contentSource);
+        cb.onSuccess(data);
     }
 }

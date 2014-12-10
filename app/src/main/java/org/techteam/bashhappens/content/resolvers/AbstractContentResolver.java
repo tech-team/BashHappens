@@ -68,7 +68,8 @@ public abstract class AbstractContentResolver {
                 sortOrder);
     }
 
-    public abstract ContentEntry getCurrentEntry(Cursor cur);
+    // Because it is needed in static context
+//    public abstract ContentEntry getCurrentEntry(Cursor cur);
 
     public List<Integer> insertEntries(Context context, ContentList<?> list) {
         List<Integer> insertedIds = new ArrayList<Integer>();

@@ -46,8 +46,8 @@ public class BashTransactionsResolver extends AbstractContentResolver {
     }
 
 
-    @Override
-    public BashTransactionsEntry getCurrentEntry(Cursor cur) {
+//    @Override
+    public static BashTransactionsEntry getCurrentEntry(Cursor cur) {
         return new BashTransactionsEntry()
                 .setId(cur.getString(cur.getColumnIndex(BashTransactions.ID)))
                 .setStatus(cur.getInt(cur.getColumnIndex(BashTransactions.STATUS)));

@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.Loader;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -30,17 +31,30 @@ import org.techteam.bashhappens.content.ContentSource;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.gui.adapters.BashOrgListAdapter;
 import org.techteam.bashhappens.gui.loaders.ContentAsyncLoader;
+import org.techteam.bashhappens.gui.loaders.ContentLoader;
 import org.techteam.bashhappens.gui.loaders.ContentLoaderResult;
 import org.techteam.bashhappens.gui.loaders.LoadIntention;
 import org.techteam.bashhappens.gui.loaders.LoaderIds;
 import org.techteam.bashhappens.gui.services.ServiceManager;
 import org.techteam.bashhappens.gui.services.VoteServiceConstants;
+import org.techteam.bashhappens.rest.CallbacksMaintainer;
+import org.techteam.bashhappens.rest.GetPostsCallback;
+import org.techteam.bashhappens.rest.OperationType;
+import org.techteam.bashhappens.rest.PendingOperation;
 import org.techteam.bashhappens.util.Toaster;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Queue;
+import java.util.Set;
 
 import org.techteam.bashhappens.rest.ServiceCallback;
 import org.techteam.bashhappens.rest.ServiceHelper;
@@ -57,6 +71,7 @@ public class PostsListFragment
 
     private static final class BundleKeys {
         public static final String FACTORY = "FACTORY";
+        public static final String PENDING_OPERATIONS = "PENDING_OPERATIONS";
     }
 
     //see comment in onCreateView()
@@ -68,71 +83,93 @@ public class PostsListFragment
 
     private ContentFactory factory = null;
     private ContentSource content = null;
-    private BashOrgListAdapter adapter = new BashOrgListAdapter(PostsListFragment.this, PostsListFragment.this, null);
+    private BashOrgListAdapter adapter = new BashOrgListAdapter(null, PostsListFragment.this);
 
-    private ServiceManager serviceManager = null;
-    private VoteBroadcastReceiver voteBroadcastReceiver;
-
-    @Deprecated private SparseArray<BashOrgListAdapter.VotedCallback> votedCallbackMap = new SparseArray<BashOrgListAdapter.VotedCallback>();
-
+    private CallbacksMaintainer callbacksMaintainer = new CallbacksMaintainer();
     private ServiceHelper serviceHelper;
+    private Map<String, PendingOperation> pendingOperations = new HashMap<>();
+//    private ServiceManager serviceManager = null;
+//    private VoteBroadcastReceiver voteBroadcastReceiver;
 
-    private LoaderManager.LoaderCallbacks<ContentLoaderResult> contentListLoaderCallbacks = new LoaderManager.LoaderCallbacks<ContentLoaderResult>() {
+//    @Deprecated private SparseArray<BashOrgListAdapter.VotedCallback> votedCallbackMap = new SparseArray<BashOrgListAdapter.VotedCallback>();
 
+    private LoaderManager.LoaderCallbacks<Cursor> contentDataLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override
-        public Loader<ContentLoaderResult> onCreateLoader(int i, Bundle bundle) {
-            if  (i == LoaderIds.CONTENT_LOADER) {
-                int loadIntention = bundle.getInt(ContentAsyncLoader.BundleKeys.LOAD_INTENT);
-                return new ContentAsyncLoader(getActivity(), content, loadIntention);
+        public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+            if  (id == LoaderIds.CONTENT_LOADER) {
+                return new ContentLoader(getActivity(), content.getSection());
             }
             throw new IllegalArgumentException("Loader with given id is not found");
         }
 
-        @SuppressWarnings("unchecked")
         @Override
-        public void onLoadFinished(Loader<ContentLoaderResult> contentListLoader, ContentLoaderResult result) {
-            mSwipeRefreshLayout.setRefreshing(false);
-
-            if (result == null) {
-                Toaster.toast(getActivity().getBaseContext(), getActivity().getString(R.string.loading_error));
-                return;
-            }
-
-            if (result.hasError()) {
-                Throwable exc = result.getException();
-                Log.w(TAG, exc);
-                Toaster.toast(getActivity().getBaseContext(), "Error: " + exc.getMessage());
-                return;
-            }
-
-
-            ContentList contentList = result.getContentList();
-            int intention = result.getLoadIntention();
-
-            switch (contentList.getStoredContentType()) {
-                case BASH_ORG:
-                    final ArrayList<BashOrgEntry> entries = contentList.getEntries();
-                    if (intention == LoadIntention.REFRESH) {
-                        setPosts(entries);
-                    } else if (intention == LoadIntention.APPEND) {
-                        if (adapter.isEmpty()) //app just started
-                            setPosts(entries);
-                        else
-                            addPosts(entries);
-                    }
-                    break;
-                case IT_HAPPENS:
-                    // TODO: add ItHappens adapter
-                    break;
-            }
+        public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
+            adapter.swapCursor(newCursor);
         }
 
         @Override
-        public void onLoaderReset(Loader<ContentLoaderResult> contentListLoader) {
-            Toaster.toast(getActivity(), "onLoaderReset");
-            // TODO
+        public void onLoaderReset(Loader<Cursor> loader) {
+            adapter.swapCursor(null);
         }
     };
+
+
+//    @Deprecated private LoaderManager.LoaderCallbacks<ContentLoaderResult> contentListLoaderCallbacks = new LoaderManager.LoaderCallbacks<ContentLoaderResult>() {
+//
+//        @Override
+//        public Loader<ContentLoaderResult> onCreateLoader(int i, Bundle bundle) {
+//            if  (i == LoaderIds.CONTENT_ASYNC_LOADER) {
+//                int loadIntention = bundle.getInt(ContentAsyncLoader.BundleKeys.LOAD_INTENT);
+//                return new ContentAsyncLoader(getActivity(), content, loadIntention);
+//            }
+//            throw new IllegalArgumentException("Loader with given id is not found");
+//        }
+//
+//        @SuppressWarnings("unchecked")
+//        @Override
+//        public void onLoadFinished(Loader<ContentLoaderResult> contentListLoader, ContentLoaderResult result) {
+//            mSwipeRefreshLayout.setRefreshing(false);
+//
+//            if (result == null) {
+//                Toaster.toast(getActivity().getBaseContext(), getActivity().getString(R.string.loading_error));
+//                return;
+//            }
+//
+//            if (result.hasError()) {
+//                Throwable exc = result.getException();
+//                Log.w(TAG, exc);
+//                Toaster.toast(getActivity().getBaseContext(), "Error: " + exc.getMessage());
+//                return;
+//            }
+//
+//
+//            ContentList contentList = result.getContentList();
+//            int intention = result.getLoadIntention();
+//
+//            switch (contentList.getStoredContentType()) {
+//                case BASH_ORG:
+//                    final ArrayList<BashOrgEntry> entries = contentList.getEntries();
+//                    if (intention == LoadIntention.REFRESH) {
+//                        setPosts(entries);
+//                    } else if (intention == LoadIntention.APPEND) {
+//                        if (adapter.isEmpty()) //app just started
+//                            setPosts(entries);
+//                        else
+//                            addPosts(entries);
+//                    }
+//                    break;
+//                case IT_HAPPENS:
+//                    // TODO: add ItHappens adapter
+//                    break;
+//            }
+//        }
+//
+//        @Override
+//        public void onLoaderReset(Loader<ContentLoaderResult> contentListLoader) {
+//            Toaster.toast(getActivity(), "onLoaderReset");
+//            // TODO
+//        }
+//    };
 
     private void setPosts(ArrayList<BashOrgEntry> entries) {
         adapter.setAll(entries);
@@ -210,8 +247,47 @@ public class PostsListFragment
     public void onAttach(Activity activity) {
         super.onAttach(activity);
 
-        serviceManager = new ServiceManager(activity);
+//        serviceManager = new ServiceManager(activity);
         serviceHelper = new ServiceHelper(activity);
+        callbacksMaintainer.addCallback(OperationType.GET_POSTS, new ServiceCallback() {
+            @Override
+            public void onSuccess(String operationId, Bundle data) {
+                mSwipeRefreshLayout.setRefreshing(false);
+                content = data.getParcelable(GetPostsCallback.Extras.NEW_CONTENT_SOURCE);
+                String msg = "ServiceCallback call #1";
+                Toaster.toast(getActivity().getApplicationContext(), msg);
+                System.out.println(msg);
+
+                pendingOperations.remove(operationId);
+                getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, null, contentDataLoaderCallbacks);
+            }
+
+            @Override
+            public void onError(String operationId, Bundle data, String message) {
+                mSwipeRefreshLayout.setRefreshing(false);
+                String msg = "ServiceCallback call #1. ERROR";
+                Toaster.toast(getActivity().getApplicationContext(), msg);
+                System.out.println(msg);
+
+                pendingOperations.remove(operationId);
+            }
+        });
+
+        callbacksMaintainer.addCallback(OperationType.BASH_VOTE, new ServiceCallback() {
+            @Override
+            public void onSuccess(String operationId, Bundle data) {
+                String msg = "voted for entry: "; // + entry.getId();
+                Toaster.toast(getActivity().getApplicationContext(), msg);
+                System.out.println(msg);
+            }
+
+            @Override
+            public void onError(String operationId, Bundle data, String message) {
+                String msg = "vote failed for entry: "; // + entry.getId();
+                Toaster.toast(getActivity().getApplicationContext(), msg);
+                System.out.println(msg);
+            }
+        });
     }
 
     @Override
@@ -225,16 +301,28 @@ public class PostsListFragment
             factory = new ContentFactory(Locale.getDefault().toString());
         } else {
             factory = savedInstanceState.getParcelable(BundleKeys.FACTORY);
+            ArrayList<PendingOperation> operations = savedInstanceState.getParcelableArrayList(BundleKeys.PENDING_OPERATIONS);
+            for (PendingOperation op : operations) {
+                pendingOperations.put(op.getOperationId(), op);
+            }
+        }
+
+        // callbacks are subscribed again to restored pending operations
+        for (String opId : pendingOperations.keySet()) {
+            PendingOperation op = pendingOperations.get(opId);
+            serviceHelper.addCallback(op.getOperationId(), callbacksMaintainer.getCallback(op.getOperationType()));
         }
 
         //TODO: should be saved in prefs i think
         content = factory.buildContent(ContentSection.BASH_ORG_NEWEST);
+        getLoaderManager().initLoader(LoaderIds.CONTENT_LOADER, null, contentDataLoaderCallbacks);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(BundleKeys.FACTORY, factory);
+        outState.putParcelableArrayList(BundleKeys.PENDING_OPERATIONS, new ArrayList<>(pendingOperations.values()));
     }
 
     @Override
@@ -244,34 +332,17 @@ public class PostsListFragment
         Toaster.toast(getActivity().getBaseContext(), R.string.loading);
         content = factory.buildContent(ContentSection.BASH_ORG_NEWEST, true);
 
-        Bundle bundle = new Bundle();
-        bundle.putInt(ContentAsyncLoader.BundleKeys.LOAD_INTENT, LoadIntention.REFRESH);
-        getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, bundle, contentListLoaderCallbacks);
+        String opId = serviceHelper.getPosts(content, LoadIntention.REFRESH, callbacksMaintainer.getCallback(OperationType.GET_POSTS));
+        pendingOperations.put(opId, new PendingOperation(OperationType.GET_POSTS, opId));
     }
 
     @Override
     public void onScrolledDown() {
-        Toaster.toast(getActivity().getBaseContext(), "Dniwe reached");
+        Toaster.toast(getActivity().getBaseContext(), "Bottom reached");
 
         System.out.println("Load has begun");
-        serviceHelper.getPosts(content, LoadIntention.APPEND, new ServiceCallback() {
-            @Override
-            public void onSuccess() {
-                String msg = "ServiceCallback call #1";
-                Toaster.toast(getActivity().getApplicationContext(), msg);
-                System.out.println(msg);
-            }
-
-            @Override
-            public void onError() {
-                String msg = "ServiceCallback call #1. ERROR";
-                Toaster.toast(getActivity().getApplicationContext(), msg);
-                System.out.println(msg);
-            }
-        });
-//        Bundle bundle = new Bundle();
-//        bundle.putInt(ContentAsyncLoader.BundleKeys.LOAD_INTENT, LoadIntention.APPEND);
-//        getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, bundle, contentListLoaderCallbacks);
+        String opId = serviceHelper.getPosts(content, LoadIntention.APPEND, callbacksMaintainer.getCallback(OperationType.GET_POSTS));
+        pendingOperations.put(opId, new PendingOperation(OperationType.GET_POSTS, opId));
     }
 
 
@@ -279,21 +350,8 @@ public class PostsListFragment
 
     @Override
     public void onMakeVote(final BashOrgEntry entry, int entryPosition, BashOrgEntry.VoteDirection direction, BashOrgListAdapter.VotedCallback votedCallback) {
-        serviceHelper.bashVote(entry, entryPosition, direction, new ServiceCallback() {
-            @Override
-            public void onSuccess() {
-                String msg = "voted for entry: " + entry.getId();
-                Toaster.toast(getActivity().getApplicationContext(), msg);
-                System.out.println(msg);
-            }
-
-            @Override
-            public void onError() {
-                String msg = "vote failed for entry: " + entry.getId();
-                Toaster.toast(getActivity().getApplicationContext(), msg);
-                System.out.println(msg);
-            }
-        });
+        String opId = serviceHelper.bashVote(entry, entryPosition, direction, callbacksMaintainer.getCallback(OperationType.BASH_VOTE));
+        pendingOperations.put(opId, new PendingOperation(OperationType.BASH_VOTE, opId));
 //        votedCallbackMap.put(entryPosition, votedCallback);
 //        serviceManager.startBashVoteService(entry, entryPosition, direction);
     }
@@ -316,17 +374,17 @@ public class PostsListFragment
 
 
 
-    private void registerBroadcastReceivers() {
-        IntentFilter voteIntentFilter = new IntentFilter(VoteServiceConstants.BROADCASTER_NAME);
-        voteBroadcastReceiver = new VoteBroadcastReceiver();
-        LocalBroadcastManager.getInstance(PostsListFragment.this.getActivity())
-                .registerReceiver(voteBroadcastReceiver, voteIntentFilter);
-    }
-
-    private void unregisterBroadcastReceivers() {
-        LocalBroadcastManager.getInstance(PostsListFragment.this.getActivity())
-                .unregisterReceiver(voteBroadcastReceiver);
-    }
+//    private void registerBroadcastReceivers() {
+//        IntentFilter voteIntentFilter = new IntentFilter(VoteServiceConstants.BROADCASTER_NAME);
+//        voteBroadcastReceiver = new VoteBroadcastReceiver();
+//        LocalBroadcastManager.getInstance(PostsListFragment.this.getActivity())
+//                .registerReceiver(voteBroadcastReceiver, voteIntentFilter);
+//    }
+//
+//    private void unregisterBroadcastReceivers() {
+//        LocalBroadcastManager.getInstance(PostsListFragment.this.getActivity())
+//                .unregisterReceiver(voteBroadcastReceiver);
+//    }
 
 
 
@@ -349,19 +407,19 @@ public class PostsListFragment
             if (error == null) {
 
                 BashOrgEntry entry = adapter.get(position);
-                BashOrgListAdapter.VotedCallback cb = votedCallbackMap.get(position);
+//                BashOrgListAdapter.VotedCallback cb = votedCallbackMap.get(position);
 
-                if (newRating != null) {
-                    entry.setRating(newRating);
-                    if (cb != null)
-                        cb.onVoted(entry);
-                    Toaster.toast(context.getApplicationContext(), "Changed rating for entry #" + id);
-                } else if (bayanOk) {
-                    entry.setBayan(true);
-                    if (cb != null)
-                        cb.onBayan(entry);
-                    Toaster.toast(context.getApplicationContext(), "Set bayan for entry #" + id);
-                }
+//                if (newRating != null) {
+//                    entry.setRating(newRating);
+//                    if (cb != null)
+//                        cb.onVoted(entry);
+//                    Toaster.toast(context.getApplicationContext(), "Changed rating for entry #" + id);
+//                } else if (bayanOk) {
+//                    entry.setBayan(true);
+//                    if (cb != null)
+//                        cb.onBayan(entry);
+//                    Toaster.toast(context.getApplicationContext(), "Set bayan for entry #" + id);
+//                }
             }
             else {
                 Toaster.toast(context.getApplicationContext(), "Error for #" + id + ". " + error);

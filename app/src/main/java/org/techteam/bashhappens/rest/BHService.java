@@ -49,6 +49,7 @@ public class BHService extends IntentService {
         public static final String OPERATION = "OPERATION";
         public static final String STATUS = "STATUS";
         public static final String ERROR_MSG = "ERROR_MSG";
+        public static final String EXTRA_DATA = "EXTRA_DATA";
 
         public class Status {
             public static final int OK = 0;
@@ -103,8 +104,9 @@ public class BHService extends IntentService {
         if (processor != null) {
             processor.start(operation, requestId, new ProcessorCallback() {
                 @Override
-                public void onSuccess() {
+                public void onSuccess(Bundle data) {
                     cbIntent.putExtra(CallbackIntentExtras.STATUS, CallbackIntentExtras.Status.OK);
+                    cbIntent.putExtra(CallbackIntentExtras.EXTRA_DATA, data);
                     LocalBroadcastManager.getInstance(BHService.this).sendBroadcast(cbIntent);
                 }
 
