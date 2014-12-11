@@ -30,4 +30,5 @@ public abstract class ContentSource<T extends ContentEntry> implements Parcelabl
     public abstract ContentList<T> retrieveNextList(Context context) throws FeedOverException, ContentParseException;
 
     public abstract String getFootprint();
+    public abstract void loadFootprint(String footprint);
 }
