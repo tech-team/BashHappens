@@ -121,6 +121,10 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
      * closed.
      */
     public Cursor swapCursor(Cursor newCursor) {
+        return swapCursor(newCursor, null);
+    }
+
+    public Cursor swapCursor(Cursor newCursor, Integer position) {
         if (newCursor == mCursor) {
             return null;
         }
@@ -135,11 +139,20 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
             }
             mRowIdColumn = newCursor.getColumnIndexOrThrow("_id");
             mDataValid = true;
-            notifyDataSetChanged();
+
+            if (position != null) {
+                notifyItemChanged(position);
+            } else {
+                notifyDataSetChanged();
+            }
         } else {
             mRowIdColumn = -1;
             mDataValid = false;
-            notifyDataSetChanged();
+            if (position != null) {
+                notifyItemChanged(position);
+            } else {
+                notifyDataSetChanged();
+            }
             //There is no notifyDataSetInvalidated() method in RecyclerView.Adapter
         }
         return oldCursor;

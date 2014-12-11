@@ -71,14 +71,21 @@ public class PostsListFragment
         @Override
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             if  (id == LoaderIds.CONTENT_LOADER) {
-                return new ContentLoader(getActivity(), content.getSection());
+                Integer entryPos = null;
+                if (args != null) {
+                    entryPos = args.getInt(ContentLoader.BundleKeys.ENTRY_POSITION, -1);
+                    entryPos = entryPos == -1 ? null : entryPos;
+                }
+
+                return new ContentLoader(getActivity(), content.getSection(), entryPos);
             }
             throw new IllegalArgumentException("Loader with given id is not found");
         }
 
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
-            adapter.swapCursor(newCursor);
+            Integer entryPos = ((ContentLoader) loader).getEntryPosition();
+            adapter.swapCursor(newCursor, entryPos);
         }
 
         @Override
@@ -201,12 +208,15 @@ public class PostsListFragment
             @Override
             public void onSuccess(String operationId, Bundle data) {
                 String entryId = data.getString(ServiceCallback.BashVoteExtras.ENTRY_ID);
+                int entryPosition = data.getInt(BashVoteExtras.ENTRY_POSITION);
 
                 String msg = "Voted for entry: " + entryId;
                 Toaster.toast(getActivity().getApplicationContext(), msg);
                 System.out.println(msg);
 
-                getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, null, contentDataLoaderCallbacks);
+                Bundle args = new Bundle();
+                args.putInt(ContentLoader.BundleKeys.ENTRY_POSITION, entryPosition);
+                getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, args, contentDataLoaderCallbacks);
             }
 
             @Override

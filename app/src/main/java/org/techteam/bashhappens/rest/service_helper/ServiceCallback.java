@@ -13,5 +13,6 @@ public interface ServiceCallback {
 
     class BashVoteExtras {
         public static final String ENTRY_ID = "ENTRY_ID";
+        public static final String ENTRY_POSITION = "ENTRY_POSITION";
     }
 }

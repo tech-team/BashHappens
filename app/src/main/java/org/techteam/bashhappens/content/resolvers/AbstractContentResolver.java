@@ -8,6 +8,7 @@ import android.net.Uri;
 import org.techteam.bashhappens.content.ContentEntry;
 import org.techteam.bashhappens.content.ContentList;
 import org.techteam.bashhappens.content.ContentSection;
+import org.techteam.bashhappens.db.tables.BashLikes;
 import org.techteam.bashhappens.db.tables.BashNewest;
 import org.techteam.bashhappens.db.tables.BashTransactions;
 
@@ -37,10 +38,14 @@ public abstract class AbstractContentResolver {
         switch (section) {
             case BASH_ORG_NEWEST:
                 return new BashNewestResolver();
+            case BASH_ORG_LIKES:
+                return new BashLikesResolver();
             case BASH_ORG_FAVS:
                 return new BashFavsResolver();
-            case BASH_ORG_TRANSACTIONS:
-                return new BashTransactionsResolver();
+            case BASH_ORG_BAYAN:
+                return new BashBayanResolver();
+            case TRANSACTIONS:
+                return new TransactionsResolver();
             case IT_HAPPENS_NEWEST:
                 //TODO: ItHappensNewest resolver, BashLikes prbbly
                 return null;
@@ -50,7 +55,7 @@ public abstract class AbstractContentResolver {
     }
 
     public Cursor getCursor(Context context) {
-        return getCursor(context, null, null, null, null);
+        return getCursor(context, getProjection(), null, null, null);
     }
     public Cursor getCursor(Context context, String[] projection,
                                      String selection, String[] selectionArgs,
@@ -127,7 +132,8 @@ public abstract class AbstractContentResolver {
     public static Map<String, Integer> truncateAll(Context context) {
         Map<String, Integer> deletions = new HashMap<String, Integer>();
         deletions.put(BashNewest.TABLE_NAME, new BashNewestResolver().deleteAllEntries(context));
-        deletions.put(BashTransactions.TABLE_NAME, new BashTransactionsResolver().deleteAllEntries(context));
+        deletions.put(BashLikes.TABLE_NAME, new BashLikesResolver().deleteAllEntries(context));
+        deletions.put(BashTransactions.TABLE_NAME, new TransactionsResolver().deleteAllEntries(context));
         return deletions;
     }
 

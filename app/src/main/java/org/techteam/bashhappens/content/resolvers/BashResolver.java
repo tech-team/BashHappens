@@ -27,11 +27,11 @@ public abstract class BashResolver extends AbstractContentResolver {
 
     @Override
     protected QueryField getQueryField(ContentEntry contentEntry) {
-        return null;
+        return new QueryField(AbstractTable.ID, new String[]{((BashOrgEntry) contentEntry).getId()});
     }
     @Override
     protected QueryField getUpdateField(ContentEntry contentEntry) {
-        return null;
+        return new QueryField(AbstractTable.ID, new String[]{((BashOrgEntry) contentEntry).getId()});
     }
 
     @Override
@@ -51,9 +51,9 @@ public abstract class BashResolver extends AbstractContentResolver {
                     .setId(cur.getString(cur.getColumnIndex(AbstractTable.ID)))
                     .setCreationDate(cur.getString(cur.getColumnIndex(AbstractTable.DATE)))
                     .setText(cur.getString(cur.getColumnIndex(AbstractTable.TEXT)))
-                    .setRating(cur.getString(cur.getColumnIndex(AbstractTable.RATING)));
-                    //.setDirection(cur.getInt(cur.getColumnIndex(BashLikes.DIRECTION)))
-                    //.setBayan(cur.getInt(cur.getColumnIndex(BashBayan.IS_BAYAN)) == 1);
+                    .setRating(cur.getString(cur.getColumnIndex(AbstractTable.RATING)))
+                    .setDirection(cur.getInt(cur.getColumnIndex(BashLikes.DIRECTION)))
+                    .setBayan(cur.getInt(cur.getColumnIndex(BashBayan.IS_BAYAN)) == 1);
     }
 
     @Override
@@ -78,9 +78,9 @@ public abstract class BashResolver extends AbstractContentResolver {
                     .setId(cur.getString(cur.getColumnIndex(AbstractTable.ID)))
                     .setCreationDate(cur.getString(cur.getColumnIndex(AbstractTable.DATE)))
                     .setText(cur.getString(cur.getColumnIndex(AbstractTable.TEXT)))
-                    .setRating(cur.getString(cur.getColumnIndex(AbstractTable.RATING)));
-                    //.setDirection(cur.getInt(cur.getColumnIndex(BashLikes.DIRECTION)))
-                    //.setBayan(cur.getInt(cur.getColumnIndex(BashBayan.IS_BAYAN)) == 1);
+                    .setRating(cur.getString(cur.getColumnIndex(AbstractTable.RATING)))
+                    .setDirection(cur.getInt(cur.getColumnIndex(BashLikes.DIRECTION)))
+                    .setBayan(cur.getInt(cur.getColumnIndex(BashBayan.IS_BAYAN)) == 1);
 
             bashOrgEntryList.add(entry);
             cur.moveToNext();
