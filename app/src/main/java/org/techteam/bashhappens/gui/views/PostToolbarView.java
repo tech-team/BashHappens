@@ -3,6 +3,9 @@ package org.techteam.bashhappens.gui.views;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,6 +39,11 @@ public class PostToolbarView extends FrameLayout {
 
     private boolean bayaned;
     private boolean faved;
+
+
+    PorterDuffColorFilter pressedStateFilter =
+            new PorterDuffColorFilter(Color.BLUE, PorterDuff.Mode.SRC_ATOP);
+
 
     public PostToolbarView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -91,8 +99,7 @@ public class PostToolbarView extends FrameLayout {
         bayanButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-            if (listener != null)
-                listener.bayanPressed(PostToolbarView.this);
+                setBayaned(!bayaned);
             }
         });
 
@@ -107,8 +114,7 @@ public class PostToolbarView extends FrameLayout {
         favButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-            if (listener != null)
-                listener.favPressed(PostToolbarView.this);
+                setFaved(!faved);
             }
         });
     }
@@ -163,11 +169,22 @@ public class PostToolbarView extends FrameLayout {
     }
     public void _setBayaned(boolean bayaned) {
         this.bayaned = bayaned;
+
+        if (bayaned) {
+            //TODO: change to ImageButton with color-filter
+            bayanButton.setTextColor(Color.BLUE);
+        } else {
+            bayanButton.setTextColor(Color.BLACK);
+        }
+
         invalidate();
     }
 
     public void setBayaned(boolean bayaned) {
         _setBayaned(bayaned);
+
+        if (listener != null)
+            listener.bayanPressed(PostToolbarView.this);
     }
 
     public boolean isFaved() {
@@ -176,12 +193,21 @@ public class PostToolbarView extends FrameLayout {
 
     public void _setFaved(boolean faved) {
         this.faved = faved;
-        //TODO: set color filter and disable button here and elsewhere
+
+        if (faved) {
+            favButton.setColorFilter(pressedStateFilter);
+        } else {
+            favButton.setColorFilter(null);
+        }
+
         invalidate();
     }
 
     public void setFaved(boolean faved) {
         _setFaved(faved);
+
+        if (listener != null)
+            listener.favPressed(PostToolbarView.this);
     }
 
     public void setRating(String rating) {

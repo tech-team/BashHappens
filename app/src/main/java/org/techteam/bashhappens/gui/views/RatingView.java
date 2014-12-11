@@ -3,6 +3,9 @@ package org.techteam.bashhappens.gui.views;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.media.Rating;
 import android.util.AttributeSet;
 import android.view.View;
@@ -31,8 +34,14 @@ public class RatingView extends FrameLayout {
     private TextView ratingText;
     private ImageButton dislikeButton;
 
+    PorterDuffColorFilter pressedStateFilter =
+            new PorterDuffColorFilter(Color.BLUE, PorterDuff.Mode.SRC_ATOP);
+
+
     public RatingView(Context context, AttributeSet attrs) {
         super(context, attrs);
+
+        init(context);
 
         TypedArray a = context.getTheme().obtainStyledAttributes(
                 attrs,
@@ -40,14 +49,12 @@ public class RatingView extends FrameLayout {
                 0, 0);
 
         try {
-            value = a.getText(R.styleable.RatingView_value).toString();
+            setValue(a.getText(R.styleable.RatingView_value).toString());
             int stateOrdinal = a.getInteger(R.styleable.RatingView_state, state.ordinal());
-            state = State.values()[stateOrdinal];
+            _setState(State.values()[stateOrdinal]);
         } finally {
             a.recycle();
         }
-
-        init(context);
     }
 
 
@@ -62,24 +69,16 @@ public class RatingView extends FrameLayout {
         likeButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (state == State.IDLE) {
+                if (state == State.IDLE)
                     setState(State.LIKED);
-
-                    if (listener != null)
-                        listener.ratingViewStateChanged(RatingView.this, State.IDLE, state);
-                }
             }
         });
 
         dislikeButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (state == State.IDLE) {
+                if (state == State.IDLE)
                     setState(State.DISLIKED);
-
-                    if (listener != null)
-                        listener.ratingViewStateChanged(RatingView.this, State.IDLE, state);
-                }
             }
         });
     }
@@ -114,7 +113,9 @@ public class RatingView extends FrameLayout {
     public void setState(State state) {
         State oldState = this.state;
         _setState(state);
-        listener.ratingViewStateChanged(this, oldState, state);
+
+        if (listener != null)
+            listener.ratingViewStateChanged(this, oldState, state);
     }
 
     /**
@@ -124,8 +125,20 @@ public class RatingView extends FrameLayout {
     public void _setState(State state) {
         this.state = state;
 
+        if (state == State.LIKED) {
+            likeButton.setEnabled(false);
+            dislikeButton.setEnabled(false);
+
+            likeButton.setColorFilter(pressedStateFilter);
+        }
+        else if (state == State.DISLIKED) {
+            likeButton.setEnabled(false);
+            dislikeButton.setEnabled(false);
+
+            dislikeButton.setColorFilter(pressedStateFilter);
+        }
+
         invalidate();
-        requestLayout();
     }
 
     public Listener getListener() {
