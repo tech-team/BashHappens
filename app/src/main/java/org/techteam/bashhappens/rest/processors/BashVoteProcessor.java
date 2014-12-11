@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import org.techteam.bashhappens.content.Constants;
+import org.techteam.bashhappens.content.ContentSection;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.content.bashorg.BashOrgUrls;
 import org.techteam.bashhappens.content.exceptions.VoteException;
@@ -47,7 +48,7 @@ public class BashVoteProcessor extends Processor {
 
                 makeBayan(entryId);
 
-                AbstractContentResolver resolver = new BashBayanResolver();
+                BashBayanResolver resolver = new BashBayanResolver();
                 resolver.insert(getContext(), new BashOrgEntry().setId(entryId)
                                                                 .setBayan(true));
             } else {
@@ -55,7 +56,7 @@ public class BashVoteProcessor extends Processor {
 
                 String newRating = changeRating(entryId, rating, direction);
 
-                AbstractContentResolver resolver = new BashLikesResolver();
+                BashLikesResolver resolver = new BashLikesResolver();
                 resolver.insert(getContext(), new BashOrgEntry().setId(entryId)
                                                                 .setRating(newRating)
                                                                 .setDirection(direction));

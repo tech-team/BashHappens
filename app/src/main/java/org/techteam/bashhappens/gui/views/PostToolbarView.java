@@ -163,6 +163,8 @@ public class PostToolbarView extends FrameLayout {
             bayanButton.setTextColor(Color.BLACK);
         }
 
+        bayanButton.setEnabled(!bayaned);
+
         invalidate();
     }
 

@@ -177,7 +177,7 @@ public class MainActivity
 
     private void selectItem(int position) {
         section = sections.get(position);
-        Toaster.toast(getBaseContext(), section.getActionBarText());
+//        Toaster.toast(getBaseContext(), section.getActionBarText());
 
         //TODO: change data source here via section.getContentSection()
 

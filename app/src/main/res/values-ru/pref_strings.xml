@@ -7,7 +7,7 @@
     <string name="pref_justify_by_width_title">Выравнивание по ширине</string>
     <string name="pref_justify_by_width_summ">Выравнивание текста цитат по ширине</string>
     <string name="pref_night_mode_title">Ночной режим</string>
-    <string name="pref_night_mode_summ">Белым по чёерному</string>
+    <string name="pref_night_mode_summ">Белым по чёрному</string>
     <string name="pref_text_size_title">Размер шрифта</string>
 
 </resources>

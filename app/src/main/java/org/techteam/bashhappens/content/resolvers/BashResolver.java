@@ -33,7 +33,6 @@ public abstract class BashResolver extends AbstractContentResolver {
     protected QueryField getUpdateField(ContentEntry contentEntry) {
         return new QueryField(AbstractTable.ID, new String[]{((BashOrgEntry) contentEntry).getId()});
     }
-
     @Override
     protected QueryField getDeletionField(ContentEntry contentEntry) {
         return new QueryField(AbstractTable.ID, new String[]{((BashOrgEntry) contentEntry).getId()});

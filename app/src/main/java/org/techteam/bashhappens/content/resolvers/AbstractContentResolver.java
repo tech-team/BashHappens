@@ -47,7 +47,7 @@ public abstract class AbstractContentResolver {
             case TRANSACTIONS:
                 return new TransactionsResolver();
             case IT_HAPPENS_NEWEST:
-                //TODO: ItHappensNewest resolver, BashLikes prbbly
+                //TODO: ItHappensNewest resolver
                 return null;
             default:
                 return null;
@@ -61,7 +61,6 @@ public abstract class AbstractContentResolver {
                                      String selection, String[] selectionArgs,
                                      String sortOrder) {
         /*if (selection != null) {
-            //TODO: multiple fields selection?
             selection += " = ?";
         }*/
         if (projection == null) {

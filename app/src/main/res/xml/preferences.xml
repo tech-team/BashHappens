@@ -16,6 +16,7 @@
             android:title="@string/pref_text_size_title"
             android:entries="@array/text_size"
             android:entryValues="@array/text_size_alias"
+            android:defaultValue="small"
             />
 
     </PreferenceCategory>

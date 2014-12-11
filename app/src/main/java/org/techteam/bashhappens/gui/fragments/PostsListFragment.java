@@ -191,7 +191,7 @@ public class PostsListFragment
                     getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, null, contentDataLoaderCallbacks);
                 }
 
-                Toaster.toast(getActivity().getApplicationContext(), msg);
+//                Toaster.toast(getActivity().getApplicationContext(), msg);
                 System.out.println(msg);
             }
 
@@ -211,7 +211,7 @@ public class PostsListFragment
                 int entryPosition = data.getInt(BashVoteExtras.ENTRY_POSITION);
 
                 String msg = "Voted for entry: " + entryId;
-                Toaster.toast(getActivity().getApplicationContext(), msg);
+//                Toaster.toast(getActivity().getApplicationContext(), msg);
                 System.out.println(msg);
 
                 Bundle args = new Bundle();
@@ -263,7 +263,7 @@ public class PostsListFragment
     public void onRefresh() {
         mSwipeRefreshLayout.setRefreshing(true);
 
-        Toaster.toast(getActivity().getBaseContext(), R.string.loading);
+//        Toaster.toast(getActivity().getBaseContext(), R.string.loading);
         content = factory.buildContent(activity.getSection().getContentSection(), true);
 
         serviceHelper.getPosts(content, LoadIntention.REFRESH, callbacksKeeper.getCallback(OperationType.GET_POSTS));
@@ -271,7 +271,7 @@ public class PostsListFragment
 
     @Override
     public void onScrolledDown() {
-        Toaster.toast(getActivity().getBaseContext(), "Bottom reached");
+//        Toaster.toast(getActivity().getBaseContext(), "Bottom reached");
 
         System.out.println("Load has begun");
         serviceHelper.getPosts(content, LoadIntention.APPEND, callbacksKeeper.getCallback(OperationType.GET_POSTS));
@@ -317,31 +317,31 @@ public class PostsListFragment
             //TODO: move defaults somewhere
             switch (resId) {
                 case R.string.pref_justify_by_width_key:
-                    Toaster.toast(getActivity().getBaseContext(),
-                            "You have changed "+ key + " to " + sharedPreferences.getBoolean(key, false));
+//                    Toaster.toast(getActivity().getBaseContext(),
+//                            "You have changed "+ key + " to " + sharedPreferences.getBoolean(key, false));
 
                     break;
                 case R.string.pref_night_mode_key:
-                    Toaster.toast(getActivity().getBaseContext(),
-                            "You have changed "+ key + " to " + sharedPreferences.getBoolean(key, false));
+//                    Toaster.toast(getActivity().getBaseContext(),
+//                            "You have changed "+ key + " to " + sharedPreferences.getBoolean(key, false));
 
                     break;
 
                 case R.string.pref_shorten_long_posts_key:
-                    Toaster.toast(getActivity().getBaseContext(),
-                            "You have changed "+ key + " to " + sharedPreferences.getBoolean(key, false));
+//                    Toaster.toast(getActivity().getBaseContext(),
+//                            "You have changed "+ key + " to " + sharedPreferences.getBoolean(key, false));
 
                     break;
 
                 case R.string.pref_text_size_key:
-                    Toaster.toast(getActivity().getBaseContext(),
-                            "You have changed "+ key + " to " + sharedPreferences.getString(key, "small"));
+//                    Toaster.toast(getActivity().getBaseContext(),
+//                            "You have changed "+ key + " to " + sharedPreferences.getString(key, "small"));
 
                     break;
 
                 default:
-                    Toaster.toast(getActivity().getBaseContext(),
-                            "Some settings changed programmatically");
+//                    Toaster.toast(getActivity().getBaseContext(),
+//                            "Some settings changed programmatically");
                     break;
             }
 

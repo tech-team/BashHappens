@@ -25,6 +25,19 @@ public class BashLikesResolver extends BashResolver {
         return new String[] {BashLikes.ARTICLE_ID, BashLikes.DIRECTION};
     }
 
+    @Override
+    protected QueryField getQueryField(ContentEntry contentEntry) {
+        return new QueryField(BashLikes.ARTICLE_ID, new String[]{((BashOrgEntry) contentEntry).getId()});
+    }
+    @Override
+    protected QueryField getUpdateField(ContentEntry contentEntry) {
+        return new QueryField(BashLikes.ARTICLE_ID, new String[]{((BashOrgEntry) contentEntry).getId()});
+    }
+    @Override
+    protected QueryField getDeletionField(ContentEntry contentEntry) {
+        return new QueryField(BashLikes.ARTICLE_ID, new String[]{((BashOrgEntry) contentEntry).getId()});
+    }
+
     public static BashOrgEntry getCurrentEntry(Cursor cur) {
         return new BashOrgEntry()
                 .setId(cur.getString(cur.getColumnIndex(BashLikes.ARTICLE_ID)))
@@ -41,36 +54,41 @@ public class BashLikesResolver extends BashResolver {
         return values;
     }
 
-    public int[] insert(Context context, ContentEntry entry, ContentSection section) {
-        int[] result = {0, 0};
-        result[0] = Integer.valueOf(context
-                                .getContentResolver()
-                                .insert(_getUri(), convertToContentValues(entry))
-                                .getLastPathSegment());
-        String[] selectionArgs = new String[] { entry.toBashOrgEntry().getId() };
+    @Override
+    public int insert(Context context, ContentEntry entry) {
 
-        AbstractContentResolver resolver = AbstractContentResolver.getResolver(section);
+        int result = 0;
+        Cursor likesCur = getCursor(context, null, BashLikes.ARTICLE_ID + "= ?",
+                new String[]{entry.toBashOrgEntry().getId()}, null);
 
-        Cursor cur = resolver.getCursor(context, null, AbstractTable.ID + "= ?",
-                                           selectionArgs, null);
-        cur.moveToFirst();
-        if (cur.getCount() != 0) {
-            String newRating = cur.getString(cur.getColumnIndex(AbstractTable.RATING));
-            if (!newRating.equals("???") && !newRating.equals("...")) {
-                newRating = Integer.toString(Integer.parseInt(newRating)
-                                            + entry.toBashOrgEntry().getDirection());
+        if (likesCur.getCount() == 0) {
+            result = Integer.valueOf(context
+                    .getContentResolver()
+                    .insert(_getUri(), convertToContentValues(entry))
+                    .getLastPathSegment());
+            String[] selectionArgs = new String[]{entry.toBashOrgEntry().getId()};
+
+            // TODO: iterate through all tables
+            ContentSection section = ContentSection.BASH_ORG_NEWEST;
+            AbstractContentResolver resolver = AbstractContentResolver.getResolver(section);
+
+            Cursor cur = resolver.getCursor(context, null, AbstractTable.ID + "= ?",
+                    selectionArgs, null);
+            cur.moveToFirst();
+            if (cur.getCount() != 0) {
+                BashOrgEntry bashOrgEntry = new BashOrgEntry()
+                        .setId(cur.getString(cur.getColumnIndex(AbstractTable.ID)))
+                        .setCreationDate(cur.getString(cur.getColumnIndex(AbstractTable.DATE)))
+                        .setText(cur.getString(cur.getColumnIndex(AbstractTable.TEXT)))
+                        .setRating(entry.toBashOrgEntry().getRating())
+                        .setDirection(entry.toBashOrgEntry().getDirection())
+                        .setBayan(cur.getInt(cur.getColumnIndex(BashBayan.IS_BAYAN)) == 1);
+
+                resolver.updateEntry(context, bashOrgEntry);
             }
-            BashOrgEntry bashOrgEntry = new BashOrgEntry()
-                    .setId(cur.getString(cur.getColumnIndex(AbstractTable.ID)))
-                    .setCreationDate(cur.getString(cur.getColumnIndex(AbstractTable.DATE)))
-                    .setText(cur.getString(cur.getColumnIndex(AbstractTable.TEXT)))
-                    .setRating(newRating)
-                    .setDirection(entry.toBashOrgEntry().getDirection())
-                    .setBayan(cur.getInt(cur.getColumnIndex(BashBayan.IS_BAYAN)) == 1);
-
-            result[1] = resolver.updateEntry(context, bashOrgEntry);
+            cur.close();
         }
-        cur.close();
+        likesCur.close();
         return result;
     }
 }
