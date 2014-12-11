@@ -281,7 +281,7 @@ public class PostsListFragment
         super.onResume();
         System.out.println("onResume");
         serviceHelper.init();
-
+        content = activity.getContentSourceFromPrefs(content);
     }
 
     @Override
@@ -289,6 +289,7 @@ public class PostsListFragment
         super.onPause();
         System.out.println("onPause");
         serviceHelper.release();
+        activity.saveContentSource(content);
     }
 
 

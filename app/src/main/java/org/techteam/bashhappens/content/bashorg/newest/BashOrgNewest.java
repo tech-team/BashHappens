@@ -30,6 +30,8 @@ public class BashOrgNewest extends BashOrg {
     private int currentPage = NO_PAGE;
     private boolean feedOver = false;
 
+    private static final String FOOTPRINT_DELIM = "_";
+
     public BashOrgNewest(String locale, ContentSection section) {
         super(locale, section);
     }
@@ -81,11 +83,29 @@ public class BashOrgNewest extends BashOrg {
     public String getFootprint() {
         StringBuilder sb = new StringBuilder();
         sb.append(Integer.toString(minPage));
-        sb.append("-");
+        sb.append(FOOTPRINT_DELIM);
         sb.append(Integer.toString(currentPage));
-        sb.append("-");
+        sb.append(FOOTPRINT_DELIM);
         sb.append(Integer.toString(maxPage));
         return sb.toString();
+    }
+
+    @Override
+    public void loadFootprint(String footprint) {
+        if (footprint != null) {
+            String[] parts = footprint.split(FOOTPRINT_DELIM);
+            try {
+                int newMinPage = Integer.parseInt(parts[0]);
+                int newCurrentPage = Integer.parseInt(parts[1]);
+                int newMaxPage = Integer.parseInt(parts[2]);
+
+                minPage = newMinPage;
+                currentPage = newCurrentPage;
+                maxPage = newMaxPage;
+            } catch (NumberFormatException ignored) {
+            }
+
+        }
     }
 
     private boolean checkFeedOver() {

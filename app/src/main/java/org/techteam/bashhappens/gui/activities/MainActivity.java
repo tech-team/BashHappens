@@ -3,7 +3,6 @@ package org.techteam.bashhappens.gui.activities;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.DrawerLayout;
@@ -20,15 +19,7 @@ import android.widget.ListView;
 import org.techteam.bashhappens.R;
 import org.techteam.bashhappens.content.ContentFactory;
 import org.techteam.bashhappens.content.ContentSection;
-import org.techteam.bashhappens.content.bashorg.BashOrg;
-import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
-import org.techteam.bashhappens.content.bashorg.BashOrgList;
-import org.techteam.bashhappens.content.bashorg.newest.BashOrgNewest;
-import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
-import org.techteam.bashhappens.content.resolvers.BashBayanResolver;
-import org.techteam.bashhappens.content.resolvers.BashLikesResolver;
-import org.techteam.bashhappens.content.resolvers.BashNewestResolver;
-import org.techteam.bashhappens.db.tables.BashLikes;
+import org.techteam.bashhappens.content.ContentSource;
 import org.techteam.bashhappens.gui.adapters.SectionsBuilder;
 import org.techteam.bashhappens.gui.adapters.SectionsListAdapter;
 import org.techteam.bashhappens.gui.fragments.PostsListFragment;
@@ -55,7 +46,10 @@ public class MainActivity
 
     private static final class PrefKeys {
         public static final String SECTION_ID = "SECTION_ID";
-        public static final String CONTENT_FACTORY = "CONTENT_FACTORY";
+
+        public static String contentSourceBySection(ContentSection section) {
+            return "CONTENT_SOURCE_" + section.toString();
+        }
     }
 
     @Override
@@ -73,35 +67,6 @@ public class MainActivity
             getFragmentManager().beginTransaction()
                     .add(R.id.content_frame, new PostsListFragment()).commit();
         }
-
-        AbstractContentResolver.truncateAll(this);
-        BashOrgEntry entry = new BashOrgEntry().setId("1").setRating("400");
-        BashOrgEntry likesEntry = new BashOrgEntry().setId("2").setDirection(-1);
-
-        BashNewestResolver newestRes =
-                (BashNewestResolver) AbstractContentResolver.getResolver(ContentSection.BASH_ORG_NEWEST);
-        newestRes.insert(this, entry);
-
-        BashLikesResolver likesRes = (BashLikesResolver)AbstractContentResolver.getResolver(ContentSection.BASH_ORG_LIKES);
-        likesRes.insert(this, likesEntry, ContentSection.BASH_ORG_NEWEST);
-
-        Cursor cur = newestRes.getCursor(this);
-        cur.moveToFirst();
-        BashOrgList list = new BashOrgList();
-        while(!cur.isAfterLast()) {
-            list.add(BashNewestResolver.getCurrentEntry(cur));
-            cur.moveToNext();
-        }
-        cur.close();
-
-        Cursor cur2 = likesRes.getCursor(this);
-        cur2.moveToFirst();
-        BashOrgList list2 = new BashOrgList();
-        while(!cur2.isAfterLast()) {
-            list2.add(BashLikesResolver.getCurrentEntry(cur2));
-            cur2.moveToNext();
-        }
-        cur2.close();
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerList = (ListView) findViewById(R.id.left_drawer);
@@ -168,12 +133,27 @@ public class MainActivity
     protected void onPause() {
         super.onPause();
 
-        SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefs.edit();
 
         editor.putInt(PrefKeys.SECTION_ID, sectionsListAdapter.getSelectedItemId());
 
         editor.apply();
+    }
+
+    public void saveContentSource(ContentSource contentSource) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(PrefKeys.contentSourceBySection(contentSource.getSection()),
+                         contentSource.getFootprint());
+        editor.apply();
+    }
+
+    public ContentSource getContentSourceFromPrefs(ContentSource contentSource) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String footprint = prefs.getString(PrefKeys.contentSourceBySection(contentSource.getSection()), null);
+        contentSource.loadFootprint(footprint);
+        return contentSource;
     }
 
 

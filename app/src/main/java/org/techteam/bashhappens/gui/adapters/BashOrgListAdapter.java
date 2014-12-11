@@ -18,6 +18,7 @@ import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.content.resolvers.BashResolver;
 import org.techteam.bashhappens.gui.fragments.OnBashEventCallback;
 import org.techteam.bashhappens.gui.fragments.OnListScrolledDownCallback;
+import org.techteam.bashhappens.gui.views.EllipsizingTextView;
 import org.techteam.bashhappens.gui.views.PostToolbarView;
 import org.techteam.bashhappens.gui.views.RatingView;
 import org.techteam.bashhappens.util.Clipboard;
@@ -34,6 +35,8 @@ public class BashOrgListAdapter
 
     private int VIEW_TYPE_ENTRY = 0;
     private int VIEW_TYPE_FOOTER = 1;
+
+    private static final int POST_TEXT_MAX_LINES = 5;
 
     public void setAll(ArrayList<BashOrgEntry> entries) {
         dataset.clear();
@@ -60,7 +63,9 @@ public class BashOrgListAdapter
         public ImageButton overflow;
 
         //content
-        public TextView text;
+        public EllipsizingTextView text;
+
+        public TextView ellipsizeHint;
 
         //bottom buttons panel
         public PostToolbarView toolbarView;
@@ -73,7 +78,9 @@ public class BashOrgListAdapter
             date = (TextView) v.findViewById(R.id.post_date);
             overflow = (ImageButton) v.findViewById(R.id.overflow_button);
 
-            text = (TextView) v.findViewById(R.id.post_text);
+            text = (EllipsizingTextView) v.findViewById(R.id.post_text);
+
+            ellipsizeHint = (TextView) v.findViewById(R.id.post_ellipsize_hint);
 
             toolbarView = (PostToolbarView) v.findViewById(R.id.post_toolbar_view);
         }
@@ -116,6 +123,7 @@ public class BashOrgListAdapter
         holder.id.setText(entry.getId());
         holder.date.setText(entry.getCreationDate());
         holder.text.setText(entry.getText());
+        holder.text.setMaxLines(POST_TEXT_MAX_LINES);
 
         int direction = entry.getDirection();
         switch(direction) {
@@ -177,6 +185,20 @@ public class BashOrgListAdapter
                 Context context = view.getContext();
                 Toaster.toast(context,
                         "Fav pressed for entry.id: " + entry.getId());
+            }
+        });
+
+        holder.text.addEllipsizeListener(new EllipsizingTextView.EllipsizeListener() {
+            @Override
+            public void ellipsizeStateChanged(boolean ellipsized) {
+                holder.ellipsizeHint.setVisibility(ellipsized ? View.VISIBLE : View.GONE);
+            }
+        });
+
+        holder.text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                holder.text.setMaxLines(Integer.MAX_VALUE);
             }
         });
 

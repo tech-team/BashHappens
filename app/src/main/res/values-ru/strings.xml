@@ -21,5 +21,6 @@
     <string name="post_link_copied">Ссылка скопирована</string>
     <string name="feed_finished">Лента кончилась. Уоу!</string>
     <string name="unknown_rating">\???</string>
+    <string name="ellipsize_hint">Press to expand</string>
 
 </resources>
