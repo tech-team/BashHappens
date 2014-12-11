@@ -10,7 +10,7 @@ import org.techteam.bashhappens.db.ITable;
 
 import static org.techteam.bashhappens.db.DataTypes.*;
 
-public class BashLikes implements BaseColumns, ITable {
+public class BashLikes implements ITable {
     public static final String TABLE_NAME = "bash_likes";
     public static final String ARTICLE_ID = "article_id";
     public static final String DIRECTION = "direction";
@@ -23,8 +23,7 @@ public class BashLikes implements BaseColumns, ITable {
     public BashLikes() {}
 
     private static final String TABLE_CREATE = "CREATE TABLE "
-            + TABLE_NAME + "(" + COLUMN_ID + TYPE_SERIAL + SEPARATOR
-            + ARTICLE_ID + TYPE_TEXT + SEPARATOR
+            + TABLE_NAME + "(" + ARTICLE_ID + TYPE_TEXT + SEPARATOR
             + DIRECTION + TYPE_INTEGER + ");";
 
     @Override

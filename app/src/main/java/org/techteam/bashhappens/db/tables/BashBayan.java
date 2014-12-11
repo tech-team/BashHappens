@@ -14,7 +14,7 @@ import static org.techteam.bashhappens.db.DataTypes.TYPE_INTEGER;
 import static org.techteam.bashhappens.db.DataTypes.TYPE_SERIAL;
 import static org.techteam.bashhappens.db.DataTypes.TYPE_TEXT;
 
-public class BashBayan implements BaseColumns, ITable {
+public class BashBayan implements ITable {
     public static final String TABLE_NAME = "bash_bayan";
     public static final String ARTICLE_ID = "article_id";
     public static final String IS_BAYAN = "is_bayan";
@@ -27,8 +27,7 @@ public class BashBayan implements BaseColumns, ITable {
     public BashBayan() {}
 
     private static final String TABLE_CREATE = "CREATE TABLE "
-            + TABLE_NAME + "(" + COLUMN_ID + TYPE_SERIAL + SEPARATOR
-            + ARTICLE_ID + TYPE_TEXT + SEPARATOR
+            + TABLE_NAME + "(" + ARTICLE_ID + TYPE_TEXT + SEPARATOR
             + IS_BAYAN + TYPE_INTEGER + ");";
 
     @Override

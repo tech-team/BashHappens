@@ -12,10 +12,12 @@ public class BashTransactionsEntry extends ContentEntry {
 
     private String id;
     private OperationType operationType;
-    private TransactionStatus status = null;
+    private TransactionStatus status;
 
     public BashTransactionsEntry() {
         super(CONTENT_TYPE);
+        this.operationType = OperationType.GET_POSTS;
+        this.status = TransactionStatus.STARTED;
     }
 
     public String getId() {
@@ -35,6 +37,10 @@ public class BashTransactionsEntry extends ContentEntry {
         return this;
     }
 
+    public BashTransactionsEntry setOperationType(int operationType) {
+        this.operationType = OperationType.toType(operationType);
+        return this;
+    }
     public BashTransactionsEntry setOperationType(OperationType operationType) {
         this.operationType = operationType;
         return this;

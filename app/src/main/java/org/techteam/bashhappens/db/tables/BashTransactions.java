@@ -17,6 +17,7 @@ public class BashTransactions implements ITable {
 
     public static final String ID = "id";
     public static final String STATUS = "status";
+    public static final String TYPE = "type";
 
     public static final String TABLE_NAME = "bash_transactions";
 
@@ -30,7 +31,8 @@ public class BashTransactions implements ITable {
     private static final String TABLE_CREATE = "CREATE TABLE "
             + TABLE_NAME + "(" + COLUMN_ID + TYPE_SERIAL + SEPARATOR
             + ID + TYPE_TEXT + SEPARATOR
-            + STATUS + TYPE_INTEGER + ");";
+            + STATUS + TYPE_INTEGER + SEPARATOR
+            + TYPE + TYPE_INTEGER + ");";
 
     @Override
     public void onCreate(SQLiteDatabase db) {
