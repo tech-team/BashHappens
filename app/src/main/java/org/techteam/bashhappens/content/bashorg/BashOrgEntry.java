@@ -1,6 +1,6 @@
 package org.techteam.bashhappens.content.bashorg;
 
-import android.content.Context;
+import android.text.Html;
 
 import org.jsoup.nodes.Element;
 import org.techteam.bashhappens.content.ContentEntry;
@@ -41,6 +41,7 @@ public class BashOrgEntry extends ContentEntry {
     private String rating;
     private int direction = 0;
     private boolean isBayan;
+    private boolean favorite;
 
     public BashOrgEntry(String id, String creationDate, String text, String rating) {
         super(CONTENT_TYPE);
@@ -96,6 +97,8 @@ public class BashOrgEntry extends ContentEntry {
         return isBayan;
     }
 
+
+
     public BashOrgEntry setId(String id) {
         this.id = id;
         return this;
@@ -127,7 +130,7 @@ public class BashOrgEntry extends ContentEntry {
         try {
             actionsBar = element.getElementsByClass(DOM.ACTIONS_BAR_CLASS).get(0);
             text = element.getElementsByClass(DOM.TEXT_CLASS).get(0).html();
-            text = text.replaceAll("<br.*>", "");
+            text = postProcessText(text);
         } catch (Exception ignored) {
             return null;
         }
@@ -138,5 +141,10 @@ public class BashOrgEntry extends ContentEntry {
                                                 .get(0).text();
 
         return new BashOrgEntry(id, creationDate, text, rating);
+    }
+
+    private static String postProcessText(String text) {
+        //text = text.replaceAll("<br.*>", "");
+        return Html.fromHtml(text).toString();
     }
 }

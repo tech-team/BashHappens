@@ -29,20 +29,20 @@ public abstract class Processor {
         BashTransactionsEntry trx = new BashTransactionsEntry().setId(requestId)
                                                                .setOperationType(operationType)
                                                                .setStatus(TransactionStatus.STARTED);
-        transactioner.insertEntry(getContext(), trx);
+        transactioner.insert(getContext(), trx);
     }
 
     protected void transactionFinished(OperationType operationType, String requestId) {
         BashTransactionsEntry trx = new BashTransactionsEntry().setId(requestId)
                                                                .setOperationType(operationType)
                                                                .setStatus(TransactionStatus.FINISHED);
-        transactioner.updateEntry(getContext(), trx);
+        transactioner.insert(getContext(), trx);
     }
 
     protected void transactionError(OperationType operationType, String requestId) {
         BashTransactionsEntry trx = new BashTransactionsEntry().setId(requestId)
                                                                .setOperationType(operationType)
                                                                .setStatus(TransactionStatus.ERROR);
-        transactioner.updateEntry(getContext(), trx);
+        transactioner.insert(getContext(), trx);
     }
 }

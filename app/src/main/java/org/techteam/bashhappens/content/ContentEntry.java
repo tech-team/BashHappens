@@ -5,6 +5,7 @@ import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 
 public abstract class ContentEntry {
     private ContentType contentType;
+    private boolean favorite;
 
     protected ContentEntry(ContentType contentType) {
         this.contentType = contentType;
@@ -19,5 +20,13 @@ public abstract class ContentEntry {
         return (BashOrgEntry) this;
     }
 
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public ContentEntry setFavorite(boolean favorite) {
+        this.favorite = favorite;
+        return this;
+    }
 
 }
