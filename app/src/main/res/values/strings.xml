@@ -21,5 +21,6 @@
     <string name="post_link_copied">Link copied</string>
     <string name="feed_finished">Feed is finished. Whoa!</string>
     <string name="unknown_rating">\???</string>
+    <string name="ellipsize_hint">Press to expand</string>
 
 </resources>
