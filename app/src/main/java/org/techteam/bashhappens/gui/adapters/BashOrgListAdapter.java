@@ -2,7 +2,9 @@ package org.techteam.bashhappens.gui.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -18,6 +20,7 @@ import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.content.resolvers.BashResolver;
 import org.techteam.bashhappens.gui.fragments.OnBashEventCallback;
 import org.techteam.bashhappens.gui.fragments.OnListScrolledDownCallback;
+import org.techteam.bashhappens.gui.loaders.LoaderIds;
 import org.techteam.bashhappens.gui.views.EllipsizingTextView;
 import org.techteam.bashhappens.gui.views.PostToolbarView;
 import org.techteam.bashhappens.gui.views.RatingView;
@@ -32,6 +35,8 @@ public class BashOrgListAdapter
     private final OnBashEventCallback eventCallback;
     private final OnListScrolledDownCallback scrolledDownCallback;
     private List<BashOrgEntry> dataset;
+
+    private Context context;
 
     private int VIEW_TYPE_ENTRY = 0;
     private int VIEW_TYPE_FOOTER = 1;
@@ -87,9 +92,11 @@ public class BashOrgListAdapter
     }
 
     public BashOrgListAdapter(Cursor contentCursor,
+                              Context context,
                               OnBashEventCallback eventCallback,
                               OnListScrolledDownCallback scrolledDownCallback) {
         super(contentCursor); // TODO
+        this.context = context;
         this.eventCallback = eventCallback;
         this.scrolledDownCallback = scrolledDownCallback;
     }
@@ -123,7 +130,33 @@ public class BashOrgListAdapter
         holder.id.setText(entry.getId());
         holder.date.setText(entry.getCreationDate());
         holder.text.setText(entry.getText());
-        holder.text.setMaxLines(POST_TEXT_MAX_LINES);
+
+        //configure according to SharedPreferences
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        if (prefs.getBoolean(context.getString(R.string.pref_shorten_long_posts_key), true))
+            holder.text.setMaxLines(POST_TEXT_MAX_LINES);
+        else
+            holder.text.setMaxLines(Integer.MAX_VALUE);
+
+        String textSize = prefs.getString(context.getString(R.string.pref_text_size_key), "small");
+        switch (textSize) {
+            case "small":
+                holder.text.setTextAppearance(context, android.R.style.TextAppearance_Small);
+                break;
+
+            case "medium":
+                holder.text.setTextAppearance(context, android.R.style.TextAppearance_Medium);
+                break;
+
+            case "large":
+                holder.text.setTextAppearance(context, android.R.style.TextAppearance_Large);
+                break;
+        }
+        holder.text.setTextColor(context.getResources().getColor(android.R.color.black));
+
+        //TODO: text justification, see:
+        //http://stackoverflow.com/questions/1292575/android-textview-justify-text
+
 
         int direction = entry.getDirection();
         switch(direction) {
@@ -192,6 +225,14 @@ public class BashOrgListAdapter
             @Override
             public void ellipsizeStateChanged(boolean ellipsized) {
                 holder.ellipsizeHint.setVisibility(ellipsized ? View.VISIBLE : View.GONE);
+            }
+        });
+
+        //set expand function both for text and hint controls
+        holder.ellipsizeHint.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                holder.text.setMaxLines(Integer.MAX_VALUE);
             }
         });
 

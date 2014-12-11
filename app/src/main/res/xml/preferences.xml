@@ -11,12 +11,6 @@
             android:summary="@string/pref_shorten_long_posts_summ"
             android:defaultValue="false" />
 
-        <CheckBoxPreference
-            android:key="@string/pref_justify_by_width_key"
-            android:title="@string/pref_justify_by_width_title"
-            android:summary="@string/pref_justify_by_width_summ"
-            android:defaultValue="false" />
-
         <ListPreference
             android:key="@string/pref_text_size_key"
             android:title="@string/pref_text_size_title"
@@ -24,10 +18,5 @@
             android:entryValues="@array/text_size_alias"
             />
 
-        <CheckBoxPreference
-            android:key="@string/pref_night_mode_key"
-            android:title="@string/pref_night_mode_title"
-            android:summary="@string/pref_night_mode_summ"
-            android:defaultValue="false" />
     </PreferenceCategory>
 </PreferenceScreen>

@@ -60,7 +60,7 @@ public class PostsListFragment
 
     private ContentFactory factory = null;
     private ContentSource content = null;
-    private BashOrgListAdapter adapter = new BashOrgListAdapter(null, PostsListFragment.this, PostsListFragment.this);
+    private BashOrgListAdapter adapter;
 
     private CallbacksKeeper callbacksKeeper = new CallbacksKeeper();
     private ServiceHelper serviceHelper;
@@ -133,6 +133,8 @@ public class PostsListFragment
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(mLayoutManager);
+
+        adapter = new BashOrgListAdapter(null, getActivity(), PostsListFragment.this, PostsListFragment.this);
         recyclerView.setAdapter(adapter);
 
         //this thing waits for user to stop scrolling and adds new data or refreshes existing data
@@ -332,6 +334,9 @@ public class PostsListFragment
                             "Some settings changed programmatically");
                     break;
             }
+
+            //cause posts to re-render
+            getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, null, contentDataLoaderCallbacks);
         }
     }
 }
