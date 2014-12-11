@@ -11,6 +11,8 @@ import org.techteam.bashhappens.content.ContentList;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.content.bashorg.BashOrgList;
 import org.techteam.bashhappens.db.tables.AbstractTable;
+import org.techteam.bashhappens.db.tables.BashBayan;
+import org.techteam.bashhappens.db.tables.BashLikes;
 
 public abstract class BashResolver extends AbstractContentResolver {
 
@@ -19,8 +21,8 @@ public abstract class BashResolver extends AbstractContentResolver {
 
     @Override
     protected String[] getProjection() {
-        return new String[] {AbstractTable._ID, AbstractTable.ID, AbstractTable.TEXT, AbstractTable.DATE, AbstractTable.RATING};
-                //BashLikes.DIRECTION, BashBayan.IS_BAYAN};
+        return new String[] {AbstractTable._ID, AbstractTable.ID, AbstractTable.TEXT, AbstractTable.DATE,
+                             AbstractTable.RATING, BashLikes.DIRECTION, BashBayan.IS_BAYAN};
     }
 
     @Override

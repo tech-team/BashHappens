@@ -18,8 +18,11 @@ import android.widget.ListView;
 
 import org.techteam.bashhappens.R;
 import org.techteam.bashhappens.content.ContentSection;
+import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
+import org.techteam.bashhappens.content.bashorg.BashOrgList;
 import org.techteam.bashhappens.content.bashorg.BashTransactionsEntry;
 import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
+import org.techteam.bashhappens.content.resolvers.BashNewestResolver;
 import org.techteam.bashhappens.content.resolvers.BashTransactionsResolver;
 import org.techteam.bashhappens.db.TransactionStatus;
 import org.techteam.bashhappens.gui.adapters.SectionsBuilder;

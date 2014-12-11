@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
+import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
 import org.techteam.bashhappens.db.tables.AbstractTable;
 import org.techteam.bashhappens.db.tables.BashBayan;
 import org.techteam.bashhappens.db.tables.BashFavs;
@@ -67,6 +68,13 @@ public class BashHappensDbProvider extends DbProvider {
             default:
                 throw new IllegalArgumentException("Unknown URI" + uri);
         }
+        query.append(" LEFT JOIN "
+                + BashLikes.TABLE_NAME + " ON "
+                + AbstractTable.ID
+                + " = " + BashLikes.TABLE_NAME + "." + BashLikes.ARTICLE_ID
+                + " LEFT JOIN " + BashBayan.TABLE_NAME + " ON "
+                + AbstractTable.ID
+                + " = " + BashBayan.TABLE_NAME + "." + BashBayan.ARTICLE_ID);
         qb.setTables(query.toString());
         if (sortOrder.data == null) {
             sortOrder.data = AbstractTable.DEFAULT_SORT_ORDER;
