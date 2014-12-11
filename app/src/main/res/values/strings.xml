@@ -20,5 +20,6 @@
     <string name="post_text_copied">Text copied</string>
     <string name="post_link_copied">Link copied</string>
     <string name="feed_finished">Feed is finished. Whoa!</string>
+    <string name="unknown_rating">\???</string>
 
 </resources>

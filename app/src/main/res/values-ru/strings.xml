@@ -20,5 +20,6 @@
     <string name="post_text_copied">Текст скопирован</string>
     <string name="post_link_copied">Ссылка скопирована</string>
     <string name="feed_finished">Лента кончилась. Уоу!</string>
+    <string name="unknown_rating">\???</string>
 
 </resources>
