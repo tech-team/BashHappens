@@ -5,8 +5,8 @@ import org.techteam.bashhappens.content.ContentType;
 import org.techteam.bashhappens.db.TransactionStatus;
 import org.techteam.bashhappens.rest.OperationType;
 
-public class BashTransactionsEntry extends ContentEntry {
-    private static final String LOG_TAG = BashTransactionsEntry.class.toString();
+public class TransactionEntry extends ContentEntry {
+    private static final String LOG_TAG = TransactionEntry.class.toString();
 
     public static final ContentType CONTENT_TYPE = ContentType.BASH_ORG;
 
@@ -14,7 +14,7 @@ public class BashTransactionsEntry extends ContentEntry {
     private OperationType operationType;
     private TransactionStatus status;
 
-    public BashTransactionsEntry() {
+    public TransactionEntry() {
         super(CONTENT_TYPE);
         this.operationType = OperationType.GET_POSTS;
         this.status = TransactionStatus.STARTED;
@@ -32,25 +32,25 @@ public class BashTransactionsEntry extends ContentEntry {
         return status;
     }
 
-    public BashTransactionsEntry setId(String id) {
+    public TransactionEntry setId(String id) {
         this.id = id;
         return this;
     }
 
-    public BashTransactionsEntry setOperationType(int operationType) {
+    public TransactionEntry setOperationType(int operationType) {
         this.operationType = OperationType.toType(operationType);
         return this;
     }
-    public BashTransactionsEntry setOperationType(OperationType operationType) {
+    public TransactionEntry setOperationType(OperationType operationType) {
         this.operationType = operationType;
         return this;
     }
 
-    public BashTransactionsEntry setStatus(int status) {
+    public TransactionEntry setStatus(int status) {
         this.status = TransactionStatus.toStatus(status);
         return this;
     }
-    public BashTransactionsEntry setStatus(TransactionStatus status) {
+    public TransactionEntry setStatus(TransactionStatus status) {
         this.status = status;
         return this;
     }

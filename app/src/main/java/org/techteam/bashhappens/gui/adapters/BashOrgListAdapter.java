@@ -149,8 +149,8 @@ public class BashOrgListAdapter
                 eventCallback.onMakeVote(entry, position, BashOrgEntry.VoteDirection.UP);
 
                 Context context = view.getContext();
-                Toaster.toast(context,
-                        "Like pressed for entry.id: " + entry.getId());
+//                Toaster.toast(context,
+//                        "Like pressed for entry.id: " + entry.getId());
             }
 
             @Override
@@ -158,8 +158,8 @@ public class BashOrgListAdapter
                 eventCallback.onMakeVote(entry, position, BashOrgEntry.VoteDirection.DOWN);
 
                 Context context = view.getContext();
-                Toaster.toast(context,
-                        "Dislike pressed for entry.id: " + entry.getId());
+//                Toaster.toast(context,
+//                        "Dislike pressed for entry.id: " + entry.getId());
             }
 
             @Override
@@ -167,24 +167,24 @@ public class BashOrgListAdapter
                 eventCallback.onMakeVote(entry, position, BashOrgEntry.VoteDirection.BAYAN);
 
                 Context context = view.getContext();
-                Toaster.toast(context,
-                        "Bayan pressed for entry.id: " + entry.getId());
+//                Toaster.toast(context,
+//                        "Bayan pressed for entry.id: " + entry.getId());
             }
 
             @Override
             public void sharePressed(PostToolbarView view) {
                 Context context = view.getContext();
                 share(context, entry);
-                Toaster.toast(context,
-                        "Share pressed for entry.id: " + entry.getId());
+//                Toaster.toast(context,
+//                        "Share pressed for entry.id: " + entry.getId());
             }
 
             @Override
             public void favPressed(PostToolbarView view) {
                 eventCallback.onFavorite(entry);
                 Context context = view.getContext();
-                Toaster.toast(context,
-                        "Fav pressed for entry.id: " + entry.getId());
+//                Toaster.toast(context,
+//                        "Fav pressed for entry.id: " + entry.getId());
             }
         });
 

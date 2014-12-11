@@ -123,12 +123,11 @@ public class ServiceHelper {
             // TODO: extract all the statuses and push to the callbacks
             int status = extras.getInt(BHService.CallbackIntentExtras.STATUS);
             String errorMsg = extras.getString(BHService.CallbackIntentExtras.ERROR_MSG);
+            Bundle data = extras.getBundle(BHService.CallbackIntentExtras.EXTRA_DATA);
 
             List<ServiceCallback> callbacks = callbackHelper.getCallbacks(id);
             if (callbacks != null) {
                 for (ServiceCallback cb : callbacks) {
-                    Bundle data = extras.getBundle(BHService.CallbackIntentExtras.EXTRA_DATA);
-
                     if (status == BHService.CallbackIntentExtras.Status.OK) {
                         cb.onSuccess(id, data);
                     } else {

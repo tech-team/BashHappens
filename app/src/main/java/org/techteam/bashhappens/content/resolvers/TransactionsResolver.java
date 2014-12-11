@@ -6,7 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import org.techteam.bashhappens.content.ContentEntry;
-import org.techteam.bashhappens.content.bashorg.BashTransactionsEntry;
+import org.techteam.bashhappens.content.bashorg.TransactionEntry;
 import org.techteam.bashhappens.db.TransactionStatus;
 import org.techteam.bashhappens.db.providers.BashHappensDbProvider;
 import org.techteam.bashhappens.db.tables.BashTransactions;
@@ -15,7 +15,7 @@ import org.techteam.bashhappens.rest.OperationType;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BashTransactionsResolver extends AbstractContentResolver {
+public class TransactionsResolver extends AbstractContentResolver {
     @Override
     protected Uri _getUri() {
         return Uri.parse(BashHappensDbProvider.CONTENT_URI + "/" + BashTransactions.TABLE_NAME);
@@ -24,7 +24,7 @@ public class BashTransactionsResolver extends AbstractContentResolver {
     @Override
     protected ContentValues convertToContentValues(ContentEntry contentEntry) {
         ContentValues values = new ContentValues();
-        BashTransactionsEntry entry = (BashTransactionsEntry) contentEntry;
+        TransactionEntry entry = (TransactionEntry) contentEntry;
 
         values.put(BashTransactions.ID, entry.getId());
         values.put(BashTransactions.STATUS, entry.getStatus().toInt());
@@ -34,17 +34,17 @@ public class BashTransactionsResolver extends AbstractContentResolver {
 
     @Override
     protected QueryField getQueryField(ContentEntry contentEntry) {
-        return new QueryField(BashTransactions.ID, new String[]{((BashTransactionsEntry) contentEntry).getId()});
+        return new QueryField(BashTransactions.ID, new String[]{((TransactionEntry) contentEntry).getId()});
     }
 
     @Override
     protected QueryField getUpdateField(ContentEntry contentEntry) {
-        return new QueryField(BashTransactions.ID, new String[]{((BashTransactionsEntry) contentEntry).getId()});
+        return new QueryField(BashTransactions.ID, new String[]{((TransactionEntry) contentEntry).getId()});
     }
 
     @Override
     protected QueryField getDeletionField(ContentEntry contentEntry) {
-        return new QueryField(BashTransactions.ID, new String[]{((BashTransactionsEntry) contentEntry).getId()});
+        return new QueryField(BashTransactions.ID, new String[]{((TransactionEntry) contentEntry).getId()});
     }
 
     @Override
@@ -54,8 +54,8 @@ public class BashTransactionsResolver extends AbstractContentResolver {
 
 
 //    @Override
-    public static BashTransactionsEntry getCurrentEntry(Cursor cur) {
-        return new BashTransactionsEntry()
+    public static TransactionEntry getCurrentEntry(Cursor cur) {
+        return new TransactionEntry()
                 .setId(cur.getString(cur.getColumnIndex(BashTransactions.ID)))
                 .setStatus(cur.getInt(cur.getColumnIndex(BashTransactions.STATUS)))
                 .setOperationType(cur.getInt(cur.getColumnIndex(BashTransactions.TYPE)));

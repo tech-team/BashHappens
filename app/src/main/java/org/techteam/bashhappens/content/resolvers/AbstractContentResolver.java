@@ -44,8 +44,8 @@ public abstract class AbstractContentResolver {
                 return new BashFavsResolver();
             case BASH_ORG_BAYAN:
                 return new BashBayanResolver();
-            case BASH_ORG_TRANSACTIONS:
-                return new BashTransactionsResolver();
+            case TRANSACTIONS:
+                return new TransactionsResolver();
             case IT_HAPPENS_NEWEST:
                 //TODO: ItHappensNewest resolver, BashLikes prbbly
                 return null;
@@ -133,7 +133,7 @@ public abstract class AbstractContentResolver {
         Map<String, Integer> deletions = new HashMap<String, Integer>();
         deletions.put(BashNewest.TABLE_NAME, new BashNewestResolver().deleteAllEntries(context));
         deletions.put(BashLikes.TABLE_NAME, new BashLikesResolver().deleteAllEntries(context));
-        deletions.put(BashTransactions.TABLE_NAME, new BashTransactionsResolver().deleteAllEntries(context));
+        deletions.put(BashTransactions.TABLE_NAME, new TransactionsResolver().deleteAllEntries(context));
         return deletions;
     }
 

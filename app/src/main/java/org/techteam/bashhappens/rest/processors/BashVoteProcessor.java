@@ -5,8 +5,12 @@ import android.os.Bundle;
 import android.util.Log;
 
 import org.techteam.bashhappens.content.Constants;
+import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.content.bashorg.BashOrgUrls;
 import org.techteam.bashhappens.content.exceptions.VoteException;
+import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
+import org.techteam.bashhappens.content.resolvers.BashBayanResolver;
+import org.techteam.bashhappens.content.resolvers.BashLikesResolver;
 import org.techteam.bashhappens.net.HttpDownloader;
 import org.techteam.bashhappens.net.UrlParams;
 import org.techteam.bashhappens.rest.OperationType;
@@ -36,26 +40,25 @@ public class BashVoteProcessor extends Processor {
 
         Bundle data = new Bundle();
         data.putString(ServiceCallback.BashVoteExtras.ENTRY_ID, entryId);
+        data.putInt(ServiceCallback.BashVoteExtras.ENTRY_POSITION, entryPosition);
         try {
             if (direction == 0) {
                 // Bayan
 
                 makeBayan(entryId);
 
-                //TODO: decide about bayan/likes system and implement
-                /*AbstractContentResolver resolver = new BashBayanResolver();
-                resolver.insertEntry(getContext(), new BashOrgEntry().setId(entryId)
-                                                                     .setBayan(true));*/
+                AbstractContentResolver resolver = new BashBayanResolver();
+                resolver.insert(getContext(), new BashOrgEntry().setId(entryId)
+                                                                .setBayan(true));
             } else {
                 // Normal rating
 
                 String newRating = changeRating(entryId, rating, direction);
 
-                //TODO: decide about bayan/likes system and implement
-                /*AbstractContentResolver resolver = new BashLikesResolver();
-                resolver.insertEntry(getContext(), new BashOrgEntry().setId(entryId)
-                        .setRating(newRating)
-                        .setDirection(direction));*/
+                AbstractContentResolver resolver = new BashLikesResolver();
+                resolver.insert(getContext(), new BashOrgEntry().setId(entryId)
+                                                                .setRating(newRating)
+                                                                .setDirection(direction));
             }
             transactionFinished(operationType, requestId);
 
