@@ -18,6 +18,8 @@ import android.widget.ListView;
 
 import org.techteam.bashhappens.R;
 import org.techteam.bashhappens.content.ContentFactory;
+import org.techteam.bashhappens.content.ContentSection;
+import org.techteam.bashhappens.content.ContentSource;
 import org.techteam.bashhappens.gui.adapters.SectionsBuilder;
 import org.techteam.bashhappens.gui.adapters.SectionsListAdapter;
 import org.techteam.bashhappens.gui.fragments.PostsListFragment;
@@ -44,7 +46,10 @@ public class MainActivity
 
     private static final class PrefKeys {
         public static final String SECTION_ID = "SECTION_ID";
-        public static final String CONTENT_FACTORY = "CONTENT_FACTORY";
+
+        public static String contentSourceBySection(ContentSection section) {
+            return "CONTENT_SOURCE_" + section.toString();
+        }
     }
 
     @Override
@@ -128,12 +133,27 @@ public class MainActivity
     protected void onPause() {
         super.onPause();
 
-        SharedPreferences prefs =  PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         SharedPreferences.Editor editor = prefs.edit();
 
         editor.putInt(PrefKeys.SECTION_ID, sectionsListAdapter.getSelectedItemId());
 
         editor.apply();
+    }
+
+    public void saveContentSource(ContentSource contentSource) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(PrefKeys.contentSourceBySection(contentSource.getSection()),
+                         contentSource.getFootprint());
+        editor.apply();
+    }
+
+    public ContentSource getContentSourceFromPrefs(ContentSource contentSource) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String footprint = prefs.getString(PrefKeys.contentSourceBySection(contentSource.getSection()), null);
+        contentSource.loadFootprint(footprint);
+        return contentSource;
     }
 
 
