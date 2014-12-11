@@ -141,9 +141,11 @@ public class BashHappensDbProvider extends DbProvider {
                                           String where, String[] whereArgs) {
         switch (mUriMatcher.match(uri)) {
             case BASH_NEWEST:
+                return db.update(BashNewest.TABLE_NAME, values, where, whereArgs);
+            case BASH_FAVS:
+                return db.update(BashFavs.TABLE_NAME, values, where, whereArgs);
             case BASH_LIKES:
             case BASH_BAYAN:
-            case BASH_FAVS:
                 throw new IllegalArgumentException("What is it I can't even");
             case BASH_TRANSACTIONS:
                 return db.update(BashTransactions.TABLE_NAME, values, where, whereArgs);
