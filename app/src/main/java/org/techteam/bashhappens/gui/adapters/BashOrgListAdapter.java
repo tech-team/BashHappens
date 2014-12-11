@@ -36,6 +36,8 @@ public class BashOrgListAdapter
     private int VIEW_TYPE_ENTRY = 0;
     private int VIEW_TYPE_FOOTER = 1;
 
+    private static final int POST_TEXT_MAX_LINES = 5;
+
     public void setAll(ArrayList<BashOrgEntry> entries) {
         dataset.clear();
         dataset.addAll(entries);
@@ -121,6 +123,7 @@ public class BashOrgListAdapter
         holder.id.setText(entry.getId());
         holder.date.setText(entry.getCreationDate());
         holder.text.setText(entry.getText());
+        holder.text.setMaxLines(POST_TEXT_MAX_LINES);
 
         int direction = entry.getDirection();
         switch(direction) {

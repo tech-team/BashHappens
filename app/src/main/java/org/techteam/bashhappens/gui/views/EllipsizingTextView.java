@@ -24,7 +24,7 @@ public class EllipsizingTextView extends TextView {
     private boolean isStale;
     private boolean programmaticChange;
     private String fullText;
-    private int maxLines = 5;
+    private int maxLines = -1;
     private float lineSpacingMultiplier = 1.0f;
     private float lineAdditionalVerticalPadding = 0.0f;
 
