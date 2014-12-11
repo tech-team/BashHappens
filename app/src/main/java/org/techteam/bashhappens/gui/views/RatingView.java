@@ -125,18 +125,14 @@ public class RatingView extends FrameLayout {
     public void _setState(State state) {
         this.state = state;
 
-        if (state == State.LIKED) {
-            likeButton.setEnabled(false);
-            dislikeButton.setEnabled(false);
+        likeButton.setEnabled(state == State.IDLE);
+        dislikeButton.setEnabled(state == State.IDLE);
 
-            likeButton.setColorFilter(pressedStateFilter);
-        }
-        else if (state == State.DISLIKED) {
-            likeButton.setEnabled(false);
-            dislikeButton.setEnabled(false);
+        likeButton.setColorFilter(state == State.LIKED ?
+                pressedStateFilter : null);
 
-            dislikeButton.setColorFilter(pressedStateFilter);
-        }
+        dislikeButton.setColorFilter(state == State.DISLIKED ?
+                pressedStateFilter : null);
 
         invalidate();
     }

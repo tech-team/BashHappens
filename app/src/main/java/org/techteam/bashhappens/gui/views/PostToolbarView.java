@@ -136,31 +136,17 @@ public class PostToolbarView extends FrameLayout {
         this.listener = listener;
     }
 
-    public boolean isLiked() {
-        return ratingView.getState() == RatingView.State.LIKED;
+    public RatingView.State getRatingState() {
+        return ratingView.getState();
     }
 
-    public void _setLiked(boolean liked) {
-        ratingView._setState(RatingView.State.LIKED);
+    public void _setRatingState(RatingView.State state) {
+        ratingView._setState(state);
         invalidate();
     }
 
-    public void setLiked(boolean liked) {
-        ratingView.setState(RatingView.State.LIKED);
-        invalidate();
-    }
-
-    public boolean isDisliked() {
-        return ratingView.getState() == RatingView.State.DISLIKED;
-    }
-
-    public void _setDisliked(boolean disliked) {
-        ratingView._setState(RatingView.State.DISLIKED);
-        invalidate();
-    }
-
-    public void setDisliked(boolean disliked) {
-        ratingView.setState(RatingView.State.DISLIKED);
+    public void setRatingState(RatingView.State state) {
+        ratingView.setState(state);
         invalidate();
     }
 

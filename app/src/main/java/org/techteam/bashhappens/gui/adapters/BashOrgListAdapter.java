@@ -19,6 +19,7 @@ import org.techteam.bashhappens.content.resolvers.BashResolver;
 import org.techteam.bashhappens.gui.fragments.OnBashEventCallback;
 import org.techteam.bashhappens.gui.fragments.OnListScrolledDownCallback;
 import org.techteam.bashhappens.gui.views.PostToolbarView;
+import org.techteam.bashhappens.gui.views.RatingView;
 import org.techteam.bashhappens.util.Clipboard;
 import org.techteam.bashhappens.util.Toaster;
 
@@ -109,7 +110,6 @@ public class BashOrgListAdapter
             return;
         }
 
-
         final BashOrgEntry entry = BashResolver.getCurrentEntry(cursor);
 
         //set data
@@ -117,10 +117,22 @@ public class BashOrgListAdapter
         holder.date.setText(entry.getCreationDate());
         holder.text.setText(entry.getText());
 
-        holder.toolbarView.setRating(entry.getRating());
+        int direction = entry.getDirection();
+        switch(direction) {
+            case 0:
+                holder.toolbarView._setRatingState(RatingView.State.IDLE);
+                break;
+            case 1:
+                holder.toolbarView._setRatingState(RatingView.State.LIKED);
+                break;
+            case -1:
+                holder.toolbarView._setRatingState(RatingView.State.DISLIKED);
+                break;
+        }
 
-        // TODO: set buttons state according to DB
-        // TODO: Actually, according to entry properties (BashOrgEntry.getDirection and getIsBayan). No access to db from here
+        holder.toolbarView.setRating(entry.getRating());
+        holder.toolbarView._setBayaned(entry.getIsBayan());
+        holder.toolbarView._setFaved(entry.isFavorite());
 
         //set handlers
         holder.toolbarView.setListener(new PostToolbarView.Listener() {
