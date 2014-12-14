@@ -1,13 +1,17 @@
-package org.techteam.bashhappens.content.resolvers;
+package org.techteam.bashhappens.db.resolvers;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
-import org.techteam.bashhappens.content.ContentEntry;
 import org.techteam.bashhappens.content.ContentList;
 import org.techteam.bashhappens.content.ContentSection;
+import org.techteam.bashhappens.content.Entry;
+import org.techteam.bashhappens.db.resolvers.bashorg.BashBayanResolver;
+import org.techteam.bashhappens.db.resolvers.bashorg.BashFavsResolver;
+import org.techteam.bashhappens.db.resolvers.bashorg.BashLikesResolver;
+import org.techteam.bashhappens.db.resolvers.bashorg.BashNewestResolver;
 import org.techteam.bashhappens.db.tables.BashLikes;
 import org.techteam.bashhappens.db.tables.BashNewest;
 import org.techteam.bashhappens.db.tables.BashTransactions;
@@ -20,15 +24,15 @@ import java.util.Map;
 public abstract class AbstractContentResolver {
 
     protected abstract Uri _getUri();
-    protected abstract ContentValues convertToContentValues(ContentEntry contentEntry);
-    protected abstract QueryField getUpdateField(ContentEntry contentEntry);
-    protected abstract QueryField getQueryField(ContentEntry contentEntry);
-    protected abstract QueryField getDeletionField(ContentEntry contentEntry);
+    protected abstract ContentValues convertToContentValues(Entry entry);
+    protected abstract QueryField getUpdateField(Entry entry);
+    protected abstract QueryField getQueryField(Entry entry);
+    protected abstract QueryField getDeletionField(Entry entry);
     protected abstract String[] getProjection();
 
     protected List<ContentValues> convertToContentValues(ContentList<?> list) {
         List<ContentValues> contentValues = new ArrayList<ContentValues>();
-        for (ContentEntry entry: list) {
+        for (Entry entry: list) {
             contentValues.add(convertToContentValues(entry));
         }
         return contentValues;
@@ -38,6 +42,16 @@ public abstract class AbstractContentResolver {
         switch (section) {
             case BASH_ORG_NEWEST:
                 return new BashNewestResolver();
+            case IT_HAPPENS_NEWEST:
+                //TODO: ItHappensNewest resolver
+                return null;
+            default:
+                return null;
+        }
+    }
+
+    public static AbstractContentResolver getResolver(ExtraResolver resolver) {
+        switch (resolver) {
             case BASH_ORG_LIKES:
                 return new BashLikesResolver();
             case BASH_ORG_FAVS:
@@ -46,9 +60,6 @@ public abstract class AbstractContentResolver {
                 return new BashBayanResolver();
             case TRANSACTIONS:
                 return new TransactionsResolver();
-            case IT_HAPPENS_NEWEST:
-                //TODO: ItHappensNewest resolver
-                return null;
             default:
                 return null;
         }
@@ -74,11 +85,10 @@ public abstract class AbstractContentResolver {
     }
 
     // Because it is needed in static context
-//    public abstract ContentEntry getCurrentEntry(Cursor cur);
 
     public List<Integer> insertEntries(Context context, ContentList<?> list) {
         List<Integer> insertedIds = new ArrayList<Integer>();
-        for(ContentValues values: convertToContentValues(list)) {
+        for(ContentValues values : convertToContentValues(list)) {
             insertedIds.add(Integer.valueOf(
                             context
                             .getContentResolver()
@@ -92,7 +102,7 @@ public abstract class AbstractContentResolver {
         return context.getContentResolver().delete(_getUri(), null, null);
     }
 
-    public int insert(Context context, ContentEntry entry) {
+    public int insert(Context context, Entry entry) {
         QueryField field = getQueryField(entry);
         Cursor cur = getCursor(context, null, field.where, field.whereArgs, null);
         int rows = cur.getCount();
@@ -105,14 +115,14 @@ public abstract class AbstractContentResolver {
         }
     }
 
-    public  int insertEntry(Context context, ContentEntry entry) {
+    public  int insertEntry(Context context, Entry entry) {
         return Integer.valueOf(context
                                .getContentResolver()
                                .insert(_getUri(), convertToContentValues(entry))
                                .getLastPathSegment());
     }
 
-    public int deleteEntry(Context context, ContentEntry entry) {
+    public int deleteEntry(Context context, Entry entry) {
         QueryField field = getDeletionField(entry);
         return (field == null)
                 ? (-1)
@@ -120,7 +130,7 @@ public abstract class AbstractContentResolver {
                       .delete(_getUri(), field.where , field.whereArgs);
     }
 
-    public int updateEntry(Context context, ContentEntry entry) {
+    public int updateEntry(Context context, Entry entry) {
         QueryField field = getUpdateField(entry);
         return (field == null)
                 ? (-1)

@@ -72,12 +72,16 @@ public class PostsListFragment
         public Loader<Cursor> onCreateLoader(int id, Bundle args) {
             if  (id == LoaderIds.CONTENT_LOADER) {
                 Integer entryPos = null;
+                Integer insertedCount = null;
                 if (args != null) {
                     entryPos = args.getInt(ContentLoader.BundleKeys.ENTRY_POSITION, -1);
                     entryPos = entryPos == -1 ? null : entryPos;
+
+                    insertedCount = args.getInt(ContentLoader.BundleKeys.INSERTED_COUNT, -1);
+                    insertedCount = insertedCount == -1 ? null : insertedCount;
                 }
 
-                return new ContentLoader(getActivity(), content.getSection(), entryPos);
+                return new ContentLoader(getActivity(), content.getSection(), entryPos, insertedCount);
             }
             throw new IllegalArgumentException("Loader with given id is not found");
         }
@@ -85,7 +89,14 @@ public class PostsListFragment
         @Override
         public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
             Integer entryPos = ((ContentLoader) loader).getEntryPosition();
-            adapter.swapCursor(newCursor, entryPos);
+            Integer count = ((ContentLoader) loader).getInsertedCount();
+            if (entryPos != null) {
+                adapter.swapCursor(newCursor, entryPos);
+//            } else if (count != null) {
+//                adapter.swapCursor(newCursor, newCursor.getCount() - count, count-1);
+            } else {
+                adapter.swapCursor(newCursor);
+            }
         }
 
         @Override
@@ -182,13 +193,16 @@ public class PostsListFragment
                 mSwipeRefreshLayout.setRefreshing(false);
                 content = data.getParcelable(GetPostsExtras.NEW_CONTENT_SOURCE);
                 boolean isFeedFinished = data.getBoolean(GetPostsExtras.FEED_FINISHED, false);
+                int insertedCount = data.getInt(GetPostsExtras.INSERTED_COUNT, -1);
 
                 String msg;
                 if (isFeedFinished) {
                     msg = getActivity().getString(R.string.feed_finished);
                 } else {
                     msg = "Successfully fetched posts";
-                    getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, null, contentDataLoaderCallbacks);
+                    Bundle args = new Bundle();
+                    args.putInt(ContentLoader.BundleKeys.INSERTED_COUNT, insertedCount);
+                    getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, args, contentDataLoaderCallbacks);
                 }
 
 //                Toaster.toast(getActivity().getApplicationContext(), msg);

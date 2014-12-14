@@ -1,14 +1,10 @@
 package org.techteam.bashhappens.content.bashorg;
 
 import android.content.Context;
-import android.util.Log;
 
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.techteam.bashhappens.content.ContentList;
-import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
-import org.techteam.bashhappens.content.resolvers.BashLikesResolver;
-import org.techteam.bashhappens.db.tables.BashLikes;
 
 import java.util.ArrayList;
 

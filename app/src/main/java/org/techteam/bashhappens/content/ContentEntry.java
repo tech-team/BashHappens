@@ -3,7 +3,7 @@ package org.techteam.bashhappens.content;
 
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 
-public abstract class ContentEntry {
+public abstract class ContentEntry extends Entry {
     private ContentType contentType;
     private boolean favorite;
 

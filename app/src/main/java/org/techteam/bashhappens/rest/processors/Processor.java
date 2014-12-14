@@ -2,10 +2,10 @@ package org.techteam.bashhappens.rest.processors;
 
 import android.content.Context;
 
-import org.techteam.bashhappens.content.ContentSection;
 import org.techteam.bashhappens.content.bashorg.TransactionEntry;
-import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
-import org.techteam.bashhappens.content.resolvers.TransactionsResolver;
+import org.techteam.bashhappens.db.resolvers.AbstractContentResolver;
+import org.techteam.bashhappens.db.resolvers.ExtraResolver;
+import org.techteam.bashhappens.db.resolvers.TransactionsResolver;
 import org.techteam.bashhappens.db.TransactionStatus;
 import org.techteam.bashhappens.rest.OperationType;
 
@@ -16,7 +16,7 @@ public abstract class Processor {
 
     public Processor(Context context) {
         this.context = context;
-        transactioner = (TransactionsResolver) AbstractContentResolver.getResolver(ContentSection.TRANSACTIONS);
+        transactioner = (TransactionsResolver) AbstractContentResolver.getResolver(ExtraResolver.TRANSACTIONS);
     }
 
     public Context getContext() {

@@ -5,13 +5,11 @@ import android.os.Bundle;
 import android.util.Log;
 
 import org.techteam.bashhappens.content.Constants;
-import org.techteam.bashhappens.content.ContentSection;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.content.bashorg.BashOrgUrls;
 import org.techteam.bashhappens.content.exceptions.VoteException;
-import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
-import org.techteam.bashhappens.content.resolvers.BashBayanResolver;
-import org.techteam.bashhappens.content.resolvers.BashLikesResolver;
+import org.techteam.bashhappens.db.resolvers.bashorg.BashBayanResolver;
+import org.techteam.bashhappens.db.resolvers.bashorg.BashLikesResolver;
 import org.techteam.bashhappens.net.HttpDownloader;
 import org.techteam.bashhappens.net.UrlParams;
 import org.techteam.bashhappens.rest.OperationType;

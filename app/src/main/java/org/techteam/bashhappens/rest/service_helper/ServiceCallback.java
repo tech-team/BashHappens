@@ -9,6 +9,7 @@ public interface ServiceCallback {
     class GetPostsExtras {
         public static final String NEW_CONTENT_SOURCE = "NEW_CONTENT_SOURCE";
         public static final String FEED_FINISHED = "FEED_FINISHED";
+        public static final String INSERTED_COUNT = "INSERTED_COUNT";
     }
 
     class BashVoteExtras {

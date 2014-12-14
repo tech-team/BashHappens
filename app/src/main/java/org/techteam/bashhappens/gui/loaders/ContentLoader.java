@@ -5,21 +5,28 @@ import android.content.CursorLoader;
 import android.database.Cursor;
 
 import org.techteam.bashhappens.content.ContentSection;
-import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
+import org.techteam.bashhappens.db.resolvers.AbstractContentResolver;
 
 public class ContentLoader extends CursorLoader {
 
     private final ContentSection section;
     private Integer entryPosition;
+    private Integer insertedCount;
+
+    public Integer getInsertedCount() {
+        return insertedCount;
+    }
 
     public abstract class BundleKeys {
         public static final String ENTRY_POSITION = "ENTRY_POSITION";
+        public static final String INSERTED_COUNT = "INSERTED_COUNT";
     }
 
-    public ContentLoader(Context context, ContentSection section, Integer entryPosition) {
+    public ContentLoader(Context context, ContentSection section, Integer entryPosition, Integer insertedCount) {
         super(context);
         this.section = section;
         this.entryPosition = entryPosition;
+        this.insertedCount = insertedCount;
     }
 
     @Override

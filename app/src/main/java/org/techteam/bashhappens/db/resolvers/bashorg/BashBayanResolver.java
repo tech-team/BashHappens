@@ -1,14 +1,15 @@
-package org.techteam.bashhappens.content.resolvers;
+package org.techteam.bashhappens.db.resolvers.bashorg;
 
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 
-import org.techteam.bashhappens.content.ContentEntry;
 import org.techteam.bashhappens.content.ContentSection;
+import org.techteam.bashhappens.content.Entry;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.db.providers.BashHappensDbProvider;
+import org.techteam.bashhappens.db.resolvers.AbstractContentResolver;
 import org.techteam.bashhappens.db.tables.AbstractTable;
 import org.techteam.bashhappens.db.tables.BashBayan;
 import org.techteam.bashhappens.db.tables.BashLikes;
@@ -31,22 +32,22 @@ public class BashBayanResolver extends BashResolver {
     }
 
     @Override
-    protected QueryField getQueryField(ContentEntry contentEntry) {
-        return new QueryField(BashBayan.ARTICLE_ID, new String[]{((BashOrgEntry) contentEntry).getId()});
+    protected QueryField getQueryField(Entry entry) {
+        return new QueryField(BashBayan.ARTICLE_ID, new String[]{((BashOrgEntry) entry).getId()});
     }
     @Override
-    protected QueryField getUpdateField(ContentEntry contentEntry) {
-        return new QueryField(BashBayan.ARTICLE_ID, new String[]{((BashOrgEntry) contentEntry).getId()});
+    protected QueryField getUpdateField(Entry entry) {
+        return new QueryField(BashBayan.ARTICLE_ID, new String[]{((BashOrgEntry) entry).getId()});
     }
     @Override
-    protected QueryField getDeletionField(ContentEntry contentEntry) {
-        return new QueryField(BashBayan.ARTICLE_ID, new String[]{((BashOrgEntry) contentEntry).getId()});
+    protected QueryField getDeletionField(Entry entry) {
+        return new QueryField(BashBayan.ARTICLE_ID, new String[]{((BashOrgEntry) entry).getId()});
     }
 
     @Override
-    protected ContentValues convertToContentValues(ContentEntry contentEntry) {
+    protected ContentValues convertToContentValues(Entry entry) {
         ContentValues values = new ContentValues();
-        BashOrgEntry bashOrgEntry = (BashOrgEntry) contentEntry;
+        BashOrgEntry bashOrgEntry = (BashOrgEntry) entry;
 
         values.put(BashBayan.ARTICLE_ID, bashOrgEntry.getId());
         values.put(BashBayan.IS_BAYAN, bashOrgEntry.getIsBayan());
@@ -54,11 +55,11 @@ public class BashBayanResolver extends BashResolver {
     }
 
     @Override
-    public int insert(Context context, ContentEntry entry) {
-
+    public int insert(Context context, Entry entry) {
+        BashOrgEntry borgEntry = (BashOrgEntry) entry;
         int result = 0;
         Cursor bayanCur = getCursor(context, null, BashBayan.ARTICLE_ID + "= ?",
-                new String[]{entry.toBashOrgEntry().getId()}, null);
+                new String[]{borgEntry.getId()}, null);
 
         if (bayanCur.getCount() == 0) {
 
@@ -66,11 +67,11 @@ public class BashBayanResolver extends BashResolver {
                     .getContentResolver()
                     .insert(_getUri(), convertToContentValues(entry))
                     .getLastPathSegment());
-            String[] selectionArgs = new String[]{entry.toBashOrgEntry().getId()};
+            String[] selectionArgs = new String[]{borgEntry.getId()};
 
             // TODO: iterate through all tables
             ContentSection section = ContentSection.BASH_ORG_NEWEST;
-            AbstractContentResolver resolver = AbstractContentResolver.getResolver(section);
+            AbstractContentResolver resolver = getResolver(section);
 
             Cursor cur = resolver.getCursor(context, null, AbstractTable.ID + "= ?",
                     selectionArgs, null);
@@ -82,7 +83,7 @@ public class BashBayanResolver extends BashResolver {
                         .setText(cur.getString(cur.getColumnIndex(AbstractTable.TEXT)))
                         .setRating(cur.getString(cur.getColumnIndex(AbstractTable.RATING)))
                         .setDirection(cur.getInt(cur.getColumnIndex(BashLikes.DIRECTION)))
-                        .setBayan(entry.toBashOrgEntry().getIsBayan());
+                        .setBayan(borgEntry.getIsBayan());
 
                 resolver.updateEntry(context, bashOrgEntry);
             }

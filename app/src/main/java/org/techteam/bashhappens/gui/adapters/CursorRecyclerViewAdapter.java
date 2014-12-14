@@ -121,10 +121,24 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
      * closed.
      */
     public Cursor swapCursor(Cursor newCursor) {
-        return swapCursor(newCursor, null);
+        Cursor c = swapCursorInternal(newCursor);
+        notifyChange(null);
+        return c;
     }
 
     public Cursor swapCursor(Cursor newCursor, Integer position) {
+        Cursor c = swapCursorInternal(newCursor);
+        notifyChange(position);
+        return c;
+    }
+
+    public Cursor swapCursor(Cursor newCursor, Integer positionStart, Integer count) {
+        Cursor c = swapCursorInternal(newCursor);
+        notifyChange(positionStart, count);
+        return c;
+    }
+
+    private Cursor swapCursorInternal(Cursor newCursor) {
         if (newCursor == mCursor) {
             return null;
         }
@@ -139,23 +153,25 @@ public abstract class CursorRecyclerViewAdapter<VH extends RecyclerView.ViewHold
             }
             mRowIdColumn = newCursor.getColumnIndexOrThrow("_id");
             mDataValid = true;
-
-            if (position != null) {
-                notifyItemChanged(position);
-            } else {
-                notifyDataSetChanged();
-            }
         } else {
             mRowIdColumn = -1;
             mDataValid = false;
-            if (position != null) {
-                notifyItemChanged(position);
-            } else {
-                notifyDataSetChanged();
-            }
             //There is no notifyDataSetInvalidated() method in RecyclerView.Adapter
         }
+
         return oldCursor;
+    }
+
+    private void notifyChange(Integer position) {
+        if (position != null) {
+            notifyItemChanged(position);
+        } else {
+            notifyDataSetChanged();
+        }
+    }
+
+    private void notifyChange(Integer positionStart, Integer count) {
+        notifyItemRangeInserted(positionStart, count);
     }
 
     private class NotifyingDataSetObserver extends DataSetObserver {

@@ -17,10 +17,9 @@ import android.widget.TextView;
 
 import org.techteam.bashhappens.R;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
-import org.techteam.bashhappens.content.resolvers.BashResolver;
+import org.techteam.bashhappens.db.resolvers.bashorg.BashResolver;
 import org.techteam.bashhappens.gui.fragments.OnBashEventCallback;
 import org.techteam.bashhappens.gui.fragments.OnListScrolledDownCallback;
-import org.techteam.bashhappens.gui.loaders.LoaderIds;
 import org.techteam.bashhappens.gui.views.EllipsizingTextView;
 import org.techteam.bashhappens.gui.views.PostToolbarView;
 import org.techteam.bashhappens.gui.views.RatingView;

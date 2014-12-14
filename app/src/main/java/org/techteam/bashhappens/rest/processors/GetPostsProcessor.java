@@ -8,8 +8,8 @@ import org.techteam.bashhappens.content.ContentSection;
 import org.techteam.bashhappens.content.ContentSource;
 import org.techteam.bashhappens.content.exceptions.ContentParseException;
 import org.techteam.bashhappens.content.exceptions.FeedOverException;
-import org.techteam.bashhappens.content.resolvers.AbstractContentResolver;
-import org.techteam.bashhappens.content.resolvers.BashResolver;
+import org.techteam.bashhappens.db.resolvers.AbstractContentResolver;
+import org.techteam.bashhappens.db.resolvers.bashorg.BashResolver;
 import org.techteam.bashhappens.gui.loaders.LoadIntention;
 import org.techteam.bashhappens.rest.OperationType;
 import org.techteam.bashhappens.rest.service_helper.ServiceCallback;
@@ -62,12 +62,14 @@ public class GetPostsProcessor extends Processor {
             }
 
             // writing to db
-            resolver.insertEntries(getContext(), list);
+            int insertedCount = resolver.insertEntries(getContext(), list).size();
 
             // finishing up a transaction
             transactionFinished(operationType, requestId);
 
-            cb.onSuccess(getInitialBundle());
+            Bundle data = getInitialBundle();
+            data.putInt(ServiceCallback.GetPostsExtras.INSERTED_COUNT, insertedCount);
+            cb.onSuccess(data);
         }
     }
 

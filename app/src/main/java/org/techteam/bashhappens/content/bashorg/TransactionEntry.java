@@ -2,22 +2,22 @@ package org.techteam.bashhappens.content.bashorg;
 
 import org.techteam.bashhappens.content.ContentEntry;
 import org.techteam.bashhappens.content.ContentType;
+import org.techteam.bashhappens.content.Entry;
 import org.techteam.bashhappens.db.TransactionStatus;
 import org.techteam.bashhappens.rest.OperationType;
 
-public class TransactionEntry extends ContentEntry {
-    private static final String LOG_TAG = TransactionEntry.class.toString();
-
-    public static final ContentType CONTENT_TYPE = ContentType.BASH_ORG;
-
+public class TransactionEntry extends Entry {
     private String id;
     private OperationType operationType;
     private TransactionStatus status;
 
+    public TransactionEntry(String id, OperationType operationType, TransactionStatus status) {
+        this.id = id;
+        this.operationType = operationType;
+        this.status = status;
+    }
+
     public TransactionEntry() {
-        super(CONTENT_TYPE);
-        this.operationType = OperationType.GET_POSTS;
-        this.status = TransactionStatus.STARTED;
     }
 
     public String getId() {

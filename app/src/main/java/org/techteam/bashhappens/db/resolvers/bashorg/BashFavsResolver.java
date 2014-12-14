@@ -1,4 +1,4 @@
-package org.techteam.bashhappens.content.resolvers;
+package org.techteam.bashhappens.db.resolvers.bashorg;
 
 import android.net.Uri;
 
