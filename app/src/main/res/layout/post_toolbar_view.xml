@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
@@ -13,15 +13,22 @@
         android:id="@+id/rating_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:value="@string/unknown_rating" />
+        app:value="@string/unknown_rating"
+        android:layout_alignParentLeft="true"
+        />
 
-    <Button
-        android:id="@+id/post_bayan"
+    <ImageButton
+        android:id="@+id/post_fav"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="?android:attr/buttonBarButtonStyle"
-        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
-        android:text="[:||||:]" />
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/post_like"
+        android:contentDescription="@string/post_fav"
+        android:layout_alignParentRight="true"
+        />
 
     <ImageButton
         android:id="@+id/post_share"
@@ -29,15 +36,26 @@
         android:layout_height="wrap_content"
         android:singleLine="true"
         style="?android:attr/buttonBarButtonStyle"
-        android:src="@drawable/ic_action_share"
-        android:contentDescription="@string/post_share" />
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/post_like"
+        android:contentDescription="@string/post_share"
+        android:layout_toLeftOf="@id/post_fav"
+        />
 
     <ImageButton
-        android:id="@+id/post_fav"
+        android:id="@+id/post_bayan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="?android:attr/buttonBarButtonStyle"
-        android:src="@drawable/ic_action_not_important"
-        android:contentDescription="@string/post_fav" />
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"
+        android:scaleType="centerInside"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small"
+        android:src="@drawable/post_bayan"
+        android:contentDescription="@string/post_bayan"
+        android:layout_toLeftOf="@id/post_share"
+        />
 
-</LinearLayout>
+</RelativeLayout>

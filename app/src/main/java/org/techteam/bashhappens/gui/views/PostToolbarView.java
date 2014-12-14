@@ -33,7 +33,7 @@ public class PostToolbarView extends FrameLayout {
     private Listener listener;
 
     private RatingView ratingView;
-    private Button bayanButton;
+    private ImageButton bayanButton;
     private ImageButton shareButton;
     private ImageButton favButton;
 
@@ -79,7 +79,7 @@ public class PostToolbarView extends FrameLayout {
         View.inflate(context, R.layout.post_toolbar_view, this);
 
         ratingView = (RatingView) findViewById(R.id.rating_view);
-        bayanButton = (Button) findViewById(R.id.post_bayan);
+        bayanButton = (ImageButton) findViewById(R.id.post_bayan);
         shareButton = (ImageButton) findViewById(R.id.post_share);
         favButton = (ImageButton) findViewById(R.id.post_fav);
 
@@ -157,10 +157,9 @@ public class PostToolbarView extends FrameLayout {
         this.bayaned = bayaned;
 
         if (bayaned) {
-            //TODO: change to ImageButton with color-filter
-            bayanButton.setTextColor(Color.BLUE);
+            bayanButton.setColorFilter(pressedStateFilter);
         } else {
-            bayanButton.setTextColor(Color.BLACK);
+            bayanButton.setColorFilter(null);
         }
 
         bayanButton.setEnabled(!bayaned);

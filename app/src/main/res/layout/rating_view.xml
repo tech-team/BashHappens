@@ -9,27 +9,34 @@
     >
 
     <ImageButton
-        android:id="@+id/post_dislike"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="?android:attr/buttonBarButtonStyle"
-        android:src="@drawable/ic_action_bad"
-        android:contentDescription="@string/post_dislike" />
-
-    <TextView
-        android:id="@+id/post_rating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        style="@style/post_header"
-        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small" />
-
-    <ImageButton
         android:id="@+id/post_like"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="?android:attr/buttonBarButtonStyle"
-        android:src="@drawable/ic_action_good"
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/post_like"
         android:contentDescription="@string/post_like" />
+
+    <TextView
+        android:id="@+id/post_rating"
+        android:layout_width="32dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        style="@style/post_header"
+        android:singleLine="true"
+        android:textAppearance="@android:style/TextAppearance.DeviceDefault.Small" />
+
+    <ImageButton
+        android:id="@+id/post_dislike"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"
+        android:scaleType="centerInside"
+        android:src="@drawable/post_dislike"
+        android:contentDescription="@string/post_dislike" />
 
 </LinearLayout>

@@ -22,5 +22,6 @@
     <string name="feed_finished">Feed is finished. Whoa!</string>
     <string name="unknown_rating">\???</string>
     <string name="ellipsize_hint">Press to expand…</string>
+    <string name="post_bayan">Mark as bayan</string>
 
 </resources>
