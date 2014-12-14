@@ -76,6 +76,7 @@ public class GetPostsProcessor extends Processor {
     private Bundle getInitialBundle() {
         Bundle data = new Bundle();
         data.putParcelable(ServiceCallback.GetPostsExtras.NEW_CONTENT_SOURCE, contentSource);
+        data.putInt(ServiceCallback.GetPostsExtras.LOAD_INTENTION, loadIntention);
         return data;
     }
 }

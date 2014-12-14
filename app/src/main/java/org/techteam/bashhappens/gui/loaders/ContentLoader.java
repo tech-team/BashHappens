@@ -12,6 +12,7 @@ public class ContentLoader extends CursorLoader {
     private final ContentSection section;
     private Integer entryPosition;
     private Integer insertedCount;
+    private int loadIntention;
 
     public Integer getInsertedCount() {
         return insertedCount;
@@ -20,13 +21,15 @@ public class ContentLoader extends CursorLoader {
     public abstract class BundleKeys {
         public static final String ENTRY_POSITION = "ENTRY_POSITION";
         public static final String INSERTED_COUNT = "INSERTED_COUNT";
+        public static final String LOAD_INTENTION = "LOAD_INTENTION";
     }
 
-    public ContentLoader(Context context, ContentSection section, Integer entryPosition, Integer insertedCount) {
+    public ContentLoader(Context context, ContentSection section, Integer entryPosition, Integer insertedCount, int loadIntention) {
         super(context);
         this.section = section;
         this.entryPosition = entryPosition;
         this.insertedCount = insertedCount;
+        this.loadIntention = loadIntention;
     }
 
     @Override
@@ -37,5 +40,9 @@ public class ContentLoader extends CursorLoader {
 
     public Integer getEntryPosition() {
         return entryPosition;
+    }
+
+    public int getLoadIntention() {
+        return loadIntention;
     }
 }
