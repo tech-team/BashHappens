@@ -47,7 +47,7 @@ public class ServiceHelper {
     }
 
     public void bashVote(BashOrgEntry entry, int entryPosition, BashOrgEntry.VoteDirection voteDirection, ServiceCallback cb) {
-       init();
+        init();
 
         String requestId = OperationType.BASH_VOTE + "_"
                             + entry.getId() + "_"

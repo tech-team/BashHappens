@@ -10,12 +10,12 @@ import org.techteam.bashhappens.content.ContentList;
 import org.techteam.bashhappens.content.Entry;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.content.bashorg.BashOrgList;
-import org.techteam.bashhappens.db.resolvers.AbstractContentResolver;
+import org.techteam.bashhappens.db.resolvers.ContentResolver;
 import org.techteam.bashhappens.db.tables.AbstractTable;
 import org.techteam.bashhappens.db.tables.BashBayan;
 import org.techteam.bashhappens.db.tables.BashLikes;
 
-public abstract class BashResolver extends AbstractContentResolver {
+public abstract class BashResolver extends ContentResolver {
 
     @Override
     protected abstract Uri _getUri();

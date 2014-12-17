@@ -38,10 +38,13 @@ public abstract class AbstractContentResolver {
         return contentValues;
     }
 
-    public static AbstractContentResolver getResolver(ContentSection section) {
+    public static ContentResolver getResolver(ContentSection section) {
         switch (section) {
             case BASH_ORG_NEWEST:
                 return new BashNewestResolver();
+            case BASH_ORG_BEST:
+                // TODO
+                return null;
             case IT_HAPPENS_NEWEST:
                 //TODO: ItHappensNewest resolver
                 return null;

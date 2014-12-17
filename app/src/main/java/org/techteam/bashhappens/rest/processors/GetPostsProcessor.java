@@ -9,7 +9,7 @@ import org.techteam.bashhappens.content.ContentSource;
 import org.techteam.bashhappens.content.exceptions.ContentParseException;
 import org.techteam.bashhappens.content.exceptions.FeedOverException;
 import org.techteam.bashhappens.db.resolvers.AbstractContentResolver;
-import org.techteam.bashhappens.db.resolvers.bashorg.BashResolver;
+import org.techteam.bashhappens.db.resolvers.ContentResolver;
 import org.techteam.bashhappens.gui.loaders.LoadIntention;
 import org.techteam.bashhappens.rest.OperationType;
 import org.techteam.bashhappens.rest.service_helper.ServiceCallback;
@@ -55,7 +55,7 @@ public class GetPostsProcessor extends Processor {
             System.out.println("DONE! + " + list.getEntries().size());
 
             ContentSection section = contentSource.getSection();
-            BashResolver resolver = (BashResolver) AbstractContentResolver.getResolver(section);
+            ContentResolver resolver = AbstractContentResolver.getResolver(section);
 
             int insertedCount = list.getEntries().size();
             if (resolver != null) {
