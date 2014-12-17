@@ -6,5 +6,4 @@ import org.techteam.bashhappens.gui.adapters.BashOrgListAdapter;
 public interface OnBashEventCallback {
     void onMakeVote(BashOrgEntry entry, int entryPosition, BashOrgEntry.VoteDirection direction);
     void onFavorite(BashOrgEntry entry);
-    // TODO: fav
 }

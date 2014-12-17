@@ -24,24 +24,7 @@ public class BashOrgList extends ContentList<BashOrgEntry> {
         ArrayList<BashOrgEntry> entries = new ArrayList<BashOrgEntry>();
         for (Element item : items) {
             BashOrgEntry entry = BashOrgEntry.fromHtml(item);
-
-            //TODO: likes are temporary unavailable. Availabilate them
-
             if (entry != null) {
-
-//                AbstractContentResolver resolver = new BashLikesResolver();
-//                ContentList tempList
-//                        = resolver.getEntries(context,
-//                                             null,
-//                                             BashLikes.ARTICLE_ID,
-//                                             new String[] {entry.getId()},
-//                                             null);
-//
-//                if (tempList.getEntries().size() != 0) {
-//                    BashOrgEntry tempEntry = (BashOrgEntry) tempList.getEntries().get(0);
-//                    entry.setDirection(tempEntry.getDirection());
-//                }
-
                 entries.add(entry);
             }
 

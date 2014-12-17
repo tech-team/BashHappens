@@ -94,7 +94,7 @@ public class BashOrgListAdapter
                               Context context,
                               OnBashEventCallback eventCallback,
                               OnListScrolledDownCallback scrolledDownCallback) {
-        super(contentCursor); // TODO
+        super(contentCursor);
         this.context = context;
         this.eventCallback = eventCallback;
         this.scrolledDownCallback = scrolledDownCallback;

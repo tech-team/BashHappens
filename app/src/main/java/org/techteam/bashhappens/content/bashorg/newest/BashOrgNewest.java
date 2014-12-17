@@ -117,7 +117,7 @@ public class BashOrgNewest extends BashOrg {
 
 
     public BashOrgNewest(Parcel in) {
-        super(in.readString(), Enum.valueOf(ContentSection.class, in.readString())); // TODO: review the order
+        super(in.readString(), Enum.valueOf(ContentSection.class, in.readString()));
 
         int[] vals = new int[3];
         in.readIntArray(vals);

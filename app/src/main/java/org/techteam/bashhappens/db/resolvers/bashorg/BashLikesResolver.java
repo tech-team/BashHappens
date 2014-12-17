@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 
 import org.techteam.bashhappens.content.ContentSection;
+import org.techteam.bashhappens.content.ContentType;
 import org.techteam.bashhappens.content.Entry;
 import org.techteam.bashhappens.content.bashorg.BashOrgEntry;
 import org.techteam.bashhappens.db.providers.BashHappensDbProvider;
@@ -68,25 +69,31 @@ public class BashLikesResolver extends BashResolver {
                     .getLastPathSegment());
             String[] selectionArgs = new String[]{borgEntry.getId()};
 
-            // TODO: iterate through all tables
-            ContentSection section = ContentSection.BASH_ORG_NEWEST;
-            AbstractContentResolver resolver = getResolver(section);
+            // Now iterating through all tables and saving a new rating
+            for (ContentSection section : ContentSection.values()) {
+                if (section.toString().startsWith(ContentType.BASH_ORG.toString())) {
+                    AbstractContentResolver resolver = getResolver(section);
+                    if (resolver == null) {
+                        continue;
+                    }
 
-            Cursor cur = resolver.getCursor(context, null, AbstractTable.ID + "= ?",
-                    selectionArgs, null);
-            cur.moveToFirst();
-            if (cur.getCount() != 0) {
-                BashOrgEntry bashOrgEntry = new BashOrgEntry()
-                        .setId(cur.getString(cur.getColumnIndex(AbstractTable.ID)))
-                        .setCreationDate(cur.getString(cur.getColumnIndex(AbstractTable.DATE)))
-                        .setText(cur.getString(cur.getColumnIndex(AbstractTable.TEXT)))
-                        .setRating(borgEntry.getRating())
-                        .setDirection(borgEntry.getDirection())
-                        .setBayan(cur.getInt(cur.getColumnIndex(BashBayan.IS_BAYAN)) == 1);
+                    Cursor cur = resolver.getCursor(context, null, AbstractTable.ID + "= ?",
+                            selectionArgs, null);
+                    cur.moveToFirst();
+                    if (cur.getCount() != 0) {
+                        BashOrgEntry bashOrgEntry = new BashOrgEntry()
+                                .setId(cur.getString(cur.getColumnIndex(AbstractTable.ID)))
+                                .setCreationDate(cur.getString(cur.getColumnIndex(AbstractTable.DATE)))
+                                .setText(cur.getString(cur.getColumnIndex(AbstractTable.TEXT)))
+                                .setRating(borgEntry.getRating())
+                                .setDirection(borgEntry.getDirection())
+                                .setBayan(cur.getInt(cur.getColumnIndex(BashBayan.IS_BAYAN)) == 1);
 
-                resolver.updateEntry(context, bashOrgEntry);
+                        resolver.updateEntry(context, bashOrgEntry);
+                    }
+                    cur.close();
+                }
             }
-            cur.close();
         }
         likesCur.close();
         return result;

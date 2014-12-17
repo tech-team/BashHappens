@@ -120,7 +120,6 @@ public class ServiceHelper {
             String id = extras.getString(BHService.CallbackIntentExtras.REQUEST_ID);
             OperationType operation = Enum.valueOf(OperationType.class, extras.getString(BHService.CallbackIntentExtras.OPERATION));
 
-            // TODO: extract all the statuses and push to the callbacks
             int status = extras.getInt(BHService.CallbackIntentExtras.STATUS);
             String errorMsg = extras.getString(BHService.CallbackIntentExtras.ERROR_MSG);
             Bundle data = extras.getBundle(BHService.CallbackIntentExtras.EXTRA_DATA);

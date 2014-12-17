@@ -67,27 +67,6 @@ public class BashBayanResolver extends BashResolver {
                     .getContentResolver()
                     .insert(_getUri(), convertToContentValues(entry))
                     .getLastPathSegment());
-            String[] selectionArgs = new String[]{borgEntry.getId()};
-
-            // TODO: iterate through all tables
-            ContentSection section = ContentSection.BASH_ORG_NEWEST;
-            AbstractContentResolver resolver = getResolver(section);
-
-            Cursor cur = resolver.getCursor(context, null, AbstractTable.ID + "= ?",
-                    selectionArgs, null);
-            cur.moveToFirst();
-            if (cur.getCount() != 0) {
-                BashOrgEntry bashOrgEntry = new BashOrgEntry()
-                        .setId(cur.getString(cur.getColumnIndex(AbstractTable.ID)))
-                        .setCreationDate(cur.getString(cur.getColumnIndex(AbstractTable.DATE)))
-                        .setText(cur.getString(cur.getColumnIndex(AbstractTable.TEXT)))
-                        .setRating(cur.getString(cur.getColumnIndex(AbstractTable.RATING)))
-                        .setDirection(cur.getInt(cur.getColumnIndex(BashLikes.DIRECTION)))
-                        .setBayan(borgEntry.getIsBayan());
-
-                resolver.updateEntry(context, bashOrgEntry);
-            }
-            cur.close();
         }
         bayanCur.close();
         return result;
