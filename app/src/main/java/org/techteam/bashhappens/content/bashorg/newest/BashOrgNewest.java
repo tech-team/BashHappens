@@ -30,8 +30,6 @@ public class BashOrgNewest extends BashOrg {
     private int currentPage = NO_PAGE;
     private boolean feedOver = false;
 
-    private static final String FOOTPRINT_DELIM = "_";
-
     public BashOrgNewest(String locale, ContentSection section) {
         super(locale, section);
     }
@@ -42,8 +40,7 @@ public class BashOrgNewest extends BashOrg {
             url += pageNum;
         }
 
-        Headers headers = new Headers().add("Accept-Language", locale);
-        String page = HttpDownloader.httpGet(new HttpDownloader.Request(url, null, headers, Constants.ENCODING));
+        String page = downloadPage(url);
 
         Document html = Jsoup.parse(page);
         BashOrgListNewest list = BashOrgListNewest.fromHtml(context, html);

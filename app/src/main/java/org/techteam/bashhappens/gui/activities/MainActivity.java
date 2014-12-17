@@ -70,7 +70,8 @@ public class MainActivity
 
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
-                    .add(R.id.content_frame, new PostsListFragment()).commit();
+                    .add(R.id.content_frame, new PostsListFragment(), PostsListFragment.class.getName())
+                    .commit();
         }
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -176,10 +177,18 @@ public class MainActivity
     }
 
     private void selectItem(int position) {
-        section = sections.get(position);
+        SectionsBuilder.Section newSection = sections.get(position);
+
 //        Toaster.toast(getBaseContext(), section.getActionBarText());
 
-        //TODO: change data source here via section.getContentSection()
+        if (section != newSection) {
+            PostsListFragment fragment = (PostsListFragment) getFragmentManager().findFragmentByTag(PostsListFragment.class.getName());
+            if (fragment != null) {
+                if (fragment.isInitialized())
+                    fragment.onRefresh();
+            }
+        }
+        section = newSection;
 
         // Highlight the selected item, update the title, and close the drawer
         sectionsListAdapter.selectItem(position);

@@ -35,7 +35,7 @@ public class ServiceHelper {
     public void getPosts(ContentSource contentSource, int loadIntention, ServiceCallback cb) {
         init();
 
-        String requestId = OperationType.GET_POSTS + "_" + contentSource.getFootprint();
+        String requestId = OperationType.GET_POSTS + "_" + contentSource.getSection().toString() + "_" + contentSource.getFootprint();
         CallbackHelper.AddStatus s = callbackHelper.addCallback(requestId, cb);
 
         if (s == CallbackHelper.AddStatus.NEW_CB) {

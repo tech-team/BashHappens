@@ -57,12 +57,15 @@ public class GetPostsProcessor extends Processor {
             ContentSection section = contentSource.getSection();
             BashResolver resolver = (BashResolver) AbstractContentResolver.getResolver(section);
 
-            if (loadIntention == LoadIntention.REFRESH) {
-                resolver.deleteAllEntries(getContext());
-            }
+            int insertedCount = list.getEntries().size();
+            if (resolver != null) {
+                if (loadIntention == LoadIntention.REFRESH) {
+                    resolver.deleteAllEntries(getContext());
+                }
 
-            // writing to db
-            int insertedCount = resolver.insertEntries(getContext(), list).size();
+                // writing to db
+                insertedCount = resolver.insertEntries(getContext(), list).size();
+            }
 
             // finishing up a transaction
             transactionFinished(operationType, requestId);

@@ -66,6 +66,7 @@ public class PostsListFragment
     private ServiceHelper serviceHelper;
 
     private MainActivity activity;
+    private boolean initialized = false;
 
     private LoaderManager.LoaderCallbacks<Cursor> contentDataLoaderCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
         @Override
@@ -271,11 +272,14 @@ public class PostsListFragment
             if (isRefreshing) {
                 // TODO: it is not working
                 mSwipeRefreshLayout.setRefreshing(true);
+            } else {
+                mSwipeRefreshLayout.setRefreshing(false);
             }
         }
 
         content = factory.buildContent(activity.getSection().getContentSection());
         getLoaderManager().initLoader(LoaderIds.CONTENT_LOADER, null, contentDataLoaderCallbacks);
+        initialized = true;
     }
 
     @Override
@@ -300,7 +304,13 @@ public class PostsListFragment
 //        Toaster.toast(getActivity().getBaseContext(), "Bottom reached");
 
         System.out.println("Load has begun");
-        serviceHelper.getPosts(content, LoadIntention.APPEND, callbacksKeeper.getCallback(OperationType.GET_POSTS));
+        int intention;
+        if (adapter.getCursor().getCount() == 0) {
+            intention = LoadIntention.REFRESH;
+        } else {
+            intention = LoadIntention.APPEND;
+        }
+        serviceHelper.getPosts(content, intention, callbacksKeeper.getCallback(OperationType.GET_POSTS));
     }
 
 
@@ -374,5 +384,9 @@ public class PostsListFragment
             //cause posts to re-render
             getLoaderManager().restartLoader(LoaderIds.CONTENT_LOADER, null, contentDataLoaderCallbacks);
         }
+    }
+
+    public boolean isInitialized() {
+        return initialized;
     }
 }

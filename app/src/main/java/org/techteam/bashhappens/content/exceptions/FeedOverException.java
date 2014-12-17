@@ -2,6 +2,7 @@ package org.techteam.bashhappens.content.exceptions;
 
 public class FeedOverException extends Exception {
     public FeedOverException() {
+        super("Feed is over");
     }
 
     public FeedOverException(String detailMessage) {

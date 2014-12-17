@@ -3,6 +3,7 @@ package org.techteam.bashhappens.content;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import org.techteam.bashhappens.content.bashorg.best.BashOrgBest;
 import org.techteam.bashhappens.content.bashorg.newest.BashOrgNewest;
 
 public class ContentFactory implements Parcelable {
@@ -58,6 +59,10 @@ public class ContentFactory implements Parcelable {
             switch (currentSection) {
                 case BASH_ORG_NEWEST:
                     currentSource = new BashOrgNewest(locale, currentSection);
+                    break;
+                case BASH_ORG_BEST:
+                    currentSource = new BashOrgBest(locale, currentSection);
+                    break;
                 case IT_HAPPENS_NEWEST:
                     break;
             }

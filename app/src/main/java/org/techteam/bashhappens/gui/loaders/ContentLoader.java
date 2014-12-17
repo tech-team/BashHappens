@@ -35,6 +35,9 @@ public class ContentLoader extends CursorLoader {
     @Override
     public Cursor loadInBackground() {
         AbstractContentResolver resolver = AbstractContentResolver.getResolver(section);
+        if (resolver == null) {
+            throw new IllegalAccessError("No resolver for section " + section.toString());
+        }
         return resolver.getCursor(getContext());
     }
 
