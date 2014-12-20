@@ -9,12 +9,15 @@ import org.techteam.bashhappens.content.ContentList;
 import org.techteam.bashhappens.content.ContentSection;
 import org.techteam.bashhappens.content.Entry;
 import org.techteam.bashhappens.db.resolvers.bashorg.BashBayanResolver;
+import org.techteam.bashhappens.db.resolvers.bashorg.BashBestResolver;
 import org.techteam.bashhappens.db.resolvers.bashorg.BashFavsResolver;
 import org.techteam.bashhappens.db.resolvers.bashorg.BashLikesResolver;
 import org.techteam.bashhappens.db.resolvers.bashorg.BashNewestResolver;
+import org.techteam.bashhappens.db.tables.BashBest;
+import org.techteam.bashhappens.db.tables.BashFavs;
 import org.techteam.bashhappens.db.tables.BashLikes;
 import org.techteam.bashhappens.db.tables.BashNewest;
-import org.techteam.bashhappens.db.tables.BashTransactions;
+import org.techteam.bashhappens.db.tables.Transactions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +34,7 @@ public abstract class AbstractContentResolver {
     protected abstract String[] getProjection();
 
     protected List<ContentValues> convertToContentValues(ContentList<?> list) {
-        List<ContentValues> contentValues = new ArrayList<ContentValues>();
+        List<ContentValues> contentValues = new ArrayList<>();
         for (Entry entry: list) {
             contentValues.add(convertToContentValues(entry));
         }
@@ -42,9 +45,10 @@ public abstract class AbstractContentResolver {
         switch (section) {
             case BASH_ORG_NEWEST:
                 return new BashNewestResolver();
+            case BASH_ORG_FAVS:
+                return new BashFavsResolver();
             case BASH_ORG_BEST:
-                // TODO
-                return null;
+                return new BashBestResolver();
             case IT_HAPPENS_NEWEST:
                 //TODO: ItHappensNewest resolver
                 return null;
@@ -90,7 +94,7 @@ public abstract class AbstractContentResolver {
     // Because it is needed in static context
 
     public List<Integer> insertEntries(Context context, ContentList<?> list) {
-        List<Integer> insertedIds = new ArrayList<Integer>();
+        List<Integer> insertedIds = new ArrayList<>();
         for(ContentValues values : convertToContentValues(list)) {
             insertedIds.add(Integer.valueOf(
                             context
@@ -144,8 +148,10 @@ public abstract class AbstractContentResolver {
     public static Map<String, Integer> truncateAll(Context context) {
         Map<String, Integer> deletions = new HashMap<String, Integer>();
         deletions.put(BashNewest.TABLE_NAME, new BashNewestResolver().deleteAllEntries(context));
+        deletions.put(BashFavs.TABLE_NAME, new BashFavsResolver().deleteAllEntries(context));
+        deletions.put(BashBest.TABLE_NAME, new BashBestResolver().deleteAllEntries(context));
         deletions.put(BashLikes.TABLE_NAME, new BashLikesResolver().deleteAllEntries(context));
-        deletions.put(BashTransactions.TABLE_NAME, new TransactionsResolver().deleteAllEntries(context));
+        deletions.put(Transactions.TABLE_NAME, new TransactionsResolver().deleteAllEntries(context));
         return deletions;
     }
 

@@ -20,9 +20,11 @@ public abstract class DbProvider extends ContentProvider {
     protected UriMatcher mUriMatcher;
     protected HashMap<String, String> mProjectionMap;
 
+    protected static final String AUTHORITY = "org.techteam.bashhappens.db.providers.";
+
     protected DbProvider() {
         mUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        mProjectionMap = new HashMap<String, String>();
+        mProjectionMap = new HashMap<>();
     }
 
     @Override
@@ -31,7 +33,7 @@ public abstract class DbProvider extends ContentProvider {
         return false;
     }
 
-    protected abstract void queryUriMatch(Uri uri, SQLiteQueryBuilder qb, StringWrapper sortOrder);
+    protected abstract void queryUriMatch(Uri uri, SQLiteQueryBuilder qb);
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
@@ -39,13 +41,12 @@ public abstract class DbProvider extends ContentProvider {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setProjectionMap(mProjectionMap);
 
-        StringWrapper order = new StringWrapper(sortOrder);
-        queryUriMatch(uri, qb, order);
+        queryUriMatch(uri, qb);
 
         database = databaseHelper.getReadableDatabase();
 
         Cursor cur = qb.query(database, projection, selection, selectionArgs,
-                null, null, order.data);
+                null, null, sortOrder);
 
         cur.setNotificationUri(getContext().getContentResolver(), uri);
         return cur;
@@ -111,12 +112,5 @@ public abstract class DbProvider extends ContentProvider {
         getContext().getContentResolver().notifyChange(uri, null);
 
         return count;
-    }
-
-    protected class StringWrapper {
-        public String data = null;
-        public StringWrapper(String data) {
-            this.data = data;
-        }
     }
 }

@@ -3,13 +3,14 @@ package org.techteam.bashhappens.db;
 import org.techteam.bashhappens.db.tables.*;
 
 public abstract class Tables {
-    public static final ITable[] TABLES = new ITable[] {
-                                       new BashNewest(),
-                                       new BashLikes(),
-                                       new BashBayan(),
-                                       new BashFavs(),
-                                       new BashTransactions(),
-                                       new ItNewest(),
-                                       new ItLikes()
-                                    };
+    public static final ITable[] TABLES =   new ITable[] {
+                                            new BashNewest(),
+                                            new BashLikes(),
+                                            new BashBayan(),
+                                            new BashFavs(),
+                                            new BashBest(),
+                                            new ItNewest(),
+                                            new ItLikes(),
+                                            new Transactions(),
+                                        };
 }

@@ -4,17 +4,17 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
-import android.text.TextUtils;
 
 import org.techteam.bashhappens.db.tables.ItNewest;
 import org.techteam.bashhappens.db.tables.ItLikes;
 
-import static org.techteam.bashhappens.db.DatabaseHelper.AUTHORITY;
-
 public class ItHappensProvider extends DbProvider {
 
-    private static final int IT_NEWEST = 1;
-    private static final int IT_LIKES = 11;
+    private static final int IT_NEWEST = 11;
+    private static final int IT_LIKES = 12;
+
+    public static final String AUTHORITY = DbProvider.AUTHORITY + "ItHappensProvider";
+    public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 
     public ItHappensProvider() {
         super();
@@ -33,14 +33,11 @@ public class ItHappensProvider extends DbProvider {
     }
 
     @Override
-    public void queryUriMatch(Uri uri, SQLiteQueryBuilder qb, StringWrapper sortOrder) {
+    public void queryUriMatch(Uri uri, SQLiteQueryBuilder qb) {
         if (mUriMatcher.match(uri) == IT_NEWEST) {
             qb.setTables(ItNewest.TABLE_NAME + " LEFT JOIN "
                     + ItLikes.TABLE_NAME + " ON "
                     + ItNewest.ID + " = " + ItLikes.ARTICLE_ID);
-            if (TextUtils.isEmpty(sortOrder.data)) {
-                sortOrder.data = ItNewest.DEFAULT_SORT_ORDER;
-            }
         }
         else {
             throw new IllegalArgumentException("Unknown URI" + uri);

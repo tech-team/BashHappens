@@ -7,12 +7,10 @@ import android.net.Uri;
 
 import org.techteam.bashhappens.db.tables.AbstractTable;
 import org.techteam.bashhappens.db.tables.BashBayan;
+import org.techteam.bashhappens.db.tables.BashBest;
 import org.techteam.bashhappens.db.tables.BashFavs;
 import org.techteam.bashhappens.db.tables.BashLikes;
 import org.techteam.bashhappens.db.tables.BashNewest;
-import org.techteam.bashhappens.db.tables.BashTransactions;
-
-import static org.techteam.bashhappens.db.DatabaseHelper.AUTHORITY;
 
 public class BashHappensDbProvider extends DbProvider {
 
@@ -20,8 +18,9 @@ public class BashHappensDbProvider extends DbProvider {
     private static final int BASH_LIKES = 2;
     private static final int BASH_BAYAN = 3;
     private static final int BASH_FAVS = 4;
-    private static final int BASH_TRANSACTIONS = 5;
+    private static final int BASH_BEST = 5;
 
+    public static final String AUTHORITY = DbProvider.AUTHORITY + "BashHappensDbProvider";
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY);
 
     public BashHappensDbProvider() {
@@ -31,39 +30,39 @@ public class BashHappensDbProvider extends DbProvider {
         mUriMatcher.addURI(AUTHORITY, BashLikes.TABLE_NAME, BASH_LIKES);
         mUriMatcher.addURI(AUTHORITY, BashBayan.TABLE_NAME, BASH_BAYAN);
         mUriMatcher.addURI(AUTHORITY, BashFavs.TABLE_NAME, BASH_FAVS);
-        mUriMatcher.addURI(AUTHORITY, BashTransactions.TABLE_NAME, BASH_TRANSACTIONS);
+        mUriMatcher.addURI(AUTHORITY, BashBest.TABLE_NAME, BASH_BEST);
 
-        for (String item : new String[] {BashNewest._ID, BashNewest.ID, BashNewest.TEXT, BashNewest.RATING, BashNewest.DATE}) {
+        for (String item : new String[] {AbstractTable._ID, AbstractTable.ID, AbstractTable.TEXT, AbstractTable.RATING, AbstractTable.DATE}) {
             mProjectionMap.put(item, item);
         }
         for (String item : new String[] {BashLikes.ARTICLE_ID, BashLikes.DIRECTION}) {
             mProjectionMap.put(item, item);
         }
         mProjectionMap.put(BashBayan.IS_BAYAN, BashBayan.IS_BAYAN);
-        for (String item : new String[] {BashTransactions.STATUS, BashTransactions.TYPE}) {
-            mProjectionMap.put(item, item);
-        }
     }
 
     @Override
-    protected void queryUriMatch(Uri uri, SQLiteQueryBuilder qb, StringWrapper sortOrder) {
+    protected void queryUriMatch(Uri uri, SQLiteQueryBuilder qb) {
         StringBuilder query = new StringBuilder();
         switch(mUriMatcher.match(uri)) {
+
             case BASH_NEWEST:
                 query.append(BashNewest.TABLE_NAME);
                 break;
             case BASH_FAVS:
                 query.append(BashFavs.TABLE_NAME);
                 break;
+            case BASH_BEST:
+                qb.setTables(BashBest.TABLE_NAME);
+                break;
+
             case BASH_LIKES:
                 qb.setTables(BashLikes.TABLE_NAME);
                 return;
             case BASH_BAYAN:
                 qb.setTables(BashBayan.TABLE_NAME);
                 return;
-            case BASH_TRANSACTIONS:
-                qb.setTables(BashTransactions.TABLE_NAME);
-                return;
+
             default:
                 throw new IllegalArgumentException("Unknown URI" + uri);
         }
@@ -75,9 +74,6 @@ public class BashHappensDbProvider extends DbProvider {
                 + AbstractTable.ID
                 + " = " + BashBayan.TABLE_NAME + "." + BashBayan.ARTICLE_ID);
         qb.setTables(query.toString());
-        if (sortOrder.data == null) {
-            sortOrder.data = AbstractTable.DEFAULT_SORT_ORDER;
-        }
     }
 
     @Override
@@ -91,8 +87,8 @@ public class BashHappensDbProvider extends DbProvider {
                 return BashBayan.CONTENT_TYPE;
             case BASH_FAVS:
                 return BashFavs.CONTENT_TYPE;
-            case BASH_TRANSACTIONS:
-                return BashTransactions.CONTENT_TYPE;
+            case BASH_BEST:
+                return BashBest.CONTENT_TYPE;
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -109,8 +105,8 @@ public class BashHappensDbProvider extends DbProvider {
                 return _insert(db, BashBayan.TABLE_NAME, BashBayan.CONTENT_ID_URI_BASE, contentValues);
             case BASH_FAVS:
                 return _insert(db, BashFavs.TABLE_NAME, BashFavs.CONTENT_ID_URI_BASE, contentValues);
-            case BASH_TRANSACTIONS:
-                return _insert(db, BashTransactions.TABLE_NAME, BashTransactions.CONTENT_ID_URI_BASE, contentValues);
+            case BASH_BEST:
+                return _insert(db, BashBest.TABLE_NAME, BashBest.CONTENT_ID_URI_BASE, contentValues);
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -128,8 +124,8 @@ public class BashHappensDbProvider extends DbProvider {
                 return db.delete(BashBayan.TABLE_NAME, where, whereArgs);
             case BASH_FAVS:
                 return db.delete(BashFavs.TABLE_NAME, where, whereArgs);
-            case BASH_TRANSACTIONS:
-                return db.delete(BashTransactions.TABLE_NAME, where, whereArgs);
+            case BASH_BEST:
+                return db.delete(BashBest.TABLE_NAME, where, whereArgs);
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }
@@ -143,11 +139,11 @@ public class BashHappensDbProvider extends DbProvider {
                 return db.update(BashNewest.TABLE_NAME, values, where, whereArgs);
             case BASH_FAVS:
                 return db.update(BashFavs.TABLE_NAME, values, where, whereArgs);
+            case BASH_BEST:
+                return db.update(BashBest.TABLE_NAME, values, where, whereArgs);
             case BASH_LIKES:
             case BASH_BAYAN:
                 throw new IllegalArgumentException("What is it I can't even");
-            case BASH_TRANSACTIONS:
-                return db.update(BashTransactions.TABLE_NAME, values, where, whereArgs);
             default:
                 throw new IllegalArgumentException("Unknown URI " + uri);
         }

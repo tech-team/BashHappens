@@ -28,13 +28,18 @@
         </activity>
 
         <provider
-            android:authorities="org.techteam.bashhappens.db.DatabaseHelper"
+            android:authorities="org.techteam.bashhappens.db.providers.BashHappensDbProvider"
             android:name=".db.providers.BashHappensDbProvider"
             android:exported="false">
         </provider>
         <provider
-            android:authorities="org.techteam.bashhappens.db.DatabaseHelper"
+            android:authorities="org.techteam.bashhappens.db.providers.ItHappensProvider"
             android:name=".db.providers.ItHappensProvider"
+            android:exported="false">
+        </provider>
+        <provider
+            android:authorities="org.techteam.bashhappens.db.providers.TransactionProvider"
+            android:name=".db.providers.TransactionProvider"
             android:exported="false">
         </provider>
 
