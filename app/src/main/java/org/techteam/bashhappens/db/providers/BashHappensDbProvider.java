@@ -53,7 +53,7 @@ public class BashHappensDbProvider extends DbProvider {
                 query.append(BashFavs.TABLE_NAME);
                 break;
             case BASH_BEST:
-                qb.setTables(BashBest.TABLE_NAME);
+                query.append(BashBest.TABLE_NAME);
                 break;
 
             case BASH_LIKES:
